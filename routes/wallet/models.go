@@ -12,6 +12,6 @@ type Wallet struct {
 
 type Balance struct {
 	Wallet
-	Symbol  string `json:"symbol,omitempty"`
+	Symbol  string `json:"symbol"`
 	Balance any    `json:"balance"`
 }

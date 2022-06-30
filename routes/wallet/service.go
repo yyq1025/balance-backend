@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"sync"
 
-	"yyq1025/balance-backend/network"
+	"yyq1025/balance-backend/routes/network"
 	"yyq1025/balance-backend/token"
 	"yyq1025/balance-backend/utils"
 

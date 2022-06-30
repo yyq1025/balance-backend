@@ -18,21 +18,25 @@ func CreateWalletHandler(c *gin.Context) {
 		return
 	}
 
-	address := c.Query("address")
+	data := make(map[string]string)
+
+	c.ShouldBindJSON(&data)
+
+	address := data["address"]
 	if !utils.IsValidAddress(address) {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "invalid address"})
 		return
 	}
 
-	network := c.Query("network")
+	network := data["network"]
 
-	token := c.Query("token")
+	token := data["token"]
 	if token != "" && !utils.IsValidAddress(token) {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "invalid token"})
 		return
 	}
 
-	tag := c.Query("tag")
+	tag := data["tag"]
 
 	res := AddWallet(db, userId, address, network, token, tag)
 
@@ -48,21 +52,25 @@ func GetWalletsHandler(c *gin.Context) {
 		return
 	}
 
-	address := c.Query("address")
+	data := make(map[string]string)
+
+	c.ShouldBindJSON(&data)
+
+	address := data["address"]
 	if address != "" && !utils.IsValidAddress(address) {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "invalid address"})
 		return
 	}
 
-	network := c.Query("network")
+	network := data["network"]
 
-	token := c.Query("token")
+	token := data["token"]
 	if token != "" && !utils.IsValidAddress(token) {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "invalid token"})
 		return
 	}
 
-	tag := c.Query("tag")
+	tag := data["tag"]
 
 	res := GetWalletsByParams(db, userId, address, network, token, tag)
 
@@ -78,21 +86,25 @@ func DeleteWalletsHandler(c *gin.Context) {
 		return
 	}
 
-	address := c.Query("address")
+	data := make(map[string]string)
+
+	c.ShouldBindJSON(&data)
+
+	address := data["address"]
 	if address != "" && !utils.IsValidAddress(address) {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "invalid address"})
 		return
 	}
 
-	network := c.Query("network")
+	network := data["network"]
 
-	token := c.Query("token")
+	token := data["token"]
 	if token != "" && !utils.IsValidAddress(token) {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "invalid token"})
 		return
 	}
 
-	tag := c.Query("tag")
+	tag := data["tag"]
 
 	res := DeleteWalletsByParams(db, userId, address, network, token, tag)
 
@@ -108,21 +120,25 @@ func GetBalancesHandler(c *gin.Context) {
 		return
 	}
 
-	address := c.Query("address")
+	data := make(map[string]string)
+
+	c.ShouldBindJSON(&data)
+
+	address := data["address"]
 	if address != "" && !utils.IsValidAddress(address) {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "invalid address"})
 		return
 	}
 
-	network := c.Query("network")
+	network := data["network"]
 
-	token := c.Query("token")
+	token := data["token"]
 	if token != "" && !utils.IsValidAddress(token) {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "invalid token"})
 		return
 	}
 
-	tag := c.Query("tag")
+	tag := data["tag"]
 
 	res := GetBalanceByParams(db, userId, address, network, token, tag)
 

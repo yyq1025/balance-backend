@@ -5,10 +5,10 @@ import (
 	"math/rand"
 	"time"
 
-	"yyq1025/balance-backend/network"
-	"yyq1025/balance-backend/user"
+	"yyq1025/balance-backend/routes/network"
+	"yyq1025/balance-backend/routes/user"
+	"yyq1025/balance-backend/routes/wallet"
 	"yyq1025/balance-backend/utils"
-	"yyq1025/balance-backend/wallet"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis_rate/v9"
@@ -21,7 +21,7 @@ func main() {
 	limiter := redis_rate.NewLimiter(rc)
 	sender := utils.NewSender()
 	router := gin.Default()
-	router.Use(CORSMiddleware())
+	router.Use(corsMiddleware())
 
 	user_group := router.Group("/user")
 	user_group.Use(dbMiddleware(rc, db))
