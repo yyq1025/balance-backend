@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 	"net/mail"
+	"net/smtp"
 	"os"
 	"regexp"
 	"time"
@@ -35,6 +36,15 @@ func GetRedis() *redis.Client {
 	}
 	log.Print("Redis Connected!")
 	return client
+}
+
+func NewSender() *Sender {
+	email := os.Getenv("EMAIL")
+	password := os.Getenv("EMAIL_PASSWORD")
+	smtpHost := os.Getenv("MAIL_HOST")
+	tlsPort := os.Getenv("MAIL_PORT")
+	auth := smtp.PlainAuth("", email, password, smtpHost)
+	return &Sender{email, password, smtpHost, tlsPort, auth}
 }
 
 func IsValidEmail(email string) bool {

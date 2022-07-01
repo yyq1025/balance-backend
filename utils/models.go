@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"math/rand"
 	"net/smtp"
-	"os"
 	"time"
 
 	"github.com/go-redis/redis/v8"
@@ -25,15 +24,6 @@ type Claims struct {
 type Sender struct {
 	email, password, smtpHost, tlsPort string
 	auth                               smtp.Auth
-}
-
-func NewSender() *Sender {
-	email := os.Getenv("EMAIL")
-	password := os.Getenv("EMAIL_PASSWORD")
-	smtpHost := os.Getenv("MAIL_HOST")
-	tlsPort := os.Getenv("MAIL_PORT")
-	auth := smtp.PlainAuth("", email, password, smtpHost)
-	return &Sender{email, password, smtpHost, tlsPort, auth}
 }
 
 func (s *Sender) SendCode(rc *redis.Client, to string) error {

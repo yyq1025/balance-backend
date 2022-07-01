@@ -18,12 +18,14 @@ CREATE TABLE `networks` (
 );
 
 CREATE TABLE `wallets` (
+  `id` INT AUTO_INCREMENT NOT NULL,
   `user_id` INT NOT NULL,
   `address` BINARY(20) NOT NULL,
   `network` VARCHAR(64) NOT NULL,
   `token` BINARY(20) NOT NULL,
   `tag` VARCHAR(320) NOT NULL,
-  PRIMARY KEY (`user_id`, `address`, `network`, `token`, `tag`),
+  PRIMARY KEY (`id`),
+  UNIQUE (`user_id`, `address`, `network`, `token`, `tag`),
   FOREIGN KEY (`user_id`) REFERENCES users(`id`) ON DELETE CASCADE,
   FOREIGN KEY (`network`) REFERENCES networks(`name`) ON DELETE CASCADE
 );

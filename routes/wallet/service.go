@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 	"net/http"
+	"sort"
 	"sync"
 
 	"yyq1025/balance-backend/routes/network"
@@ -32,7 +33,7 @@ func AddWallet(db *gorm.DB, userId int, address, network, tokenAddress, tag stri
 	if rowsAffected == 0 {
 		return utils.AddWalletError
 	}
-	return utils.Response{Code: http.StatusOK, Data: map[string]any{"status": "add wallet success"}}
+	return utils.Response{Code: http.StatusOK, Data: map[string]any{"message": "add wallet success"}}
 }
 
 func GetWalletsByParams(db *gorm.DB, userId int, address, networkName, tokenAddress, tag string) utils.Response {
@@ -71,7 +72,7 @@ func DeleteWalletsByParams(db *gorm.DB, userId int, address, networkName, tokenA
 		return utils.FindWalletError
 	}
 
-	return utils.Response{Code: http.StatusOK, Data: map[string]any{"status": "delete success"}}
+	return utils.Response{Code: http.StatusOK, Data: map[string]any{"message": "delete success"}}
 }
 
 func GetBalanceByParams(db *gorm.DB, userId int, address, networkName, tokenAddress, tag string) utils.Response {
@@ -170,5 +171,9 @@ func GetBalanceByParams(db *gorm.DB, userId int, address, networkName, tokenAddr
 	for result := range ch {
 		results = append(results, result)
 	}
+
+	sort.Slice(results, func(i, j int) bool {
+		return results[i].Id < results[j].Id
+	})
 	return utils.Response{Code: http.StatusOK, Data: map[string]any{"wallets": results}}
 }
