@@ -48,7 +48,7 @@ func main() {
 		wallet_group.POST("/", wallet.CreateWalletHandler)
 		// wallet_group.GET("", wallet.GetWalletsHandler)
 		wallet_group.DELETE("/:id", wallet.DeleteWalletsHandler)
-		wallet_group.GET("/", wallet.GetBalancesHandler)
+		wallet_group.GET("/balance", wallet.GetBalancesHandler)
 	}
 
 	log.Fatal(router.Run(":8080"))

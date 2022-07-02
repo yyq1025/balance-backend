@@ -108,7 +108,7 @@ func GetBalancesHandler(c *gin.Context) {
 		return
 	}
 
-	id, _ := strconv.Atoi(c.Param("id"))
+	// id, _ := strconv.Atoi(c.Param("id"))
 
 	// data := make(map[string]string)
 
@@ -130,7 +130,7 @@ func GetBalancesHandler(c *gin.Context) {
 
 	// tag := data["tag"]
 
-	res := GetBalanceByParams(db, &Wallet{Id: id, UserId: userId})
+	res := GetBalanceByParams(db, &Wallet{UserId: userId})
 
 	c.JSON(res.Code, res.Data)
 }
