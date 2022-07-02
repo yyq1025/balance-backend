@@ -1,7 +1,7 @@
 package user
 
 type User struct {
-	Id       int `gorm:"autoIncrement"`
+	Id       int
 	Email    string
 	Password []byte
 }

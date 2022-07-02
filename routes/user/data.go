@@ -13,6 +13,9 @@ var user_cache sync.Map
 
 func CreateUser(db *gorm.DB, user *User) (int64, error) {
 	result := db.Create(user)
+	if result.RowsAffected > 0 {
+		user_cache.Store(user.Email, *user)
+	}
 	return result.RowsAffected, result.Error
 }
 

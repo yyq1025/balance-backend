@@ -16,7 +16,7 @@ var VerificationCodeError = Response{http.StatusBadRequest, map[string]any{"mess
 
 var UserLoginError = Response{http.StatusInternalServerError, map[string]any{"message": "cannot login"}}
 
-var AddWalletError = Response{http.StatusInternalServerError, map[string]any{"message": "cannot add wallet address"}}
+var AddWalletError = Response{http.StatusInternalServerError, map[string]any{"message": "cannot add wallet"}}
 
 var FindUserError = Response{http.StatusInternalServerError, map[string]any{"message": "cannot find user"}}
 

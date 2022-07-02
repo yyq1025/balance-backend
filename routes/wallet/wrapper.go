@@ -2,6 +2,7 @@ package wallet
 
 import (
 	"net/http"
+	"strconv"
 
 	"yyq1025/balance-backend/utils"
 
@@ -86,27 +87,14 @@ func DeleteWalletsHandler(c *gin.Context) {
 		return
 	}
 
-	data := make(map[string]string)
+	Id, err := strconv.Atoi(c.Param("id"))
 
-	c.ShouldBindJSON(&data)
-
-	address := data["address"]
-	if address != "" && !utils.IsValidAddress(address) {
-		c.JSON(http.StatusBadRequest, gin.H{"message": "invalid address"})
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": "invalid id"})
 		return
 	}
 
-	network := data["network"]
-
-	token := data["token"]
-	if token != "" && !utils.IsValidAddress(token) {
-		c.JSON(http.StatusBadRequest, gin.H{"message": "invalid token"})
-		return
-	}
-
-	tag := data["tag"]
-
-	res := DeleteWalletsByParams(db, userId, address, network, token, tag)
+	res := DeleteWalletsByIds(db, &Wallet{Id: Id, UserId: userId})
 
 	c.JSON(res.Code, res.Data)
 }
@@ -120,27 +108,29 @@ func GetBalancesHandler(c *gin.Context) {
 		return
 	}
 
-	data := make(map[string]string)
+	id, _ := strconv.Atoi(c.Param("id"))
 
-	c.ShouldBindJSON(&data)
+	// data := make(map[string]string)
 
-	address := data["address"]
-	if address != "" && !utils.IsValidAddress(address) {
-		c.JSON(http.StatusBadRequest, gin.H{"message": "invalid address"})
-		return
-	}
+	// c.ShouldBindJSON(&data)
 
-	network := data["network"]
+	// address := data["address"]
+	// if address != "" && !utils.IsValidAddress(address) {
+	// 	c.JSON(http.StatusBadRequest, gin.H{"message": "invalid address"})
+	// 	return
+	// }
 
-	token := data["token"]
-	if token != "" && !utils.IsValidAddress(token) {
-		c.JSON(http.StatusBadRequest, gin.H{"message": "invalid token"})
-		return
-	}
+	// network := data["network"]
 
-	tag := data["tag"]
+	// token := data["token"]
+	// if token != "" && !utils.IsValidAddress(token) {
+	// 	c.JSON(http.StatusBadRequest, gin.H{"message": "invalid token"})
+	// 	return
+	// }
 
-	res := GetBalanceByParams(db, userId, address, network, token, tag)
+	// tag := data["tag"]
+
+	res := GetBalanceByParams(db, &Wallet{Id: id, UserId: userId})
 
 	c.JSON(res.Code, res.Data)
 }
