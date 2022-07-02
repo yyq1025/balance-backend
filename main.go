@@ -12,6 +12,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis_rate/v9"
+	cors "github.com/rs/cors/wrapper/gin"
 )
 
 func main() {
@@ -21,7 +22,7 @@ func main() {
 	limiter := redis_rate.NewLimiter(rc)
 	sender := utils.NewSender()
 	router := gin.Default()
-	router.Use(corsMiddleware())
+	router.Use(cors.AllowAll())
 
 	user_group := router.Group("/user")
 	user_group.Use(dbMiddleware(rc, db))
