@@ -51,5 +51,7 @@ func main() {
 		wallet_group.GET("/balance", wallet.GetBalancesHandler)
 	}
 
+	router.GET("/", jwtAuthMiddleware(), jwtRateLimitMiddleware(limiter), dbMiddleware(rc, db), wallet.GetBalancesHandler)
+
 	log.Fatal(router.Run(":8080"))
 }
