@@ -45,7 +45,7 @@ func main() {
 	wallet_group.Use(jwtRateLimitMiddleware(limiter))
 	wallet_group.Use(dbMiddleware(rc, db))
 	{
-		wallet_group.POST("", wallet.CreateWalletHandler)
+		wallet_group.POST("/", wallet.CreateWalletHandler)
 		// wallet_group.GET("", wallet.GetWalletsHandler)
 		wallet_group.DELETE("/:id", wallet.DeleteWalletsHandler)
 		wallet_group.GET("/", wallet.GetBalancesHandler)
