@@ -6,35 +6,36 @@ import (
 
 	"github.com/go-redis/redis/v8"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 // user_cache: email:User
 var user_cache sync.Map
 
-func CreateUser(db *gorm.DB, user *User) (int64, error) {
-	result := db.Create(user)
-	if result.RowsAffected > 0 {
+func CreateUser(db *gorm.DB, user *User) error {
+	err := db.Create(user).Error
+	if err == nil {
 		user_cache.Store(user.Email, *user)
 	}
-	return result.RowsAffected, result.Error
+	return err
 }
 
-func QueryUsers(db *gorm.DB, condition *User, users *[]User) (int64, error) {
+func QueryUser(db *gorm.DB, condition *User, user *User) error {
 	if cached_user, exist := user_cache.Load(condition.Email); exist {
-		*users = []User{cached_user.(User)}
-		return 1, nil
+		*user = cached_user.(User)
+		return nil
 	}
-	result := db.Where(condition).Find(users)
-	for _, user := range *users {
-		user_cache.LoadOrStore(user.Email, user)
+	err := db.Where(condition).First(user).Error
+	if err == nil {
+		user_cache.Store(user.Email, *user)
 	}
-	return result.RowsAffected, result.Error
+	return err
 }
 
-func UpdateUsers(db *gorm.DB, old *User, new *User) (int64, error) {
-	result := db.Where(old).Updates(new)
-	if result.RowsAffected > 0 {
-		user_cache.Delete(old.Email)
+func UpdateUsers(db *gorm.DB, old *User, new *User, users *[]User) (int64, error) {
+	result := db.Model(users).Clauses(clause.Returning{}).Where(old).Updates(new)
+	for _, user := range *users {
+		user_cache.Store(user.Email, user)
 	}
 	return result.RowsAffected, result.Error
 }

@@ -45,8 +45,6 @@ func RegisterHandler(c *gin.Context) {
 func SendCodeHandler(c *gin.Context) {
 	rc := c.MustGet("rc").(*redis.Client)
 
-	sender := c.MustGet("sender").(*utils.Sender)
-
 	data := make(map[string]string)
 
 	c.ShouldBindJSON(&data)
@@ -57,7 +55,7 @@ func SendCodeHandler(c *gin.Context) {
 		return
 	}
 
-	res := SendCode(sender, rc, email)
+	res := SendCode(rc, email)
 
 	c.JSON(res.Code, res.Data)
 }

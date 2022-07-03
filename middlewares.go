@@ -76,10 +76,3 @@ func dbMiddleware(rc *redis.Client, db *gorm.DB) gin.HandlerFunc {
 		c.Next()
 	}
 }
-
-func senderMiddleware(s *utils.Sender) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		c.Set("sender", s)
-		c.Next()
-	}
-}

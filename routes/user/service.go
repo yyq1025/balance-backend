@@ -12,6 +12,8 @@ import (
 	"gorm.io/gorm"
 )
 
+var sender = newSender()
+
 func AddUser(rc *redis.Client, db *gorm.DB, email, password, code string) utils.Response {
 	if !VerifyCode(rc, email, code) {
 		return utils.VerificationCodeError
@@ -21,19 +23,21 @@ func AddUser(rc *redis.Client, db *gorm.DB, email, password, code string) utils.
 		log.Print(err)
 		return utils.CreateUserError
 	}
-	rowsAffected, err := CreateUser(db, &User{Email: email, Password: hashedPassword})
-	if err != nil {
+	user := User{Email: email, Password: hashedPassword}
+	if err := CreateUser(db, &user); err != nil {
 		log.Print(err)
 		return utils.CreateUserError
 	}
-	if rowsAffected == 0 {
-		return utils.CreateUserError
+	jwt, err := utils.CreateJWT(user.ID, 24*time.Hour)
+	if err != nil {
+		log.Print(err)
+		return utils.UserLoginError
 	}
-	return utils.Response{Code: http.StatusOK, Data: map[string]any{"message": "registration success"}}
+	return utils.Response{Code: http.StatusOK, Data: map[string]any{"email": user.Email, "token": jwt}}
 }
 
-func SendCode(s *utils.Sender, rc *redis.Client, email string) utils.Response {
-	if err := s.SendCode(rc, email); err != nil {
+func SendCode(rc *redis.Client, email string) utils.Response {
+	if err := sender.sendCode(rc, email); err != nil {
 		log.Print(err)
 		return utils.SendCodeError
 	}
@@ -41,21 +45,20 @@ func SendCode(s *utils.Sender, rc *redis.Client, email string) utils.Response {
 }
 
 func Login(db *gorm.DB, email, password string) utils.Response {
-	var users []User
-	rowsAffected, err := QueryUsers(db, &User{Email: email}, &users)
-	if err != nil {
+	var user User
+	if err := QueryUser(db, &User{Email: email}, &user); err != nil {
 		log.Print(err)
 		return utils.LoginAuthError
 	}
-	if rowsAffected == 0 || bcrypt.CompareHashAndPassword(users[0].Password, []byte(password)) != nil {
+	if bcrypt.CompareHashAndPassword(user.Password, []byte(password)) != nil {
 		return utils.LoginAuthError
 	}
-	jwt, err := utils.CreateJWT(users[0].Id, 24*time.Hour)
+	jwt, err := utils.CreateJWT(user.ID, 24*time.Hour)
 	if err != nil {
 		log.Print(err)
 		return utils.UserLoginError
 	}
-	return utils.Response{Code: http.StatusOK, Data: map[string]any{"email": users[0].Email, "token": jwt}}
+	return utils.Response{Code: http.StatusOK, Data: map[string]any{"email": user.Email, "token": jwt}}
 }
 
 func ChangePassword(rc *redis.Client, db *gorm.DB, email, password string, code string) utils.Response {
@@ -67,7 +70,7 @@ func ChangePassword(rc *redis.Client, db *gorm.DB, email, password string, code 
 		log.Print(err)
 		return utils.ChangePasswordError
 	}
-	rowsAffected, err := UpdateUsers(db, &User{Email: email}, &User{Password: hashedPassword})
+	rowsAffected, err := UpdateUsers(db, &User{Email: email}, &User{Password: hashedPassword}, &[]User{})
 	if err != nil {
 		log.Print(err)
 		return utils.ChangePasswordError

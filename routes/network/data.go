@@ -20,3 +20,15 @@ func QueryNetworks(db *gorm.DB, condition *Network, networks *[]Network) (int64,
 	}
 	return result.RowsAffected, result.Error
 }
+
+func QueryNetwork(db *gorm.DB, condition *Network, network *Network) error {
+	if cached_network, exist := network_cache.Load(condition.Name); exist {
+		*network = cached_network.(Network)
+		return nil
+	}
+	err := db.Where(condition).First(network).Error
+	if err == nil {
+		network_cache.Store(network.Name, *network)
+	}
+	return err
+}

@@ -36,31 +36,9 @@ func AddWallet(db *gorm.DB, userId int, address, network, tokenAddress, tag stri
 	return utils.Response{Code: http.StatusOK, Data: map[string]any{"balance": balance}}
 }
 
-func GetWalletsByParams(db *gorm.DB, userId int, address, networkName, tokenAddress, tag string) utils.Response {
-	condition := &Wallet{
-		UserId:  userId,
-		Address: common.HexToAddress(address),
-		Network: networkName,
-		Token:   common.HexToAddress(tokenAddress),
-		Tag:     tag,
-	}
+func DeleteBalances(db *gorm.DB, condition *Wallet) utils.Response {
 	var wallets []Wallet
-	_, err := QueryWallets(db, condition, &wallets)
-	if err != nil {
-		log.Print(err)
-		return utils.DeleteAddressesError
-	}
-
-	return utils.Response{Code: http.StatusOK, Data: map[string]any{"wallets": wallets}}
-}
-
-func DeleteWalletsByIds(db *gorm.DB, condition *Wallet) utils.Response {
-	// condition := &Wallet{
-	// 	Id:     Id,
-	// 	UserId: userId,
-	// }
-
-	rowsAffected, err := DeleteWallets(db, condition, &[]Wallet{})
+	rowsAffected, err := DeleteWallets(db, condition, &wallets)
 	if err != nil {
 		log.Print(err)
 		return utils.DeleteAddressesError
@@ -69,17 +47,10 @@ func DeleteWalletsByIds(db *gorm.DB, condition *Wallet) utils.Response {
 		return utils.FindWalletError
 	}
 
-	return utils.Response{Code: http.StatusOK, Data: map[string]any{"message": "delete success"}}
+	return utils.Response{Code: http.StatusOK, Data: map[string]any{"wallets": wallets}}
 }
 
-func GetBalanceByParams(db *gorm.DB, condition *Wallet) utils.Response {
-	// condition := &Wallet{
-	// 	UserId:  userId,
-	// 	Address: common.HexToAddress(address),
-	// 	Network: networkName,
-	// 	Token:   common.HexToAddress(tokenAddress),
-	// 	Tag:     tag,
-	// }
+func GetBalances(db *gorm.DB, condition *Wallet) utils.Response {
 	var wallets []Wallet
 	_, err := QueryWallets(db, condition, &wallets)
 	if err != nil {
@@ -112,7 +83,18 @@ func GetBalanceByParams(db *gorm.DB, condition *Wallet) utils.Response {
 	}
 
 	sort.Slice(results, func(i, j int) bool {
-		return results[i].Id < results[j].Id
+		return results[i].ID < results[j].ID
 	})
 	return utils.Response{Code: http.StatusOK, Data: map[string]any{"balances": results}}
+}
+
+func GetBalance(db *gorm.DB, condition *Wallet) utils.Response {
+	var wallet Wallet
+	if err := QueryWallet(db, condition, &wallet); err != nil {
+		log.Print(err)
+		return utils.FindWalletError
+	}
+	balance := getBalance(db, wallet)
+	balance.Wallet = wallet
+	return utils.Response{Code: http.StatusOK, Data: map[string]any{"balance": balance}}
 }

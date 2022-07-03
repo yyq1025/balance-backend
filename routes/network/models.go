@@ -1,7 +1,7 @@
 package network
 
 type Network struct {
-	Name   string `json:"name"`
+	Name   string `gorm:"primaryKey" json:"name"`
 	Url    string `json:"url"`
 	Symbol string `json:"symbol"`
 }

@@ -44,40 +44,6 @@ func CreateWalletHandler(c *gin.Context) {
 	c.JSON(res.Code, res.Data)
 }
 
-func GetWalletsHandler(c *gin.Context) {
-	db := c.MustGet("db").(*gorm.DB)
-
-	userId := c.MustGet("userId").(int)
-	if userId == 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"message": "invalid user"})
-		return
-	}
-
-	data := make(map[string]string)
-
-	c.ShouldBindJSON(&data)
-
-	address := data["address"]
-	if address != "" && !utils.IsValidAddress(address) {
-		c.JSON(http.StatusBadRequest, gin.H{"message": "invalid address"})
-		return
-	}
-
-	network := data["network"]
-
-	token := data["token"]
-	if token != "" && !utils.IsValidAddress(token) {
-		c.JSON(http.StatusBadRequest, gin.H{"message": "invalid token"})
-		return
-	}
-
-	tag := data["tag"]
-
-	res := GetWalletsByParams(db, userId, address, network, token, tag)
-
-	c.JSON(res.Code, res.Data)
-}
-
 func DeleteWalletsHandler(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
 
@@ -87,14 +53,14 @@ func DeleteWalletsHandler(c *gin.Context) {
 		return
 	}
 
-	Id, err := strconv.Atoi(c.Param("id"))
+	id, err := strconv.Atoi(c.Param("id"))
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "invalid id"})
 		return
 	}
 
-	res := DeleteWalletsByIds(db, &Wallet{Id: Id, UserId: userId})
+	res := DeleteBalances(db, &Wallet{ID: id, UserId: userId})
 
 	c.JSON(res.Code, res.Data)
 }
@@ -108,29 +74,23 @@ func GetBalancesHandler(c *gin.Context) {
 		return
 	}
 
-	id, _ := strconv.Atoi(c.Param("id")[1:])
+	res := GetBalances(db, &Wallet{UserId: userId})
 
-	// data := make(map[string]string)
+	c.JSON(res.Code, res.Data)
+}
 
-	// c.ShouldBindJSON(&data)
+func GetBalanceHandler(c *gin.Context) {
+	db := c.MustGet("db").(*gorm.DB)
 
-	// address := data["address"]
-	// if address != "" && !utils.IsValidAddress(address) {
-	// 	c.JSON(http.StatusBadRequest, gin.H{"message": "invalid address"})
-	// 	return
-	// }
+	userId := c.MustGet("userId").(int)
+	if userId == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"message": "invalid user"})
+		return
+	}
 
-	// network := data["network"]
+	id, _ := strconv.Atoi(c.Param("id"))
 
-	// token := data["token"]
-	// if token != "" && !utils.IsValidAddress(token) {
-	// 	c.JSON(http.StatusBadRequest, gin.H{"message": "invalid token"})
-	// 	return
-	// }
-
-	// tag := data["tag"]
-
-	res := GetBalanceByParams(db, &Wallet{Id: id, UserId: userId})
+	res := GetBalance(db, &Wallet{ID: id, UserId: userId})
 
 	c.JSON(res.Code, res.Data)
 }

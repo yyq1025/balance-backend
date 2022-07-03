@@ -18,27 +18,39 @@ var symbol_cache, decimals_cache sync.Map
 func CreateWallet(db *gorm.DB, wallet *Wallet) (int64, error) {
 	result := db.Create(wallet)
 	if result.RowsAffected > 0 {
-		wallet_cache.Store(wallet.Id, *wallet)
+		wallet_cache.Store(wallet.ID, *wallet)
 	}
 	return result.RowsAffected, result.Error
 }
 
 func QueryWallets(db *gorm.DB, condition *Wallet, wallets *[]Wallet) (int64, error) {
-	if cached_wallet, exist := wallet_cache.Load(condition.Id); exist {
+	if cached_wallet, exist := wallet_cache.Load(condition.ID); exist {
 		*wallets = []Wallet{cached_wallet.(Wallet)}
 		return 1, nil
 	}
 	result := db.Where(condition).Find(wallets)
 	for _, wallet := range *wallets {
-		wallet_cache.LoadOrStore(wallet.Id, wallet)
+		wallet_cache.LoadOrStore(wallet.ID, wallet)
 	}
 	return result.RowsAffected, result.Error
+}
+
+func QueryWallet(db *gorm.DB, condition *Wallet, wallet *Wallet) error {
+	if cached_wallet, exist := wallet_cache.Load(condition.ID); exist {
+		*wallet = cached_wallet.(Wallet)
+		return nil
+	}
+	err := db.Where(condition).First(wallet).Error
+	if err == nil {
+		wallet_cache.Store(wallet.ID, *wallet)
+	}
+	return err
 }
 
 func DeleteWallets(db *gorm.DB, condition *Wallet, wallets *[]Wallet) (int64, error) {
 	result := db.Clauses(clause.Returning{}).Where(condition).Delete(wallets)
 	for _, wallet := range *wallets {
-		wallet_cache.Delete(wallet.Id)
+		wallet_cache.Delete(wallet.ID)
 	}
 	return result.RowsAffected, result.Error
 }

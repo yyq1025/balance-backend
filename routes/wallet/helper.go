@@ -13,25 +13,20 @@ import (
 )
 
 func getBalance(db *gorm.DB, w Wallet) (b Balance) {
-	var walletNetworks []network.Network
-	rowsAffected, err := network.QueryNetworks(db, &network.Network{Name: w.Network}, &walletNetworks)
-	if err != nil {
+	var walletNetwork network.Network
+	if err := network.QueryNetwork(db, &network.Network{Name: w.Network}, &walletNetwork); err != nil {
 		log.Print(err)
 		b.Balance = ""
 		return
 	}
-	if rowsAffected == 0 {
-		b.Balance = ""
-		return
-	}
-	rpcClient, err := ethclient.Dial(walletNetworks[0].Url)
+	rpcClient, err := ethclient.Dial(walletNetwork.Url)
 	if err != nil {
 		log.Print(err)
 		b.Balance = ""
 		return
 	}
 	if utils.IsZeroAddress(w.Token) {
-		b.Symbol = walletNetworks[0].Symbol
+		b.Symbol = walletNetwork.Symbol
 		balance, err := rpcClient.BalanceAt(context.Background(), w.Address, nil)
 		if err != nil {
 			log.Print(err)
@@ -47,7 +42,7 @@ func getBalance(db *gorm.DB, w Wallet) (b Balance) {
 			b.Balance = ""
 			return
 		}
-		symbol, err := GetSymbol(walletNetworks[0].Name, w.Token, contract)
+		symbol, err := GetSymbol(walletNetwork.Name, w.Token, contract)
 		if err != nil {
 			log.Print(err)
 		} else {
@@ -59,7 +54,7 @@ func getBalance(db *gorm.DB, w Wallet) (b Balance) {
 			b.Balance = ""
 			return
 		}
-		decimals, err := GetDecimals(walletNetworks[0].Name, w.Token, contract)
+		decimals, err := GetDecimals(walletNetwork.Name, w.Token, contract)
 		if err != nil {
 			log.Print(err)
 			b.Balance = ""

@@ -3,7 +3,7 @@ package wallet
 import "github.com/ethereum/go-ethereum/common"
 
 type Wallet struct {
-	Id      int            `json:"id"`
+	ID      int            `json:"id"`
 	UserId  int            `json:"-"`
 	Address common.Address `json:"address"`
 	Network string         `gorm:"default:Ethereum" json:"network"`
