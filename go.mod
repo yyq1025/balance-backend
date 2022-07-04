@@ -4,15 +4,15 @@ go 1.18
 
 require (
 	github.com/ethereum/go-ethereum v1.10.20
-	github.com/gin-contrib/cors v1.3.1
 	github.com/gin-gonic/gin v1.8.1
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/go-redis/redis_rate/v9 v9.1.2
 	github.com/golang-jwt/jwt/v4 v4.4.2
+	github.com/rs/cors/wrapper/gin v0.0.0-20220619195839-da52b0701de5
 	github.com/shopspring/decimal v1.3.1
 	github.com/wagslane/go-password-validator v0.3.0
 	golang.org/x/crypto v0.0.0-20220622213112-05595931fe9d
-	gorm.io/driver/postgres v1.3.7
+	gorm.io/driver/postgres v1.3.8
 	gorm.io/gorm v1.23.7
 )
 
@@ -50,7 +50,6 @@ require (
 	github.com/pelletier/go-toml/v2 v2.0.1 // indirect
 	github.com/rjeczalik/notify v0.9.1 // indirect
 	github.com/rs/cors v1.8.1 // indirect
-	github.com/rs/cors/wrapper/gin v0.0.0-20220619195839-da52b0701de5 // indirect
 	github.com/shirou/gopsutil v3.21.4-0.20210419000835-c7a38de76ee5+incompatible // indirect
 	github.com/tklauser/go-sysconf v0.3.5 // indirect
 	github.com/tklauser/numcpus v0.2.2 // indirect
