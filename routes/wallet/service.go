@@ -3,7 +3,6 @@ package wallet
 import (
 	"log"
 	"net/http"
-	"sort"
 	"sync"
 
 	"yyq1025/balance-backend/utils"
@@ -38,8 +37,11 @@ func DeleteBalances(db *gorm.DB, condition *Wallet) utils.Response {
 	if rowsAffected == 0 {
 		return utils.FindWalletError
 	}
-
-	return utils.Response{Code: http.StatusOK, Data: map[string]any{"wallets": wallets}}
+	ids := make([]int, 0)
+	for _, wallet := range wallets {
+		ids = append(ids, wallet.ID)
+	}
+	return utils.Response{Code: http.StatusOK, Data: map[string]any{"ids": ids}}
 }
 
 func GetBalances(db *gorm.DB, condition *Wallet) utils.Response {
@@ -74,9 +76,6 @@ func GetBalances(db *gorm.DB, condition *Wallet) utils.Response {
 		results = append(results, result)
 	}
 
-	sort.Slice(results, func(i, j int) bool {
-		return results[i].ID < results[j].ID
-	})
 	return utils.Response{Code: http.StatusOK, Data: map[string]any{"balances": results}}
 }
 

@@ -35,32 +35,31 @@ func getBalance(db *gorm.DB, w Wallet) (b Balance) {
 		}
 		b.Balance = utils.ToDecimal(balance, 18).String()
 		return
-	} else {
-		contract, err := token.NewToken(w.Token, rpcClient)
-		if err != nil {
-			log.Print(err)
-			b.Balance = ""
-			return
-		}
-		symbol, err := GetSymbol(walletNetwork.Name, w.Token, contract)
-		if err != nil {
-			log.Print(err)
-		} else {
-			b.Symbol = symbol
-		}
-		balance, err := contract.BalanceOf(&bind.CallOpts{}, w.Address)
-		if err != nil {
-			log.Print(err)
-			b.Balance = ""
-			return
-		}
-		decimals, err := GetDecimals(walletNetwork.Name, w.Token, contract)
-		if err != nil {
-			log.Print(err)
-			b.Balance = ""
-			return
-		}
-		b.Balance = utils.ToDecimal(balance, int(decimals)).String()
+	}
+	contract, err := token.NewToken(w.Token, rpcClient)
+	if err != nil {
+		log.Print(err)
+		b.Balance = ""
 		return
 	}
+	symbol, err := GetSymbol(walletNetwork.Name, w.Token, contract)
+	if err != nil {
+		log.Print(err)
+	} else {
+		b.Symbol = symbol
+	}
+	balance, err := contract.BalanceOf(&bind.CallOpts{}, w.Address)
+	if err != nil {
+		log.Print(err)
+		b.Balance = ""
+		return
+	}
+	decimals, err := GetDecimals(walletNetwork.Name, w.Token, contract)
+	if err != nil {
+		log.Print(err)
+		b.Balance = ""
+		return
+	}
+	b.Balance = utils.ToDecimal(balance, int(decimals)).String()
+	return
 }

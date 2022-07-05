@@ -13,7 +13,8 @@ CREATE TABLE "networks" (
   "chain_id" VARCHAR(64) NOT NULL,
   "name" VARCHAR(64) NOT NULL PRIMARY KEY,
   "url" VARCHAR(128) NOT NULL,
-  "symbol" VARCHAR(16) NOT NULL
+  "symbol" VARCHAR(16) NOT NULL,
+  "explorer" VARCHAR(128) NOT NULL
 );
 
 CREATE TABLE "wallets" (
