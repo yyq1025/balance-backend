@@ -10,7 +10,7 @@ import (
 )
 
 func GetAllNetWorks(db *gorm.DB) utils.Response {
-	var networks []Network
+	networks := make([]Network, 0)
 
 	_, err := QueryNetworks(db, &Network{}, &networks)
 

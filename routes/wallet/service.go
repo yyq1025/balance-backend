@@ -8,23 +8,15 @@ import (
 
 	"yyq1025/balance-backend/utils"
 
-	"github.com/ethereum/go-ethereum/common"
 	"gorm.io/gorm"
 )
 
-func AddWallet(db *gorm.DB, userId int, address, network, tokenAddress, tag string) utils.Response {
-	wallet := Wallet{
-		UserId:  userId,
-		Address: common.HexToAddress(address),
-		Network: network,
-		Token:   common.HexToAddress(tokenAddress),
-		Tag:     tag,
-	}
-	balance := getBalance(db, wallet)
+func AddWallet(db *gorm.DB, wallet *Wallet) utils.Response {
+	balance := getBalance(db, *wallet)
 	if balance.Balance == "" {
 		return utils.AddWalletError
 	}
-	rowsAffected, err := CreateWallet(db, &wallet)
+	rowsAffected, err := CreateWallet(db, wallet)
 	if err != nil {
 		log.Print(err)
 		return utils.AddWalletError
@@ -32,12 +24,12 @@ func AddWallet(db *gorm.DB, userId int, address, network, tokenAddress, tag stri
 	if rowsAffected == 0 {
 		return utils.AddWalletError
 	}
-	balance.Wallet = wallet
+	balance.Wallet = *wallet
 	return utils.Response{Code: http.StatusOK, Data: map[string]any{"balance": balance}}
 }
 
 func DeleteBalances(db *gorm.DB, condition *Wallet) utils.Response {
-	var wallets []Wallet
+	wallets := make([]Wallet, 0)
 	rowsAffected, err := DeleteWallets(db, condition, &wallets)
 	if err != nil {
 		log.Print(err)
@@ -51,7 +43,7 @@ func DeleteBalances(db *gorm.DB, condition *Wallet) utils.Response {
 }
 
 func GetBalances(db *gorm.DB, condition *Wallet) utils.Response {
-	var wallets []Wallet
+	wallets := make([]Wallet, 0)
 	_, err := QueryWallets(db, condition, &wallets)
 	if err != nil {
 		log.Print(err)
@@ -77,7 +69,7 @@ func GetBalances(db *gorm.DB, condition *Wallet) utils.Response {
 		close(ch)
 	}()
 
-	var results []Balance
+	results := make([]Balance, 0)
 	for result := range ch {
 		results = append(results, result)
 	}

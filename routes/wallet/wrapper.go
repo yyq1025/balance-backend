@@ -6,6 +6,7 @@ import (
 
 	"yyq1025/balance-backend/utils"
 
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
@@ -39,7 +40,15 @@ func CreateWalletHandler(c *gin.Context) {
 
 	tag := data["tag"]
 
-	res := AddWallet(db, userId, address, network, token, tag)
+	wallet := Wallet{
+		UserId:  userId,
+		Address: common.HexToAddress(address),
+		Network: network,
+		Token:   common.HexToAddress(token),
+		Tag:     tag,
+	}
+
+	res := AddWallet(db, &wallet)
 
 	c.JSON(res.Code, res.Data)
 }
