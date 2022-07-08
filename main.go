@@ -22,9 +22,8 @@ func main() {
 	rc := utils.GetRedis()
 	limiter := redis_rate.NewLimiter(rc)
 	rc_cache := cache.New(&cache.Options{
-		Redis:        rc,
-		LocalCache:   cache.NewTinyLFU(1000, time.Minute),
-		StatsEnabled: true,
+		Redis:      rc,
+		LocalCache: cache.NewTinyLFU(1000, time.Minute),
 	})
 	router := gin.Default()
 	router.Use(cors.AllowAll())

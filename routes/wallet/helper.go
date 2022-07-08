@@ -13,25 +13,23 @@ import (
 	"gorm.io/gorm"
 )
 
-func getBalance(rc_cache *cache.Cache, db *gorm.DB, w Wallet) (b Balance) {
+func getBalance(ctx context.Context, rc_cache *cache.Cache, db *gorm.DB, w Wallet) (b Balance, err error) {
 	var walletNetwork network.Network
-	if err := network.QueryNetwork(rc_cache, db, &network.Network{Name: w.Network}, &walletNetwork); err != nil {
+	if err = network.QueryNetwork(rc_cache, db, &network.Network{Name: w.Network}, &walletNetwork); err != nil {
 		log.Print(err)
-		b.Balance = ""
 		return
 	}
 	rpcClient, err := ethclient.Dial(walletNetwork.Url)
 	if err != nil {
 		log.Print(err)
-		b.Balance = ""
 		return
 	}
 	if utils.IsZeroAddress(w.Token) {
 		b.Symbol = walletNetwork.Symbol
-		balance, err := rpcClient.BalanceAt(context.Background(), w.Address, nil)
-		if err != nil {
-			log.Print(err)
-			b.Balance = ""
+		balance, error := rpcClient.BalanceAt(ctx, w.Address, nil)
+		if error != nil {
+			log.Print(error)
+			err = error
 			return
 		}
 		b.Balance = utils.ToDecimal(balance, 18).String()
@@ -40,25 +38,22 @@ func getBalance(rc_cache *cache.Cache, db *gorm.DB, w Wallet) (b Balance) {
 	contract, err := token.NewToken(w.Token, rpcClient)
 	if err != nil {
 		log.Print(err)
-		b.Balance = ""
 		return
 	}
-	symbol, err := GetSymbol(rc_cache, walletNetwork.Name, w.Token, contract)
+	symbol, err := GetSymbol(ctx, rc_cache, walletNetwork.Name, w.Token, contract)
 	if err != nil {
 		log.Print(err)
-	} else {
-		b.Symbol = symbol
-	}
-	balance, err := contract.BalanceOf(&bind.CallOpts{}, w.Address)
-	if err != nil {
-		log.Print(err)
-		b.Balance = ""
 		return
 	}
-	decimals, err := GetDecimals(rc_cache, walletNetwork.Name, w.Token, contract)
+	b.Symbol = symbol
+	balance, err := contract.BalanceOf(&bind.CallOpts{Context: ctx}, w.Address)
 	if err != nil {
 		log.Print(err)
-		b.Balance = ""
+		return
+	}
+	decimals, err := GetDecimals(ctx, rc_cache, walletNetwork.Name, w.Token, contract)
+	if err != nil {
+		log.Print(err)
 		return
 	}
 	b.Balance = utils.ToDecimal(balance, int(decimals)).String()

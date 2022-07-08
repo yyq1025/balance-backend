@@ -1,15 +1,16 @@
 package wallet
 
 import (
-	"log"
 	"net/http"
 	"strconv"
+	"time"
 
 	"yyq1025/balance-backend/utils"
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/cache/v8"
+	"golang.org/x/net/context"
 	"gorm.io/gorm"
 )
 
@@ -52,10 +53,12 @@ func CreateWalletHandler(c *gin.Context) {
 		Tag:     tag,
 	}
 
-	res := AddWallet(rc_cache, db, &wallet)
+	ctx, cancel := context.WithTimeout(context.Background(), 4*time.Second)
+	defer cancel()
+
+	res := AddWallet(ctx, rc_cache, db, &wallet)
 
 	c.JSON(res.Code, res.Data)
-	log.Print(rc_cache.Stats())
 }
 
 func DeleteWalletsHandler(c *gin.Context) {
@@ -79,7 +82,6 @@ func DeleteWalletsHandler(c *gin.Context) {
 	res := DeleteBalances(rc_cache, db, &Wallet{ID: id, UserId: userId})
 
 	c.JSON(res.Code, res.Data)
-	log.Print(rc_cache.Stats())
 }
 
 func GetBalancesHandler(c *gin.Context) {
@@ -93,10 +95,12 @@ func GetBalancesHandler(c *gin.Context) {
 		return
 	}
 
-	res := GetBalances(rc_cache, db, &Wallet{UserId: userId})
+	ctx, cancel := context.WithTimeout(context.Background(), 4*time.Second)
+	defer cancel()
+
+	res := GetBalances(ctx, rc_cache, db, &Wallet{UserId: userId})
 
 	c.JSON(res.Code, res.Data)
-	log.Print(rc_cache.Stats())
 }
 
 func GetBalanceHandler(c *gin.Context) {
@@ -112,8 +116,10 @@ func GetBalanceHandler(c *gin.Context) {
 
 	id, _ := strconv.Atoi(c.Param("id"))
 
-	res := GetBalance(rc_cache, db, &Wallet{ID: id, UserId: userId})
+	ctx, cancel := context.WithTimeout(context.Background(), 4*time.Second)
+	defer cancel()
+
+	res := GetBalance(ctx, rc_cache, db, &Wallet{ID: id, UserId: userId})
 
 	c.JSON(res.Code, res.Data)
-	log.Print(rc_cache.Stats())
 }

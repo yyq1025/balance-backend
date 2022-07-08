@@ -1,6 +1,7 @@
 package user
 
 import (
+	"context"
 	"fmt"
 	"math/rand"
 	"net/smtp"
@@ -38,7 +39,7 @@ func (s *Sender) sendCode(rc_cache *cache.Cache, to string) error {
 		return err
 	}
 	return rc_cache.Set(&cache.Item{
-		Ctx:   ctx,
+		Ctx:   context.TODO(),
 		Key:   fmt.Sprintf("code:%s", to),
 		Value: code,
 		TTL:   time.Duration(30 * time.Minute),

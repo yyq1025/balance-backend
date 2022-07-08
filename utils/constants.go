@@ -29,3 +29,5 @@ var DeleteAddressesError = Response{http.StatusInternalServerError, map[string]a
 var FindWalletError = Response{http.StatusInternalServerError, map[string]any{"message": "cannot find wallet"}}
 
 var ChangePasswordError = Response{http.StatusInternalServerError, map[string]any{"message": "cannot change password"}}
+
+var GetBalanceError = Response{http.StatusInternalServerError, map[string]any{"message": "cannot get balance"}}
