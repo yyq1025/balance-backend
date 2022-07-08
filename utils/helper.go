@@ -2,6 +2,7 @@ package utils
 
 import (
 	"context"
+	"crypto/tls"
 	"fmt"
 	"log"
 	"net/mail"
@@ -28,7 +29,9 @@ func GetDB() *gorm.DB {
 
 func GetRedis() *redis.Client {
 	client := redis.NewClient(&redis.Options{
-		Addr: fmt.Sprintf("%s:%s", os.Getenv("REDIS_HOST"), os.Getenv("REDIS_PORT")),
+		Addr:      os.Getenv("REDIS_HOST"),
+		Password:  os.Getenv("REDIS_PASSWORD"),
+		TLSConfig: &tls.Config{MinVersion: tls.VersionTLS12},
 	})
 	_, err := client.Ping(context.Background()).Result()
 	if err != nil {

@@ -53,7 +53,7 @@ func CreateWalletHandler(c *gin.Context) {
 		Tag:     tag,
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), 4*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 3500*time.Millisecond)
 	defer cancel()
 
 	res := AddWallet(ctx, rc_cache, db, &wallet)
@@ -95,7 +95,7 @@ func GetBalancesHandler(c *gin.Context) {
 		return
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), 4*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 3500*time.Millisecond)
 	defer cancel()
 
 	res := GetBalances(ctx, rc_cache, db, &Wallet{UserId: userId})
@@ -116,7 +116,7 @@ func GetBalanceHandler(c *gin.Context) {
 
 	id, _ := strconv.Atoi(c.Param("id"))
 
-	ctx, cancel := context.WithTimeout(context.Background(), 4*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 3500*time.Millisecond)
 	defer cancel()
 
 	res := GetBalance(ctx, rc_cache, db, &Wallet{ID: id, UserId: userId})
