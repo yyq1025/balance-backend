@@ -9,12 +9,13 @@ import (
 
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/ethclient"
+	"github.com/go-redis/cache/v8"
 	"gorm.io/gorm"
 )
 
-func getBalance(db *gorm.DB, w Wallet) (b Balance) {
+func getBalance(rc_cache *cache.Cache, db *gorm.DB, w Wallet) (b Balance) {
 	var walletNetwork network.Network
-	if err := network.QueryNetwork(db, &network.Network{Name: w.Network}, &walletNetwork); err != nil {
+	if err := network.QueryNetwork(rc_cache, db, &network.Network{Name: w.Network}, &walletNetwork); err != nil {
 		log.Print(err)
 		b.Balance = ""
 		return
@@ -42,7 +43,7 @@ func getBalance(db *gorm.DB, w Wallet) (b Balance) {
 		b.Balance = ""
 		return
 	}
-	symbol, err := GetSymbol(walletNetwork.Name, w.Token, contract)
+	symbol, err := GetSymbol(rc_cache, walletNetwork.Name, w.Token, contract)
 	if err != nil {
 		log.Print(err)
 	} else {
@@ -54,7 +55,7 @@ func getBalance(db *gorm.DB, w Wallet) (b Balance) {
 		b.Balance = ""
 		return
 	}
-	decimals, err := GetDecimals(walletNetwork.Name, w.Token, contract)
+	decimals, err := GetDecimals(rc_cache, walletNetwork.Name, w.Token, contract)
 	if err != nil {
 		log.Print(err)
 		b.Balance = ""

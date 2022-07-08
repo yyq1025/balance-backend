@@ -2,49 +2,73 @@ package user
 
 import (
 	"context"
-	"sync"
+	"fmt"
+	"time"
 
-	"github.com/go-redis/redis/v8"
+	"github.com/go-redis/cache/v8"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
 
 // user_cache: email:User
-var user_cache sync.Map
+// var user_cache sync.Map
+var ctx = context.TODO()
 
-func CreateUser(db *gorm.DB, user *User) error {
+func CreateUser(rc_cache *cache.Cache, db *gorm.DB, user *User) error {
 	err := db.Create(user).Error
 	if err == nil {
-		user_cache.Store(user.Email, *user)
+		rc_cache.Set(&cache.Item{
+			Ctx:   ctx,
+			Key:   fmt.Sprintf("user:%s", user.Email),
+			Value: *user,
+			TTL:   time.Hour,
+		})
+		// user_cache.Store(user.Email, *user)
 	}
 	return err
 }
 
-func QueryUser(db *gorm.DB, condition *User, user *User) error {
-	if cached_user, exist := user_cache.Load(condition.Email); exist {
-		*user = cached_user.(User)
+func QueryUser(rc_cache *cache.Cache, db *gorm.DB, condition *User, user *User) error {
+	if err := rc_cache.Get(ctx, fmt.Sprintf("user:%s", condition.Email), user); err == nil {
+		// *user = cached_user.(User)
 		return nil
 	}
 	err := db.Where(condition).First(user).Error
 	if err == nil {
-		user_cache.Store(user.Email, *user)
+		rc_cache.Set(&cache.Item{
+			Ctx:   ctx,
+			Key:   fmt.Sprintf("user:%s", user.Email),
+			Value: *user,
+			TTL:   time.Hour,
+		})
+		// user_cache.Store(user.Email, *user)
 	}
 	return err
 }
 
-func UpdateUsers(db *gorm.DB, old *User, new *User, users *[]User) (int64, error) {
-	result := db.Model(users).Clauses(clause.Returning{}).Where(old).Updates(new)
+func UpdateUsers(rc_cache *cache.Cache, db *gorm.DB, old *User, new *User, users *[]User) error {
+	err := db.Model(users).Clauses(clause.Returning{}).Where(old).Updates(new).Error
 	for _, user := range *users {
-		user_cache.Store(user.Email, user)
+		rc_cache.Set(&cache.Item{
+			Ctx:   ctx,
+			Key:   fmt.Sprintf("user:%s", user.Email),
+			Value: user,
+			TTL:   time.Hour,
+		})
+		// user_cache.Store(user.Email, user)
 	}
-	return result.RowsAffected, result.Error
+	return err
 }
 
-func VerifyCode(rc *redis.Client, email string, code string) bool {
-	actual, err := rc.Get(context.Background(), email).Result()
-	if err == nil && code == actual {
-		rc.Del(context.Background(), email)
+func VerifyCode(rc_cache *cache.Cache, email string, code string) bool {
+	var actual string
+	if err := rc_cache.Get(ctx, fmt.Sprintf("code:%s", email), &actual); err == nil && actual == code {
+		rc_cache.Delete(ctx, fmt.Sprintf("code:%s", email))
 		return true
 	}
+	// if err == nil && code == actual {
+	// 	rc.Del(context.Background(), email)
+	// 	return true
+	// }
 	return false
 }

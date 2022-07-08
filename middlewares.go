@@ -1,14 +1,14 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
-	"strconv"
 	"strings"
 
 	"yyq1025/balance-backend/utils"
 
 	"github.com/gin-gonic/gin"
-	"github.com/go-redis/redis/v8"
+	"github.com/go-redis/cache/v8"
 	"github.com/go-redis/redis_rate/v9"
 	"gorm.io/gorm"
 )
@@ -30,7 +30,7 @@ import (
 // 	}
 // }
 
-func jwtAuthMiddleware() gin.HandlerFunc {
+func authMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authHeader := c.GetHeader("Authorization")
 		if authHeader == "" {
@@ -52,10 +52,10 @@ func jwtAuthMiddleware() gin.HandlerFunc {
 	}
 }
 
-func jwtRateLimitMiddleware(limiter *redis_rate.Limiter) gin.HandlerFunc {
+func rateLimitMiddleware(limiter *redis_rate.Limiter) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		userId := c.MustGet("userId").(int)
-		res, err := limiter.Allow(c, strconv.Itoa(userId), redis_rate.PerMinute(10))
+		res, err := limiter.Allow(c, fmt.Sprintf("rate:%d", userId), redis_rate.PerMinute(10))
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"message": "rate limit error"})
 			return
@@ -69,9 +69,9 @@ func jwtRateLimitMiddleware(limiter *redis_rate.Limiter) gin.HandlerFunc {
 }
 
 // dbMiddleware will add the db connection to the context
-func dbMiddleware(rc *redis.Client, db *gorm.DB) gin.HandlerFunc {
+func dataMiddleware(rc_cache *cache.Cache, db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		c.Set("rc", rc)
+		c.Set("rc_cache", rc_cache)
 		c.Set("db", db)
 		c.Next()
 	}

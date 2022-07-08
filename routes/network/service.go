@@ -6,15 +6,14 @@ import (
 
 	"yyq1025/balance-backend/utils"
 
+	"github.com/go-redis/cache/v8"
 	"gorm.io/gorm"
 )
 
-func GetAllNetWorks(db *gorm.DB) utils.Response {
+func GetNetWorks(rc_cache *cache.Cache, db *gorm.DB, condition *Network) utils.Response {
 	networks := make([]Network, 0)
 
-	_, err := QueryNetworks(db, &Network{}, &networks)
-
-	if err != nil {
+	if err := QueryNetworks(rc_cache, db, condition, &networks); err != nil {
 		log.Print(err)
 		return utils.GetNetworkError
 	}

@@ -7,15 +7,15 @@ import (
 
 	"yyq1025/balance-backend/utils"
 
-	"github.com/go-redis/redis/v8"
+	"github.com/go-redis/cache/v8"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
 
 var sender = newSender()
 
-func AddUser(rc *redis.Client, db *gorm.DB, email, password, code string) utils.Response {
-	if !VerifyCode(rc, email, code) {
+func AddUser(rc_cache *cache.Cache, db *gorm.DB, email, password, code string) utils.Response {
+	if !VerifyCode(rc_cache, email, code) {
 		return utils.VerificationCodeError
 	}
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
@@ -24,7 +24,7 @@ func AddUser(rc *redis.Client, db *gorm.DB, email, password, code string) utils.
 		return utils.CreateUserError
 	}
 	user := User{Email: email, Password: hashedPassword}
-	if err := CreateUser(db, &user); err != nil {
+	if err := CreateUser(rc_cache, db, &user); err != nil {
 		log.Print(err)
 		return utils.CreateUserError
 	}
@@ -36,17 +36,17 @@ func AddUser(rc *redis.Client, db *gorm.DB, email, password, code string) utils.
 	return utils.Response{Code: http.StatusOK, Data: map[string]any{"email": user.Email, "token": jwt}}
 }
 
-func SendCode(rc *redis.Client, email string) utils.Response {
-	if err := sender.sendCode(rc, email); err != nil {
+func SendCode(rc_cache *cache.Cache, email string) utils.Response {
+	if err := sender.sendCode(rc_cache, email); err != nil {
 		log.Print(err)
 		return utils.SendCodeError
 	}
 	return utils.Response{Code: http.StatusOK, Data: map[string]any{"message": "code sent to " + email}}
 }
 
-func Login(db *gorm.DB, email, password string) utils.Response {
+func Login(rc_cache *cache.Cache, db *gorm.DB, email, password string) utils.Response {
 	var user User
-	if err := QueryUser(db, &User{Email: email}, &user); err != nil {
+	if err := QueryUser(rc_cache, db, &User{Email: email}, &user); err != nil {
 		log.Print(err)
 		return utils.LoginAuthError
 	}
@@ -61,8 +61,8 @@ func Login(db *gorm.DB, email, password string) utils.Response {
 	return utils.Response{Code: http.StatusOK, Data: map[string]any{"email": user.Email, "token": jwt}}
 }
 
-func ChangePassword(rc *redis.Client, db *gorm.DB, email, password string, code string) utils.Response {
-	if !VerifyCode(rc, email, code) {
+func ChangePassword(rc_cache *cache.Cache, db *gorm.DB, email, password string, code string) utils.Response {
+	if !VerifyCode(rc_cache, email, code) {
 		return utils.VerificationCodeError
 	}
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
@@ -70,12 +70,13 @@ func ChangePassword(rc *redis.Client, db *gorm.DB, email, password string, code 
 		log.Print(err)
 		return utils.ChangePasswordError
 	}
-	rowsAffected, err := UpdateUsers(db, &User{Email: email}, &User{Password: hashedPassword}, &[]User{})
+	var updatedUsers []User
+	err = UpdateUsers(rc_cache, db, &User{Email: email}, &User{Password: hashedPassword}, &updatedUsers)
 	if err != nil {
 		log.Print(err)
 		return utils.ChangePasswordError
 	}
-	if rowsAffected == 0 {
+	if len(updatedUsers) == 0 {
 		return utils.FindUserError
 	}
 	return utils.Response{Code: http.StatusOK, Data: map[string]any{"message": "change password success"}}

@@ -1,14 +1,13 @@
 package user
 
 import (
-	"context"
 	"fmt"
 	"math/rand"
 	"net/smtp"
 	"os"
 	"time"
 
-	"github.com/go-redis/redis/v8"
+	"github.com/go-redis/cache/v8"
 )
 
 type User struct {
@@ -31,15 +30,17 @@ func newSender() *Sender {
 	return &Sender{email, password, smtpHost, tlsPort, auth}
 }
 
-func (s *Sender) sendCode(rc *redis.Client, to string) error {
+func (s *Sender) sendCode(rc_cache *cache.Cache, to string) error {
 	subject := "Subject: Your OTP Code.\n\n"
 	code := fmt.Sprintf("%06d", rand.Intn(1e6))
 	ending := "\n\nCode expires in 30 min."
 	if err := smtp.SendMail(s.smtpHost+":"+s.tlsPort, s.auth, s.email, []string{to}, []byte(subject+code+ending)); err != nil {
 		return err
 	}
-	if err := rc.Set(context.Background(), to, code, 30*time.Minute).Err(); err != nil {
-		return err
-	}
-	return nil
+	return rc_cache.Set(&cache.Item{
+		Ctx:   ctx,
+		Key:   fmt.Sprintf("code:%s", to),
+		Value: code,
+		TTL:   time.Duration(30 * time.Minute),
+	})
 }

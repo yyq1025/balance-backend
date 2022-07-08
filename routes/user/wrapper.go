@@ -6,12 +6,12 @@ import (
 	"yyq1025/balance-backend/utils"
 
 	"github.com/gin-gonic/gin"
-	"github.com/go-redis/redis/v8"
+	"github.com/go-redis/cache/v8"
 	"gorm.io/gorm"
 )
 
 func RegisterHandler(c *gin.Context) {
-	rc := c.MustGet("rc").(*redis.Client)
+	rc_cache := c.MustGet("rc_cache").(*cache.Cache)
 
 	db := c.MustGet("db").(*gorm.DB)
 
@@ -37,13 +37,13 @@ func RegisterHandler(c *gin.Context) {
 		return
 	}
 
-	res := AddUser(rc, db, email, password, code)
+	res := AddUser(rc_cache, db, email, password, code)
 
 	c.JSON(res.Code, res.Data)
 }
 
 func SendCodeHandler(c *gin.Context) {
-	rc := c.MustGet("rc").(*redis.Client)
+	rc_cache := c.MustGet("rc_cache").(*cache.Cache)
 
 	data := make(map[string]string)
 
@@ -55,12 +55,14 @@ func SendCodeHandler(c *gin.Context) {
 		return
 	}
 
-	res := SendCode(rc, email)
+	res := SendCode(rc_cache, email)
 
 	c.JSON(res.Code, res.Data)
 }
 
 func LoginHandler(c *gin.Context) {
+	rc_cache := c.MustGet("rc_cache").(*cache.Cache)
+
 	db := c.MustGet("db").(*gorm.DB)
 
 	data := make(map[string]string)
@@ -79,13 +81,13 @@ func LoginHandler(c *gin.Context) {
 		return
 	}
 
-	res := Login(db, email, password)
+	res := Login(rc_cache, db, email, password)
 
 	c.JSON(res.Code, res.Data)
 }
 
 func ChangePasswordHandler(c *gin.Context) {
-	rc := c.MustGet("rc").(*redis.Client)
+	rc_cache := c.MustGet("rc_cache").(*cache.Cache)
 
 	db := c.MustGet("db").(*gorm.DB)
 
@@ -111,7 +113,7 @@ func ChangePasswordHandler(c *gin.Context) {
 		return
 	}
 
-	res := ChangePassword(rc, db, email, password, code)
+	res := ChangePassword(rc_cache, db, email, password, code)
 
 	c.JSON(res.Code, res.Data)
 }

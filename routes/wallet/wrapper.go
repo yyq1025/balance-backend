@@ -1,6 +1,7 @@
 package wallet
 
 import (
+	"log"
 	"net/http"
 	"strconv"
 
@@ -8,10 +9,13 @@ import (
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/gin-gonic/gin"
+	"github.com/go-redis/cache/v8"
 	"gorm.io/gorm"
 )
 
 func CreateWalletHandler(c *gin.Context) {
+	rc_cache := c.MustGet("rc_cache").(*cache.Cache)
+
 	db := c.MustGet("db").(*gorm.DB)
 
 	userId := c.MustGet("userId").(int)
@@ -48,12 +52,15 @@ func CreateWalletHandler(c *gin.Context) {
 		Tag:     tag,
 	}
 
-	res := AddWallet(db, &wallet)
+	res := AddWallet(rc_cache, db, &wallet)
 
 	c.JSON(res.Code, res.Data)
+	log.Print(rc_cache.Stats())
 }
 
 func DeleteWalletsHandler(c *gin.Context) {
+	rc_cache := c.MustGet("rc_cache").(*cache.Cache)
+
 	db := c.MustGet("db").(*gorm.DB)
 
 	userId := c.MustGet("userId").(int)
@@ -69,12 +76,15 @@ func DeleteWalletsHandler(c *gin.Context) {
 		return
 	}
 
-	res := DeleteBalances(db, &Wallet{ID: id, UserId: userId})
+	res := DeleteBalances(rc_cache, db, &Wallet{ID: id, UserId: userId})
 
 	c.JSON(res.Code, res.Data)
+	log.Print(rc_cache.Stats())
 }
 
 func GetBalancesHandler(c *gin.Context) {
+	rc_cache := c.MustGet("rc_cache").(*cache.Cache)
+
 	db := c.MustGet("db").(*gorm.DB)
 
 	userId := c.MustGet("userId").(int)
@@ -83,12 +93,15 @@ func GetBalancesHandler(c *gin.Context) {
 		return
 	}
 
-	res := GetBalances(db, &Wallet{UserId: userId})
+	res := GetBalances(rc_cache, db, &Wallet{UserId: userId})
 
 	c.JSON(res.Code, res.Data)
+	log.Print(rc_cache.Stats())
 }
 
 func GetBalanceHandler(c *gin.Context) {
+	rc_cache := c.MustGet("rc_cache").(*cache.Cache)
+
 	db := c.MustGet("db").(*gorm.DB)
 
 	userId := c.MustGet("userId").(int)
@@ -99,7 +112,8 @@ func GetBalanceHandler(c *gin.Context) {
 
 	id, _ := strconv.Atoi(c.Param("id"))
 
-	res := GetBalance(db, &Wallet{ID: id, UserId: userId})
+	res := GetBalance(rc_cache, db, &Wallet{ID: id, UserId: userId})
 
 	c.JSON(res.Code, res.Data)
+	log.Print(rc_cache.Stats())
 }
