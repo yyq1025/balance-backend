@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"yyq1025/balance-backend/routes/network"
-	"yyq1025/balance-backend/routes/user"
 	"yyq1025/balance-backend/routes/wallet"
 	"yyq1025/balance-backend/utils"
 
@@ -19,34 +18,26 @@ import (
 func main() {
 	rand.Seed(time.Now().UnixMicro())
 	db := utils.GetDB()
-	rc := utils.GetRedis()
-	limiter := redis_rate.NewLimiter(rc)
-	rc_cache := cache.New(&cache.Options{
-		Redis:      rc,
+	rdb := utils.GetRedis()
+	limiter := redis_rate.NewLimiter(rdb)
+	rdb_cache := cache.New(&cache.Options{
+		Redis:      rdb,
 		LocalCache: cache.NewTinyLFU(1000, time.Minute),
 	})
+	jwtValidator := utils.GetValidator()
 	router := gin.Default()
 	router.Use(cors.AllowAll())
 
-	user_group := router.Group("/user")
-	user_group.Use(dataMiddleware(rc_cache, db))
-	{
-		user_group.POST("/register", user.RegisterHandler)
-		user_group.POST("/code", user.SendCodeHandler)
-		user_group.POST("/login", user.LoginHandler)
-		user_group.PUT("/password", user.ChangePasswordHandler)
-	}
-
 	network_group := router.Group("/networks")
-	network_group.Use(dataMiddleware(rc_cache, db))
+	network_group.Use(dataMiddleware(rdb_cache, db))
 	{
 		network_group.GET("", network.GetNetworksHandler)
 	}
 
 	wallet_group := router.Group("/wallet")
-	wallet_group.Use(authMiddleware())
+	wallet_group.Use(authMiddleware(jwtValidator))
 	wallet_group.Use(rateLimitMiddleware(limiter))
-	wallet_group.Use(dataMiddleware(rc_cache, db))
+	wallet_group.Use(dataMiddleware(rdb_cache, db))
 	{
 		wallet_group.POST("", wallet.CreateWalletHandler)
 		wallet_group.DELETE("/:id", wallet.DeleteWalletsHandler)

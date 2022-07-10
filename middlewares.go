@@ -1,12 +1,12 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"strings"
 
-	"yyq1025/balance-backend/utils"
-
+	"github.com/auth0/go-jwt-middleware/v2/validator"
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/cache/v8"
 	"github.com/go-redis/redis_rate/v9"
@@ -30,32 +30,35 @@ import (
 // 	}
 // }
 
-func authMiddleware() gin.HandlerFunc {
+func authMiddleware(jwtValidator *validator.Validator) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authHeader := c.GetHeader("Authorization")
 		if authHeader == "" {
 			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": "empty header"})
 			return
 		}
-		parts := strings.Split(authHeader, " ")
+		parts := strings.Fields(authHeader)
 		if len(parts) != 2 || parts[0] != "Bearer" {
 			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": "incorrect header format"})
 			return
 		}
-		claims, err := utils.ParseToken(parts[1])
+		// claims, err := utils.ParseToken(parts[1])
+		claims, err := jwtValidator.ValidateToken(context.Background(), parts[1])
 		if err != nil {
+			fmt.Println(err)
 			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": "invalid token"})
 			return
 		}
-		c.Set("userId", claims.UserId)
+		// fmt.Print(claims.(*validator.ValidatedClaims).RegisteredClaims.Subject)
+		c.Set("userId", claims.(*validator.ValidatedClaims).RegisteredClaims.Subject)
 		c.Next()
 	}
 }
 
 func rateLimitMiddleware(limiter *redis_rate.Limiter) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		userId := c.MustGet("userId").(int)
-		res, err := limiter.Allow(c, fmt.Sprintf("rate:%d", userId), redis_rate.PerMinute(10))
+		userId := c.MustGet("userId").(string)
+		res, err := limiter.Allow(c, userId, redis_rate.PerMinute(10))
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"message": "rate limit error"})
 			return
@@ -69,9 +72,9 @@ func rateLimitMiddleware(limiter *redis_rate.Limiter) gin.HandlerFunc {
 }
 
 // dbMiddleware will add the db connection to the context
-func dataMiddleware(rc_cache *cache.Cache, db *gorm.DB) gin.HandlerFunc {
+func dataMiddleware(rdb_cache *cache.Cache, db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		c.Set("rc_cache", rc_cache)
+		c.Set("rdb_cache", rdb_cache)
 		c.Set("db", db)
 		c.Next()
 	}

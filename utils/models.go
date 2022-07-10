@@ -1,7 +1,7 @@
 package utils
 
 import (
-	"github.com/golang-jwt/jwt/v4"
+	"context"
 )
 
 type Response struct {
@@ -9,7 +9,10 @@ type Response struct {
 	Data map[string]any
 }
 
-type Claims struct {
-	UserId int `json:"userId"`
-	jwt.RegisteredClaims
+type CustomClaims struct {
+	Scope string `json:"scope"`
+}
+
+func (c CustomClaims) Validate(ctx context.Context) error {
+	return nil
 }

@@ -15,12 +15,12 @@ import (
 )
 
 func CreateWalletHandler(c *gin.Context) {
-	rc_cache := c.MustGet("rc_cache").(*cache.Cache)
+	rdb_cache := c.MustGet("rdb_cache").(*cache.Cache)
 
 	db := c.MustGet("db").(*gorm.DB)
 
-	userId := c.MustGet("userId").(int)
-	if userId == 0 {
+	userId := c.MustGet("userId").(string)
+	if userId == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "invalid user"})
 		return
 	}
@@ -56,18 +56,18 @@ func CreateWalletHandler(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3500*time.Millisecond)
 	defer cancel()
 
-	res := AddWallet(ctx, rc_cache, db, &wallet)
+	res := AddWallet(ctx, rdb_cache, db, &wallet)
 
 	c.JSON(res.Code, res.Data)
 }
 
 func DeleteWalletsHandler(c *gin.Context) {
-	rc_cache := c.MustGet("rc_cache").(*cache.Cache)
+	rdb_cache := c.MustGet("rdb_cache").(*cache.Cache)
 
 	db := c.MustGet("db").(*gorm.DB)
 
-	userId := c.MustGet("userId").(int)
-	if userId == 0 {
+	userId := c.MustGet("userId").(string)
+	if userId == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "invalid user"})
 		return
 	}
@@ -79,18 +79,18 @@ func DeleteWalletsHandler(c *gin.Context) {
 		return
 	}
 
-	res := DeleteBalances(rc_cache, db, &Wallet{ID: id, UserId: userId})
+	res := DeleteBalances(rdb_cache, db, &Wallet{ID: id, UserId: userId})
 
 	c.JSON(res.Code, res.Data)
 }
 
 func GetBalancesHandler(c *gin.Context) {
-	rc_cache := c.MustGet("rc_cache").(*cache.Cache)
+	rdb_cache := c.MustGet("rdb_cache").(*cache.Cache)
 
 	db := c.MustGet("db").(*gorm.DB)
 
-	userId := c.MustGet("userId").(int)
-	if userId == 0 {
+	userId := c.MustGet("userId").(string)
+	if userId == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "invalid user"})
 		return
 	}
@@ -98,18 +98,18 @@ func GetBalancesHandler(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3500*time.Millisecond)
 	defer cancel()
 
-	res := GetBalances(ctx, rc_cache, db, &Wallet{UserId: userId})
+	res := GetBalances(ctx, rdb_cache, db, &Wallet{UserId: userId})
 
 	c.JSON(res.Code, res.Data)
 }
 
 func GetBalanceHandler(c *gin.Context) {
-	rc_cache := c.MustGet("rc_cache").(*cache.Cache)
+	rdb_cache := c.MustGet("rdb_cache").(*cache.Cache)
 
 	db := c.MustGet("db").(*gorm.DB)
 
-	userId := c.MustGet("userId").(int)
-	if userId == 0 {
+	userId := c.MustGet("userId").(string)
+	if userId == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "invalid user"})
 		return
 	}
@@ -119,7 +119,7 @@ func GetBalanceHandler(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3500*time.Millisecond)
 	defer cancel()
 
-	res := GetBalance(ctx, rc_cache, db, &Wallet{ID: id, UserId: userId})
+	res := GetBalance(ctx, rdb_cache, db, &Wallet{ID: id, UserId: userId})
 
 	c.JSON(res.Code, res.Data)
 }
