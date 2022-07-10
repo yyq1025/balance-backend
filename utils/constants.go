@@ -2,8 +2,6 @@ package utils
 
 import "net/http"
 
-var SecretKey = "Richard Yang"
-
 var GetNetworkError = Response{http.StatusInternalServerError, map[string]any{"message": "cannot connect get networks"}}
 
 var EthError = Response{http.StatusBadGateway, map[string]any{"message": "cannot connect to network"}}

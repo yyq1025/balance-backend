@@ -1,6 +1,7 @@
 package wallet
 
 import (
+	"context"
 	"net/http"
 	"strconv"
 	"time"
@@ -10,7 +11,6 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/cache/v8"
-	"golang.org/x/net/context"
 	"gorm.io/gorm"
 )
 
