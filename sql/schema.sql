@@ -1,13 +1,5 @@
 DROP TABLE IF EXISTS "wallets";
 DROP TABLE IF EXISTS "networks";
-DROP TABLE IF EXISTS "users";
-
-CREATE TABLE "users" (
-  "id" SERIAL PRIMARY KEY,
-  "email" VARCHAR(320) NOT NULL,
-  "password" BYTEA NOT NULL,
-  UNIQUE ("email")
-);
 
 CREATE TABLE "networks" (
   "chain_id" VARCHAR(64) NOT NULL,
@@ -25,6 +17,5 @@ CREATE TABLE "wallets" (
   "token" BYTEA NOT NULL,
   "tag" VARCHAR(255) NOT NULL,
   UNIQUE ("user_id", "address", "network", "token", "tag"),
-  -- FOREIGN KEY ("user_id") REFERENCES users("id") ON DELETE CASCADE,
   FOREIGN KEY ("network") REFERENCES networks("name") ON DELETE CASCADE
 );
