@@ -13,9 +13,9 @@ import (
 	"gorm.io/gorm"
 )
 
-func getBalance(ctx context.Context, rc_cache *cache.Cache, db *gorm.DB, w Wallet) (b Balance, err error) {
+func getBalance(ctx context.Context, rdb_cache *cache.Cache, db *gorm.DB, w Wallet) (b Balance, err error) {
 	var walletNetwork network.Network
-	if err = network.QueryNetwork(rc_cache, db, &network.Network{Name: w.Network}, &walletNetwork); err != nil {
+	if err = network.QueryNetwork(rdb_cache, db, &network.Network{Name: w.Network}, &walletNetwork); err != nil {
 		log.Print(err)
 		return
 	}
@@ -40,7 +40,7 @@ func getBalance(ctx context.Context, rc_cache *cache.Cache, db *gorm.DB, w Walle
 		log.Print(err)
 		return
 	}
-	symbol, err := GetSymbol(ctx, rc_cache, walletNetwork.Name, w.Token, contract)
+	symbol, err := GetSymbol(ctx, rdb_cache, walletNetwork.Name, w.Token, contract)
 	if err != nil {
 		log.Print(err)
 		return
@@ -51,7 +51,7 @@ func getBalance(ctx context.Context, rc_cache *cache.Cache, db *gorm.DB, w Walle
 		log.Print(err)
 		return
 	}
-	decimals, err := GetDecimals(ctx, rc_cache, walletNetwork.Name, w.Token, contract)
+	decimals, err := GetDecimals(ctx, rdb_cache, walletNetwork.Name, w.Token, contract)
 	if err != nil {
 		log.Print(err)
 		return

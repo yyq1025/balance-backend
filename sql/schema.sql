@@ -19,12 +19,12 @@ CREATE TABLE "networks" (
 
 CREATE TABLE "wallets" (
   "id" SERIAL PRIMARY KEY,
-  "user_id" INT NOT NULL,
+  "user_id" VARCHAR(128) NOT NULL,
   "address" BYTEA NOT NULL,
   "network" VARCHAR(64) NOT NULL,
   "token" BYTEA NOT NULL,
   "tag" VARCHAR(255) NOT NULL,
   UNIQUE ("user_id", "address", "network", "token", "tag"),
-  FOREIGN KEY ("user_id") REFERENCES users("id") ON DELETE CASCADE,
+  -- FOREIGN KEY ("user_id") REFERENCES users("id") ON DELETE CASCADE,
   FOREIGN KEY ("network") REFERENCES networks("name") ON DELETE CASCADE
 );

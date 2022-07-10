@@ -5,14 +5,13 @@ import (
 	"crypto/tls"
 	"fmt"
 	"log"
-	"net/mail"
+	"net/url"
 	"os"
-	"regexp"
 	"time"
 
+	"github.com/auth0/go-jwt-middleware/v2/jwks"
+	"github.com/auth0/go-jwt-middleware/v2/validator"
 	"github.com/go-redis/redis/v8"
-	"github.com/golang-jwt/jwt/v4"
-	passwordvalidator "github.com/wagslane/go-password-validator"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -41,38 +40,29 @@ func GetRedis() *redis.Client {
 	return client
 }
 
-func IsValidEmail(email string) bool {
-	_, err := mail.ParseAddress(email)
-	return err == nil
-}
-
-func IsValidPassword(password string) bool {
-	return passwordvalidator.Validate(password, 60) == nil
-}
-
-func IsValidCode(code string) bool {
-	return regexp.MustCompile("^[0-9]{6}$").MatchString(code)
-}
-
-func CreateJWT(userId int, duration time.Duration) (string, error) {
-	claims := &Claims{
-		userId,
-		jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(duration)),
-		},
+func GetValidator() *validator.Validator {
+	issuerURL, err := url.Parse("https://" + os.Getenv("AUTH0_DOMAIN") + "/")
+	if err != nil {
+		log.Fatalf("Failed to parse the issuer url: %v", err)
 	}
-	jwtToken := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return jwtToken.SignedString([]byte(SecretKey))
-}
 
-func ParseToken(tokenString string) (*Claims, error) {
-	token, err := jwt.ParseWithClaims(tokenString, &Claims{}, func(token *jwt.Token) (any, error) {
-		return []byte(SecretKey), nil
-	})
+	provider := jwks.NewCachingProvider(issuerURL, 5*time.Minute)
 
-	if claims, ok := token.Claims.(*Claims); ok && token.Valid {
-		return claims, nil
-	} else {
-		return nil, err
+	jwtValidator, err := validator.New(
+		provider.KeyFunc,
+		validator.RS256,
+		issuerURL.String(),
+		[]string{os.Getenv("AUTH0_AUDIENCE")},
+		validator.WithCustomClaims(
+			func() validator.CustomClaims {
+				return &CustomClaims{}
+			},
+		),
+		validator.WithAllowedClockSkew(time.Minute),
+	)
+	if err != nil {
+		log.Fatalf("Failed to set up the jwt validator")
 	}
+
+	return jwtValidator
 }

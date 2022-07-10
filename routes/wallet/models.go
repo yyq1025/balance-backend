@@ -4,7 +4,7 @@ import "github.com/ethereum/go-ethereum/common"
 
 type Wallet struct {
 	ID      int            `json:"id"`
-	UserId  int            `json:"-"`
+	UserId  string         `json:"-"`
 	Address common.Address `json:"address"`
 	Network string         `gorm:"default:Ethereum" json:"network"`
 	Token   common.Address `json:"token"`
