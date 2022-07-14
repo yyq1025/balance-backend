@@ -42,14 +42,12 @@ func authMiddleware(jwtValidator *validator.Validator) gin.HandlerFunc {
 			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": "incorrect header format"})
 			return
 		}
-		// claims, err := utils.ParseToken(parts[1])
 		claims, err := jwtValidator.ValidateToken(context.Background(), parts[1])
 		if err != nil {
 			fmt.Println(err)
 			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": "invalid token"})
 			return
 		}
-		// fmt.Print(claims.(*validator.ValidatedClaims).RegisteredClaims.Subject)
 		c.Set("userId", claims.(*validator.ValidatedClaims).RegisteredClaims.Subject)
 		c.Next()
 	}
