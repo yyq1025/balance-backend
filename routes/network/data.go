@@ -17,7 +17,7 @@ func QueryNetworks(rdb_cache *cache.Cache, db *gorm.DB, condition *Network, netw
 	}
 	err := db.Where(condition).Find(networks).Error
 	for _, network := range *networks {
-		rdb_cache.Set(&cache.Item{
+		_ = rdb_cache.Set(&cache.Item{
 			Ctx:   context.TODO(),
 			Key:   fmt.Sprintf("network:%s", network.Name),
 			Value: network,
@@ -34,7 +34,7 @@ func QueryNetwork(rdb_cache *cache.Cache, db *gorm.DB, condition *Network, netwo
 	}
 	err := db.Where(condition).First(network).Error
 	if err == nil {
-		rdb_cache.Set(&cache.Item{
+		_ = rdb_cache.Set(&cache.Item{
 			Ctx:   context.TODO(),
 			Key:   fmt.Sprintf("network:%s", network.Name),
 			Value: *network,

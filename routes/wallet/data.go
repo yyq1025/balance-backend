@@ -17,7 +17,7 @@ import (
 func CreateWallet(rdb_cache *cache.Cache, db *gorm.DB, wallet *Wallet) error {
 	err := db.Create(wallet).Error
 	if err == nil {
-		rdb_cache.Set(&cache.Item{
+		_ = rdb_cache.Set(&cache.Item{
 			Ctx:   context.TODO(),
 			Key:   fmt.Sprintf("wallet:%d", wallet.ID),
 			Value: *wallet,
@@ -35,7 +35,7 @@ func QueryWallets(rdb_cache *cache.Cache, db *gorm.DB, condition *Wallet, wallet
 	}
 	err := db.Where(condition).Find(wallets).Error
 	for _, wallet := range *wallets {
-		rdb_cache.Set(&cache.Item{
+		_ = rdb_cache.Set(&cache.Item{
 			Ctx:   context.TODO(),
 			Key:   fmt.Sprintf("wallet:%d", wallet.ID),
 			Value: wallet,
@@ -52,7 +52,7 @@ func QueryWallet(rdb_cache *cache.Cache, db *gorm.DB, condition *Wallet, wallet 
 	}
 	err := db.Where(condition).First(wallet).Error
 	if err == nil {
-		rdb_cache.Set(&cache.Item{
+		_ = rdb_cache.Set(&cache.Item{
 			Ctx:   context.TODO(),
 			Key:   fmt.Sprintf("wallet:%d", wallet.ID),
 			Value: *wallet,
@@ -65,7 +65,7 @@ func QueryWallet(rdb_cache *cache.Cache, db *gorm.DB, condition *Wallet, wallet 
 func DeleteWallets(rdb_cache *cache.Cache, db *gorm.DB, condition *Wallet, wallets *[]Wallet) error {
 	err := db.Clauses(clause.Returning{}).Where(condition).Delete(wallets).Error
 	for _, wallet := range *wallets {
-		rdb_cache.Delete(context.TODO(), fmt.Sprintf("wallet:%d", wallet.ID))
+		_ = rdb_cache.Delete(context.TODO(), fmt.Sprintf("wallet:%d", wallet.ID))
 	}
 	return err
 }
@@ -77,7 +77,7 @@ func GetSymbol(ctx context.Context, rdb_cache *cache.Cache, network string, addr
 	}
 	symbol, err := contract.Symbol(&bind.CallOpts{Context: ctx})
 	if err == nil {
-		rdb_cache.Set(&cache.Item{
+		_ = rdb_cache.Set(&cache.Item{
 			Ctx:   context.TODO(),
 			Key:   fmt.Sprintf("symbol:%s:%s", network, address.String()),
 			Value: symbol,
@@ -94,7 +94,7 @@ func GetDecimals(ctx context.Context, rdb_cache *cache.Cache, network string, ad
 	}
 	decimals, err := contract.Decimals(&bind.CallOpts{Context: ctx})
 	if err == nil {
-		rdb_cache.Set(&cache.Item{
+		_ = rdb_cache.Set(&cache.Item{
 			Ctx:   context.TODO(),
 			Key:   fmt.Sprintf("decimals:%s:%s", network, address.String()),
 			Value: decimals,

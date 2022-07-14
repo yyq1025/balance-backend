@@ -27,7 +27,10 @@ func CreateWalletHandler(c *gin.Context) {
 
 	data := make(map[string]string)
 
-	c.ShouldBindJSON(&data)
+	if err := c.ShouldBindJSON(&data); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		return
+	}
 
 	address := data["address"]
 	if !utils.IsValidAddress(address) {

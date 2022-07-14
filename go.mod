@@ -3,21 +3,23 @@ module yyq1025/balance-backend
 go 1.18
 
 require (
+	github.com/DATA-DOG/go-sqlmock v1.5.0
 	github.com/auth0/go-jwt-middleware/v2 v2.0.1
 	github.com/ethereum/go-ethereum v1.10.20
 	github.com/gin-gonic/gin v1.8.1
 	github.com/go-redis/cache/v8 v8.4.3
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/go-redis/redis_rate/v9 v9.1.2
+	github.com/go-redis/redismock/v8 v8.0.6
 	github.com/rs/cors/wrapper/gin v0.0.0-20220619195839-da52b0701de5
 	github.com/shopspring/decimal v1.3.1
+	github.com/stretchr/testify v1.8.0
 	golang.org/x/crypto v0.0.0-20220622213112-05595931fe9d
 	gorm.io/driver/postgres v1.3.8
 	gorm.io/gorm v1.23.8
 )
 
 require (
-	github.com/DATA-DOG/go-sqlmock v1.5.0 // indirect
 	github.com/btcsuite/btcd/btcec/v2 v2.2.0 // indirect
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
@@ -29,7 +31,6 @@ require (
 	github.com/go-playground/locales v0.14.0 // indirect
 	github.com/go-playground/universal-translator v0.18.0 // indirect
 	github.com/go-playground/validator/v10 v10.11.0 // indirect
-	github.com/go-redis/redismock/v8 v8.0.6 // indirect
 	github.com/go-stack/stack v1.8.1 // indirect
 	github.com/goccy/go-json v0.9.8 // indirect
 	github.com/golang-jwt/jwt/v4 v4.4.2 // indirect
@@ -57,7 +58,6 @@ require (
 	github.com/rjeczalik/notify v0.9.2 // indirect
 	github.com/rs/cors v1.8.2 // indirect
 	github.com/shirou/gopsutil v3.21.11+incompatible // indirect
-	github.com/stretchr/testify v1.8.0 // indirect
 	github.com/tklauser/go-sysconf v0.3.10 // indirect
 	github.com/tklauser/numcpus v0.5.0 // indirect
 	github.com/ugorji/go/codec v1.2.7 // indirect
