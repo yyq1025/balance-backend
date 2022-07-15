@@ -12,7 +12,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/cache/v8"
 	"github.com/go-redis/redis_rate/v9"
-	cors "github.com/rs/cors/wrapper/gin"
 )
 
 func main() {
@@ -26,8 +25,8 @@ func main() {
 	})
 	jwtValidator := utils.GetValidator()
 	router := gin.Default()
-	router.Use(cors.AllowAll())
-
+	// router.Use(cors.AllowAll())
+	router.Use(corsMiddleware())
 	network_group := router.Group("/networks")
 	network_group.Use(dataMiddleware(rdb_cache, db))
 	{

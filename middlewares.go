@@ -13,22 +13,22 @@ import (
 	"gorm.io/gorm"
 )
 
-// func corsMiddleware() gin.HandlerFunc {
-// 	return func(c *gin.Context) {
+func corsMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
 
-// 		c.Header("Access-Control-Allow-Origin", "*")
-// 		c.Header("Access-Control-Credentials", "true")
-// 		c.Header("Access-Control-Allow-Headers", "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version")
-// 		c.Header("Access-Control-Allow-Methods", "GET, OPTIONS, PATCH, DELETE, POST, PUT")
+		c.Header("Access-Control-Allow-Origin", "*")
+		c.Header("Access-Control-Credentials", "true")
+		c.Header("Access-Control-Allow-Headers", "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version")
+		c.Header("Access-Control-Allow-Methods", "GET, OPTIONS, PATCH, DELETE, POST, PUT")
 
-// 		if c.Request.Method == "OPTIONS" {
-// 			c.AbortWithStatus(http.StatusNoContent)
-// 			return
-// 		}
+		if c.Request.Method == "OPTIONS" {
+			c.AbortWithStatus(http.StatusNoContent)
+			return
+		}
 
-// 		c.Next()
-// 	}
-// }
+		c.Next()
+	}
+}
 
 func authMiddleware(jwtValidator *validator.Validator) gin.HandlerFunc {
 	return func(c *gin.Context) {
