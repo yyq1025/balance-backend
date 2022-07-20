@@ -15,7 +15,6 @@ CREATE TABLE "wallets" (
   "address" BYTEA NOT NULL,
   "network" VARCHAR(64) NOT NULL,
   "token" BYTEA NOT NULL,
-  "tag" VARCHAR(255) NOT NULL,
-  UNIQUE ("user_id", "address", "network", "token", "tag"),
+  UNIQUE ("user_id", "address", "network", "token"),
   FOREIGN KEY ("network") REFERENCES networks("name") ON DELETE CASCADE
 );

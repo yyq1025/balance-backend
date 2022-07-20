@@ -46,14 +46,11 @@ func CreateWalletHandler(c *gin.Context) {
 		return
 	}
 
-	tag := data["tag"]
-
 	wallet := Wallet{
 		UserId:  userId,
 		Address: common.HexToAddress(address),
 		Network: network,
 		Token:   common.HexToAddress(token),
-		Tag:     tag,
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3500*time.Millisecond)

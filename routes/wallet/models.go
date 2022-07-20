@@ -8,7 +8,6 @@ type Wallet struct {
 	Address common.Address `json:"address"`
 	Network string         `gorm:"default:Ethereum" json:"network"`
 	Token   common.Address `json:"token"`
-	Tag     string         `json:"tag,omitempty"`
 }
 
 type Balance struct {
