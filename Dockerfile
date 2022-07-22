@@ -3,7 +3,7 @@
 ##
 ## Build
 ##
-FROM golang:latest AS build
+FROM golang:1.18 AS build
 
 WORKDIR /app
 
@@ -16,14 +16,12 @@ RUN go build -o /balance-backend
 ##
 ## Deploy
 ##
-FROM gcr.io/distroless/base-debian11:latest
+FROM gcr.io/distroless/base-debian11:nonroot
 
 WORKDIR /
 
 COPY --from=build /balance-backend /balance-backend
 
 EXPOSE 8080
-
-USER nonroot:nonroot
 
 ENTRYPOINT ["/balance-backend"]
