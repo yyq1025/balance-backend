@@ -48,15 +48,15 @@ func authMiddleware(jwtValidator *validator.Validator) gin.HandlerFunc {
 			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": "invalid token"})
 			return
 		}
-		c.Set("userId", claims.(*validator.ValidatedClaims).RegisteredClaims.Subject)
+		c.Set("userID", claims.(*validator.ValidatedClaims).RegisteredClaims.Subject)
 		c.Next()
 	}
 }
 
 func rateLimitMiddleware(limiter *redis_rate.Limiter) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		userId := c.MustGet("userId").(string)
-		res, err := limiter.Allow(c, userId, redis_rate.PerMinute(10))
+		userID := c.MustGet("userID").(string)
+		res, err := limiter.Allow(c, userID, redis_rate.PerMinute(10))
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"message": "rate limit error"})
 			return
@@ -70,9 +70,9 @@ func rateLimitMiddleware(limiter *redis_rate.Limiter) gin.HandlerFunc {
 }
 
 // dbMiddleware will add the db connection to the context
-func dataMiddleware(rdb_cache *cache.Cache, db *gorm.DB) gin.HandlerFunc {
+func dataMiddleware(rdbCache *cache.Cache, db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		c.Set("rdb_cache", rdb_cache)
+		c.Set("rdbCache", rdbCache)
 		c.Set("db", db)
 		c.Next()
 	}

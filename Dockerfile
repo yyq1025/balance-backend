@@ -3,11 +3,11 @@
 ##
 ## Build
 ##
-FROM golang AS build
+FROM golang:latest AS build
 
 WORKDIR /app
 
-ADD . /app
+COPY . /app
 
 RUN go mod download
 
@@ -16,7 +16,7 @@ RUN go build -o /balance-backend
 ##
 ## Deploy
 ##
-FROM gcr.io/distroless/base-debian11
+FROM gcr.io/distroless/base-debian11:latest
 
 WORKDIR /
 

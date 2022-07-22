@@ -7,11 +7,11 @@ import (
 )
 
 func GetNetworksHandler(c *gin.Context) {
-	rdb_cache := c.MustGet("rdb_cache").(*cache.Cache)
+	rdbCache := c.MustGet("rdbCache").(*cache.Cache)
 
 	db := c.MustGet("db").(*gorm.DB)
 
-	res := GetNetWorks(rdb_cache, db, &Network{})
+	res := GetNetWorks(rdbCache, db, &Network{})
 
 	c.JSON(res.Code, res.Data)
 }

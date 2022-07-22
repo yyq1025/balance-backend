@@ -15,21 +15,21 @@ import (
 
 func TestQueryNetworksCached(t *testing.T) {
 	expected := []Network{{Name: "Ethereum"}}
-	rdb, rdb_mock := redismock.NewClientMock()
-	rdb_cache := cache.New(&cache.Options{
+	rdb, rdbMock := redismock.NewClientMock()
+	rdbCache := cache.New(&cache.Options{
 		Redis: rdb})
 
 	condition := &Network{Name: "Ethereum"}
 	actual := make([]Network, 0)
 
-	val, _ := rdb_cache.Marshal(Network{Name: "Ethereum"})
-	rdb_mock.ExpectGet(fmt.Sprintf("network:%s", condition.Name)).SetVal(string(val))
+	val, _ := rdbCache.Marshal(Network{Name: "Ethereum"})
+	rdbMock.ExpectGet(fmt.Sprintf("network:%s", condition.Name)).SetVal(string(val))
 
-	if err := QueryNetworks(rdb_cache, nil, condition, &actual); err != nil {
+	if err := QueryNetworks(rdbCache, nil, condition, &actual); err != nil {
 		t.Error(err)
 	}
 
-	if err := rdb_mock.ExpectationsWereMet(); err != nil {
+	if err := rdbMock.ExpectationsWereMet(); err != nil {
 		t.Error(err)
 	}
 	assert.Equal(t, expected, actual)

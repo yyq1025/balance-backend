@@ -19,7 +19,7 @@ func main() {
 	db := utils.GetDB()
 	rdb := utils.GetRedis()
 	limiter := redis_rate.NewLimiter(rdb)
-	rdb_cache := cache.New(&cache.Options{
+	rdbCache := cache.New(&cache.Options{
 		Redis:      rdb,
 		LocalCache: cache.NewTinyLFU(1000, time.Minute),
 	})
@@ -27,21 +27,21 @@ func main() {
 	router := gin.Default()
 	// router.Use(cors.AllowAll())
 	router.Use(corsMiddleware())
-	network_group := router.Group("/networks")
-	network_group.Use(dataMiddleware(rdb_cache, db))
+	networkGroup := router.Group("/networks")
+	networkGroup.Use(dataMiddleware(rdbCache, db))
 	{
-		network_group.GET("", network.GetNetworksHandler)
+		networkGroup.GET("", network.GetNetworksHandler)
 	}
 
-	wallet_group := router.Group("/wallet")
-	wallet_group.Use(authMiddleware(jwtValidator))
-	wallet_group.Use(rateLimitMiddleware(limiter))
-	wallet_group.Use(dataMiddleware(rdb_cache, db))
+	walletGroup := router.Group("/wallet")
+	walletGroup.Use(authMiddleware(jwtValidator))
+	walletGroup.Use(rateLimitMiddleware(limiter))
+	walletGroup.Use(dataMiddleware(rdbCache, db))
 	{
-		wallet_group.POST("", wallet.CreateWalletHandler)
-		wallet_group.DELETE("/:id", wallet.DeleteWalletsHandler)
-		wallet_group.GET("/balances", wallet.GetBalancesHandler)
-		wallet_group.GET("/balances/:id", wallet.GetBalanceHandler)
+		walletGroup.POST("", wallet.CreateWalletHandler)
+		walletGroup.DELETE("/:id", wallet.DeleteWalletsHandler)
+		walletGroup.GET("/balances", wallet.GetBalancesHandler)
+		walletGroup.GET("/balances/:id", wallet.GetBalanceHandler)
 	}
 
 	log.Fatal(router.Run(":8080"))
