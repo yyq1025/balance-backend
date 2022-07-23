@@ -47,7 +47,7 @@ func CreateWalletHandler(c *gin.Context) {
 	}
 
 	wallet := Wallet{
-		userID:  userID,
+		UserID:  userID,
 		Address: common.HexToAddress(address),
 		Network: network,
 		Token:   common.HexToAddress(token),
@@ -79,7 +79,7 @@ func DeleteWalletsHandler(c *gin.Context) {
 		return
 	}
 
-	res := DeleteBalances(rdbCache, db, &Wallet{ID: id, userID: userID})
+	res := DeleteBalances(rdbCache, db, &Wallet{ID: id, UserID: userID})
 
 	c.JSON(res.Code, res.Data)
 }
@@ -98,7 +98,7 @@ func GetBalancesHandler(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3500*time.Millisecond)
 	defer cancel()
 
-	res := GetBalances(ctx, rdbCache, db, &Wallet{userID: userID})
+	res := GetBalances(ctx, rdbCache, db, &Wallet{UserID: userID})
 
 	c.JSON(res.Code, res.Data)
 }
@@ -119,7 +119,7 @@ func GetBalanceHandler(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3500*time.Millisecond)
 	defer cancel()
 
-	res := GetBalance(ctx, rdbCache, db, &Wallet{ID: id, userID: userID})
+	res := GetBalance(ctx, rdbCache, db, &Wallet{ID: id, UserID: userID})
 
 	c.JSON(res.Code, res.Data)
 }

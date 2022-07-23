@@ -19,7 +19,7 @@ func getBalance(ctx context.Context, rdbCache *cache.Cache, db *gorm.DB, w Walle
 		log.Print(err)
 		return
 	}
-	rpcClient, err := ethclient.Dial(walletNetwork.Url)
+	rpcClient, err := ethclient.Dial(walletNetwork.URL)
 	if err != nil {
 		log.Print(err)
 		return

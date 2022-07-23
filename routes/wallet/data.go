@@ -28,9 +28,9 @@ func CreateWallet(rdbCache *cache.Cache, db *gorm.DB, wallet *Wallet) error {
 }
 
 func QueryWallets(rdbCache *cache.Cache, db *gorm.DB, condition *Wallet, wallets *[]Wallet) error {
-	var cached_wallet Wallet
-	if err := rdbCache.Get(context.TODO(), fmt.Sprintf("wallet:%d", condition.ID), &cached_wallet); err == nil {
-		*wallets = []Wallet{cached_wallet}
+	var cachedWallet Wallet
+	if err := rdbCache.Get(context.TODO(), fmt.Sprintf("wallet:%d", condition.ID), &cachedWallet); err == nil {
+		*wallets = []Wallet{cachedWallet}
 		return nil
 	}
 	err := db.Where(condition).Find(wallets).Error
