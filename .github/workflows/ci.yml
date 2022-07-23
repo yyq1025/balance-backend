@@ -5,12 +5,12 @@ on:
     branches:
       - main
     paths:
-      - "**.go"
+      - "**/*.go"
   pull_request:
     branches:
       - main
     paths:
-      - "**.go"
+      - "**/*.go"
   workflow_dispatch:
 
 jobs:
