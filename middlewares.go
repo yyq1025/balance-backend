@@ -69,7 +69,6 @@ func rateLimitMiddleware(limiter *redis_rate.Limiter) gin.HandlerFunc {
 	}
 }
 
-// dbMiddleware will add the db connection to the context
 func dataMiddleware(rdbCache *cache.Cache, db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.Set("rdbCache", rdbCache)

@@ -25,7 +25,6 @@ func main() {
 	})
 	jwtValidator := utils.GetValidator()
 	router := gin.Default()
-	// router.Use(cors.AllowAll())
 	router.Use(corsMiddleware())
 	networkGroup := router.Group("/networks")
 	networkGroup.Use(dataMiddleware(rdbCache, db))
