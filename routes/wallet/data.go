@@ -27,25 +27,6 @@ func CreateWallet(rdbCache *cache.Cache, db *gorm.DB, wallet *Wallet) error {
 	return err
 }
 
-// func QueryWallets(rdbCache *cache.Cache, db *gorm.DB, condition *Wallet, wallets *[]Wallet) error {
-// 	var cachedWallet Wallet
-// 	if err := rdbCache.Get(context.TODO(), fmt.Sprintf("wallet:%d", condition.ID), &cachedWallet); err == nil {
-// 		*wallets = []Wallet{cachedWallet}
-// 		return nil
-// 	}
-// 	err := db.Where(condition).Find(wallets).Error
-// 	for _, wallet := range *wallets {
-// 		_ = rdbCache.Set(&cache.Item{
-// 			Ctx:   context.TODO(),
-// 			Key:   fmt.Sprintf("wallet:%d", wallet.ID),
-// 			Value: wallet,
-// 			TTL:   time.Hour,
-// 			SetNX: true,
-// 		})
-// 	}
-// 	return err
-// }
-
 func QueryWalletsWithPagination(rdbCache *cache.Cache, db *gorm.DB, condition *Wallet, wallets *[]Wallet, p *Pagination) error {
 	if p.IDLte > 0 {
 		db = db.Where("id <= ?", p.IDLte)

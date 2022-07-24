@@ -58,7 +58,6 @@ func GetBalancesWithPagination(ctx context.Context, rdbCache *cache.Cache, db *g
 	} else {
 		p.Page = -1
 	}
-	// next := Pagination{IDLte: p.IDLte, Page: p.Page, PageSize: p.PageSize}
 
 	var wg sync.WaitGroup
 	ch := make(chan Balance)
