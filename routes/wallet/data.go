@@ -46,11 +46,11 @@ func CreateWallet(rdbCache *cache.Cache, db *gorm.DB, wallet *Wallet) error {
 // 	return err
 // }
 
-func QueryWalletsWithPagination(rdbCache *cache.Cache, db *gorm.DB, condition *Wallet, wallets *[]Wallet, idLte, page, pageSize int) error {
-	if idLte > 0 {
-		db = db.Where("id <= ?", idLte)
+func QueryWalletsWithPagination(rdbCache *cache.Cache, db *gorm.DB, condition *Wallet, wallets *[]Wallet, p *Pagination) error {
+	if p.IDLte > 0 {
+		db = db.Where("id <= ?", p.IDLte)
 	}
-	err := db.Where(condition).Order("id desc").Offset(page * pageSize).Limit(pageSize).Find(wallets).Error
+	err := db.Where(condition).Order("id desc").Offset(p.Page * p.PageSize).Limit(p.PageSize).Find(wallets).Error
 	for _, wallet := range *wallets {
 		_ = rdbCache.Set(&cache.Item{
 			Ctx:   context.TODO(),
