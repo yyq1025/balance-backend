@@ -42,13 +42,23 @@ func DeleteBalances(rdbCache *cache.Cache, db *gorm.DB, condition *Wallet) utils
 	return utils.Response{Code: http.StatusOK, Data: map[string]any{"ids": ids}}
 }
 
-func GetBalances(ctx context.Context, rdbCache *cache.Cache, db *gorm.DB, condition *Wallet) utils.Response {
+func GetBalancesWithPagination(ctx context.Context, rdbCache *cache.Cache, db *gorm.DB, condition *Wallet, idLte, page, pageSize int) utils.Response {
 	wallets := make([]Wallet, 0)
-	err := QueryWallets(rdbCache, db, condition, &wallets)
+	err := QueryWalletsWithPagination(rdbCache, db, condition, &wallets, idLte, page, pageSize)
 	if err != nil {
 		log.Print(err)
 		return utils.FindWalletError
 	}
+
+	if len(wallets) > 0 && idLte == 0 {
+		idLte = wallets[0].ID
+	}
+	if len(wallets) == pageSize {
+		page++
+	} else {
+		page = -1
+	}
+	next := Pagination{IDLte: idLte, Page: page, PageSize: pageSize}
 
 	var wg sync.WaitGroup
 	ch := make(chan Balance)
@@ -77,7 +87,7 @@ func GetBalances(ctx context.Context, rdbCache *cache.Cache, db *gorm.DB, condit
 		results = append(results, result)
 	}
 
-	return utils.Response{Code: http.StatusOK, Data: map[string]any{"balances": results}}
+	return utils.Response{Code: http.StatusOK, Data: map[string]any{"balances": results, "next": next}}
 }
 
 func GetBalance(ctx context.Context, rdbCache *cache.Cache, db *gorm.DB, condition *Wallet) utils.Response {

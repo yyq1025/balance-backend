@@ -95,10 +95,28 @@ func GetBalancesHandler(c *gin.Context) {
 		return
 	}
 
+	idLte, err := strconv.Atoi(c.DefaultQuery("idLte", "0"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": "invalid idLte"})
+		return
+	}
+
+	page, err := strconv.Atoi(c.DefaultQuery("page", "0"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": "invalid page"})
+		return
+	}
+
+	pageSize, err := strconv.Atoi(c.DefaultQuery("pageSize", "6"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": "invalid page size"})
+		return
+	}
+
 	ctx, cancel := context.WithTimeout(context.Background(), 3500*time.Millisecond)
 	defer cancel()
 
-	res := GetBalances(ctx, rdbCache, db, &Wallet{UserID: userID})
+	res := GetBalancesWithPagination(ctx, rdbCache, db, &Wallet{UserID: userID}, idLte, page, pageSize)
 
 	c.JSON(res.Code, res.Data)
 }
