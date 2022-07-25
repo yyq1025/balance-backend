@@ -6,7 +6,7 @@ type Wallet struct {
 	ID      int            `json:"id"`
 	UserID  string         `json:"-"`
 	Address common.Address `json:"address"`
-	Network string         `gorm:"default:Ethereum" json:"network"`
+	Network string         `json:"network"`
 	Token   common.Address `json:"token"`
 }
 
