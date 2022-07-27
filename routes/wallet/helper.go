@@ -2,7 +2,6 @@ package wallet
 
 import (
 	"context"
-	"log"
 	"yyq1025/balance-backend/routes/network"
 	"yyq1025/balance-backend/token"
 	"yyq1025/balance-backend/utils"
@@ -16,46 +15,42 @@ import (
 func getBalance(ctx context.Context, rdbCache *cache.Cache, db *gorm.DB, w Wallet) (b Balance, err error) {
 	var walletNetwork network.Network
 	if err = network.QueryNetwork(rdbCache, db, &network.Network{Name: w.Network}, &walletNetwork); err != nil {
-		log.Print(err)
 		return
 	}
 	rpcClient, err := ethclient.Dial(walletNetwork.URL)
 	if err != nil {
-		log.Print(err)
 		return
 	}
 	if utils.IsZeroAddress(w.Token) {
 		b.Symbol = walletNetwork.Symbol
 		balance, error := rpcClient.BalanceAt(ctx, w.Address, nil)
 		if error != nil {
-			log.Print(error)
+			b.Balance = -1
 			err = error
 			return
 		}
-		b.Balance = utils.ToDecimal(balance, 18).String()
+		b.Balance = utils.ToDecimal(balance, 18).InexactFloat64()
 		return
 	}
 	contract, err := token.NewToken(w.Token, rpcClient)
 	if err != nil {
-		log.Print(err)
 		return
 	}
 	symbol, err := GetSymbol(ctx, rdbCache, walletNetwork.Name, w.Token, contract)
 	if err != nil {
-		log.Print(err)
 		return
 	}
 	b.Symbol = symbol
 	balance, err := contract.BalanceOf(&bind.CallOpts{Context: ctx}, w.Address)
 	if err != nil {
-		log.Print(err)
+		b.Balance = -1
 		return
 	}
 	decimals, err := GetDecimals(ctx, rdbCache, walletNetwork.Name, w.Token, contract)
 	if err != nil {
-		log.Print(err)
+		b.Balance = -1
 		return
 	}
-	b.Balance = utils.ToDecimal(balance, int(decimals)).String()
+	b.Balance = utils.ToDecimal(balance, int(decimals)).InexactFloat64()
 	return
 }

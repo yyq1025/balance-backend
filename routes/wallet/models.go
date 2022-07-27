@@ -1,6 +1,8 @@
 package wallet
 
-import "github.com/ethereum/go-ethereum/common"
+import (
+	"github.com/ethereum/go-ethereum/common"
+)
 
 type Wallet struct {
 	ID      int            `json:"id"`
@@ -12,8 +14,8 @@ type Wallet struct {
 
 type Balance struct {
 	Wallet
-	Symbol  string `json:"symbol"`
-	Balance string `json:"balance"`
+	Symbol  string  `json:"symbol"`
+	Balance float64 `json:"balance"`
 }
 
 type Pagination struct {
