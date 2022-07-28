@@ -3,17 +3,21 @@ package wallet
 import (
 	"context"
 	"fmt"
+	"math/big"
 	"time"
 
-	"yyq1025/balance-backend/token"
+	"yyq1025/balance-backend/erc20"
+	"yyq1025/balance-backend/routes/network"
+	"yyq1025/balance-backend/utils"
 
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/go-redis/cache/v8"
 	"gorm.io/gorm"
 )
 
-func CreateWallet(ctx context.Context, rdbCache *cache.Cache, db *gorm.DB, wallet *Wallet) error {
+func createWallet(ctx context.Context, rdbCache *cache.Cache, db *gorm.DB, wallet *Wallet) error {
 	err := db.WithContext(ctx).Create(wallet).Error
 	if err == nil {
 		_ = rdbCache.Set(&cache.Item{
@@ -26,7 +30,7 @@ func CreateWallet(ctx context.Context, rdbCache *cache.Cache, db *gorm.DB, walle
 	return err
 }
 
-func QueryWalletsWithPagination(ctx context.Context, rdbCache *cache.Cache, db *gorm.DB, condition *Wallet, wallets *[]Wallet, p *Pagination) error {
+func queryWalletsWithPagination(ctx context.Context, rdbCache *cache.Cache, db *gorm.DB, condition *Wallet, wallets *[]Wallet, p *Pagination) error {
 	if p.IDLte > 0 {
 		db = db.Where("id <= ?", p.IDLte)
 	}
@@ -43,7 +47,7 @@ func QueryWalletsWithPagination(ctx context.Context, rdbCache *cache.Cache, db *
 	return err
 }
 
-func QueryWallet(ctx context.Context, rdbCache *cache.Cache, db *gorm.DB, condition *Wallet, wallet *Wallet) error {
+func queryWallet(ctx context.Context, rdbCache *cache.Cache, db *gorm.DB, condition *Wallet, wallet *Wallet) error {
 	if err := rdbCache.Get(ctx, fmt.Sprintf("wallet:%d", condition.ID), wallet); err == nil {
 		return nil
 	}
@@ -59,25 +63,51 @@ func QueryWallet(ctx context.Context, rdbCache *cache.Cache, db *gorm.DB, condit
 	return err
 }
 
-func DeleteWallet(ctx context.Context, rdbCache *cache.Cache, db *gorm.DB, condition *Wallet) error {
+func deleteWallet(ctx context.Context, rdbCache *cache.Cache, db *gorm.DB, condition *Wallet) error {
 	// User could only delete his own wallet
-	err := db.WithContext(ctx).Where(condition).Delete(condition).Error
+	err := db.WithContext(ctx).Where(condition).Delete(&Wallet{}).Error
 	if err == nil {
 		_ = rdbCache.Delete(ctx, fmt.Sprintf("wallet:%d", condition.ID))
 	}
 	return err
 }
 
-func GetSymbol(ctx context.Context, rdbCache *cache.Cache, network string, address common.Address, contract *token.Token) (string, error) {
+func getTokenBalance(ctx context.Context, rdbCache *cache.Cache, n network.Network, address, token common.Address) (*big.Int, error) {
+	rpcClient, err := ethclient.Dial(n.URL)
+	if err != nil {
+		return nil, err
+	}
+	if utils.IsZeroAddress(token) {
+		return rpcClient.BalanceAt(ctx, address, nil)
+	}
+	contract, err := erc20.NewErc20(token, rpcClient)
+	if err != nil {
+		return nil, err
+	}
+	return contract.BalanceOf(&bind.CallOpts{Context: ctx}, address)
+}
+
+func getTokenSymbol(ctx context.Context, rdbCache *cache.Cache, n network.Network, token common.Address) (string, error) {
+	if utils.IsZeroAddress(token) {
+		return n.Symbol, nil
+	}
 	var symbol string
-	if err := rdbCache.Get(ctx, fmt.Sprintf("symbol:%s:%s", network, address.String()), &symbol); err == nil {
+	if err := rdbCache.Get(ctx, fmt.Sprintf("symbol:%s:%s", n.Name, token.String()), &symbol); err == nil {
 		return symbol, nil
 	}
-	symbol, err := contract.Symbol(&bind.CallOpts{Context: ctx})
+	rpcClient, err := ethclient.Dial(n.URL)
+	if err != nil {
+		return "", err
+	}
+	contract, err := erc20.NewErc20(token, rpcClient)
+	if err != nil {
+		return "", err
+	}
+	symbol, err = contract.Symbol(&bind.CallOpts{Context: ctx})
 	if err == nil {
 		_ = rdbCache.Set(&cache.Item{
 			Ctx:   ctx,
-			Key:   fmt.Sprintf("symbol:%s:%s", network, address.String()),
+			Key:   fmt.Sprintf("symbol:%s:%s", n.Name, token.String()),
 			Value: symbol,
 			TTL:   time.Hour,
 		})
@@ -85,16 +115,27 @@ func GetSymbol(ctx context.Context, rdbCache *cache.Cache, network string, addre
 	return symbol, err
 }
 
-func GetDecimals(ctx context.Context, rdbCache *cache.Cache, network string, address common.Address, contract *token.Token) (uint8, error) {
+func getTokenDecimals(ctx context.Context, rdbCache *cache.Cache, n network.Network, token common.Address) (uint8, error) {
+	if utils.IsZeroAddress(token) {
+		return 18, nil
+	}
 	var decimals uint8
-	if err := rdbCache.Get(ctx, fmt.Sprintf("decimals:%s:%s", network, address.String()), &decimals); err == nil {
+	if err := rdbCache.Get(ctx, fmt.Sprintf("decimals:%s:%s", n.Name, token.String()), &decimals); err == nil {
 		return decimals, nil
 	}
-	decimals, err := contract.Decimals(&bind.CallOpts{Context: ctx})
+	rpcClient, err := ethclient.Dial(n.URL)
+	if err != nil {
+		return 0, err
+	}
+	contract, err := erc20.NewErc20(token, rpcClient)
+	if err != nil {
+		return 0, err
+	}
+	decimals, err = contract.Decimals(&bind.CallOpts{Context: ctx})
 	if err == nil {
 		_ = rdbCache.Set(&cache.Item{
 			Ctx:   ctx,
-			Key:   fmt.Sprintf("decimals:%s:%s", network, address.String()),
+			Key:   fmt.Sprintf("decimals:%s:%s", n.Name, token.String()),
 			Value: decimals,
 			TTL:   time.Hour,
 		})

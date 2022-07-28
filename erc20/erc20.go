@@ -1,7 +1,7 @@
 // Code generated - DO NOT EDIT.
 // This file is a generated binding and any manual changes will be lost.
 
-package token
+package erc20
 
 import (
 	"errors"
@@ -28,113 +28,113 @@ var (
 	_ = event.NewSubscription
 )
 
-// TokenMetaData contains all meta data concerning the Token contract.
-var TokenMetaData = &bind.MetaData{
+// Erc20MetaData contains all meta data concerning the Erc20 contract.
+var Erc20MetaData = &bind.MetaData{
 	ABI: "[{\"constant\":true,\"inputs\":[],\"name\":\"name\",\"outputs\":[{\"name\":\"\",\"type\":\"string\"}],\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_from\",\"type\":\"address\"},{\"name\":\"_to\",\"type\":\"address\"},{\"name\":\"_value\",\"type\":\"uint256\"}],\"name\":\"transferFrom\",\"outputs\":[{\"name\":\"success\",\"type\":\"bool\"}],\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"decimals\",\"outputs\":[{\"name\":\"\",\"type\":\"uint8\"}],\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"\",\"type\":\"address\"}],\"name\":\"balanceOf\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"symbol\",\"outputs\":[{\"name\":\"\",\"type\":\"string\"}],\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_to\",\"type\":\"address\"},{\"name\":\"_value\",\"type\":\"uint256\"}],\"name\":\"transfer\",\"outputs\":[],\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_spender\",\"type\":\"address\"},{\"name\":\"_value\",\"type\":\"uint256\"},{\"name\":\"_extraData\",\"type\":\"bytes\"}],\"name\":\"approveAndCall\",\"outputs\":[{\"name\":\"success\",\"type\":\"bool\"}],\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"\",\"type\":\"address\"},{\"name\":\"\",\"type\":\"address\"}],\"name\":\"spentAllowance\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"\",\"type\":\"address\"},{\"name\":\"\",\"type\":\"address\"}],\"name\":\"allowance\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"type\":\"function\"},{\"inputs\":[{\"name\":\"initialSupply\",\"type\":\"uint256\"},{\"name\":\"tokenName\",\"type\":\"string\"},{\"name\":\"decimalUnits\",\"type\":\"uint8\"},{\"name\":\"tokenSymbol\",\"type\":\"string\"}],\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"from\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"to\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"Transfer\",\"type\":\"event\"}]",
 }
 
-// TokenABI is the input ABI used to generate the binding from.
-// Deprecated: Use TokenMetaData.ABI instead.
-var TokenABI = TokenMetaData.ABI
+// Erc20ABI is the input ABI used to generate the binding from.
+// Deprecated: Use Erc20MetaData.ABI instead.
+var Erc20ABI = Erc20MetaData.ABI
 
-// Token is an auto generated Go binding around an Ethereum contract.
-type Token struct {
-	TokenCaller     // Read-only binding to the contract
-	TokenTransactor // Write-only binding to the contract
-	TokenFilterer   // Log filterer for contract events
+// Erc20 is an auto generated Go binding around an Ethereum contract.
+type Erc20 struct {
+	Erc20Caller     // Read-only binding to the contract
+	Erc20Transactor // Write-only binding to the contract
+	Erc20Filterer   // Log filterer for contract events
 }
 
-// TokenCaller is an auto generated read-only Go binding around an Ethereum contract.
-type TokenCaller struct {
+// Erc20Caller is an auto generated read-only Go binding around an Ethereum contract.
+type Erc20Caller struct {
 	contract *bind.BoundContract // Generic contract wrapper for the low level calls
 }
 
-// TokenTransactor is an auto generated write-only Go binding around an Ethereum contract.
-type TokenTransactor struct {
+// Erc20Transactor is an auto generated write-only Go binding around an Ethereum contract.
+type Erc20Transactor struct {
 	contract *bind.BoundContract // Generic contract wrapper for the low level calls
 }
 
-// TokenFilterer is an auto generated log filtering Go binding around an Ethereum contract events.
-type TokenFilterer struct {
+// Erc20Filterer is an auto generated log filtering Go binding around an Ethereum contract events.
+type Erc20Filterer struct {
 	contract *bind.BoundContract // Generic contract wrapper for the low level calls
 }
 
-// TokenSession is an auto generated Go binding around an Ethereum contract,
+// Erc20Session is an auto generated Go binding around an Ethereum contract,
 // with pre-set call and transact options.
-type TokenSession struct {
-	Contract     *Token            // Generic contract binding to set the session for
+type Erc20Session struct {
+	Contract     *Erc20            // Generic contract binding to set the session for
 	CallOpts     bind.CallOpts     // Call options to use throughout this session
 	TransactOpts bind.TransactOpts // Transaction auth options to use throughout this session
 }
 
-// TokenCallerSession is an auto generated read-only Go binding around an Ethereum contract,
+// Erc20CallerSession is an auto generated read-only Go binding around an Ethereum contract,
 // with pre-set call options.
-type TokenCallerSession struct {
-	Contract *TokenCaller  // Generic contract caller binding to set the session for
+type Erc20CallerSession struct {
+	Contract *Erc20Caller  // Generic contract caller binding to set the session for
 	CallOpts bind.CallOpts // Call options to use throughout this session
 }
 
-// TokenTransactorSession is an auto generated write-only Go binding around an Ethereum contract,
+// Erc20TransactorSession is an auto generated write-only Go binding around an Ethereum contract,
 // with pre-set transact options.
-type TokenTransactorSession struct {
-	Contract     *TokenTransactor  // Generic contract transactor binding to set the session for
+type Erc20TransactorSession struct {
+	Contract     *Erc20Transactor  // Generic contract transactor binding to set the session for
 	TransactOpts bind.TransactOpts // Transaction auth options to use throughout this session
 }
 
-// TokenRaw is an auto generated low-level Go binding around an Ethereum contract.
-type TokenRaw struct {
-	Contract *Token // Generic contract binding to access the raw methods on
+// Erc20Raw is an auto generated low-level Go binding around an Ethereum contract.
+type Erc20Raw struct {
+	Contract *Erc20 // Generic contract binding to access the raw methods on
 }
 
-// TokenCallerRaw is an auto generated low-level read-only Go binding around an Ethereum contract.
-type TokenCallerRaw struct {
-	Contract *TokenCaller // Generic read-only contract binding to access the raw methods on
+// Erc20CallerRaw is an auto generated low-level read-only Go binding around an Ethereum contract.
+type Erc20CallerRaw struct {
+	Contract *Erc20Caller // Generic read-only contract binding to access the raw methods on
 }
 
-// TokenTransactorRaw is an auto generated low-level write-only Go binding around an Ethereum contract.
-type TokenTransactorRaw struct {
-	Contract *TokenTransactor // Generic write-only contract binding to access the raw methods on
+// Erc20TransactorRaw is an auto generated low-level write-only Go binding around an Ethereum contract.
+type Erc20TransactorRaw struct {
+	Contract *Erc20Transactor // Generic write-only contract binding to access the raw methods on
 }
 
-// NewToken creates a new instance of Token, bound to a specific deployed contract.
-func NewToken(address common.Address, backend bind.ContractBackend) (*Token, error) {
-	contract, err := bindToken(address, backend, backend, backend)
+// NewErc20 creates a new instance of Erc20, bound to a specific deployed contract.
+func NewErc20(address common.Address, backend bind.ContractBackend) (*Erc20, error) {
+	contract, err := bindErc20(address, backend, backend, backend)
 	if err != nil {
 		return nil, err
 	}
-	return &Token{TokenCaller: TokenCaller{contract: contract}, TokenTransactor: TokenTransactor{contract: contract}, TokenFilterer: TokenFilterer{contract: contract}}, nil
+	return &Erc20{Erc20Caller: Erc20Caller{contract: contract}, Erc20Transactor: Erc20Transactor{contract: contract}, Erc20Filterer: Erc20Filterer{contract: contract}}, nil
 }
 
-// NewTokenCaller creates a new read-only instance of Token, bound to a specific deployed contract.
-func NewTokenCaller(address common.Address, caller bind.ContractCaller) (*TokenCaller, error) {
-	contract, err := bindToken(address, caller, nil, nil)
+// NewErc20Caller creates a new read-only instance of Erc20, bound to a specific deployed contract.
+func NewErc20Caller(address common.Address, caller bind.ContractCaller) (*Erc20Caller, error) {
+	contract, err := bindErc20(address, caller, nil, nil)
 	if err != nil {
 		return nil, err
 	}
-	return &TokenCaller{contract: contract}, nil
+	return &Erc20Caller{contract: contract}, nil
 }
 
-// NewTokenTransactor creates a new write-only instance of Token, bound to a specific deployed contract.
-func NewTokenTransactor(address common.Address, transactor bind.ContractTransactor) (*TokenTransactor, error) {
-	contract, err := bindToken(address, nil, transactor, nil)
+// NewErc20Transactor creates a new write-only instance of Erc20, bound to a specific deployed contract.
+func NewErc20Transactor(address common.Address, transactor bind.ContractTransactor) (*Erc20Transactor, error) {
+	contract, err := bindErc20(address, nil, transactor, nil)
 	if err != nil {
 		return nil, err
 	}
-	return &TokenTransactor{contract: contract}, nil
+	return &Erc20Transactor{contract: contract}, nil
 }
 
-// NewTokenFilterer creates a new log filterer instance of Token, bound to a specific deployed contract.
-func NewTokenFilterer(address common.Address, filterer bind.ContractFilterer) (*TokenFilterer, error) {
-	contract, err := bindToken(address, nil, nil, filterer)
+// NewErc20Filterer creates a new log filterer instance of Erc20, bound to a specific deployed contract.
+func NewErc20Filterer(address common.Address, filterer bind.ContractFilterer) (*Erc20Filterer, error) {
+	contract, err := bindErc20(address, nil, nil, filterer)
 	if err != nil {
 		return nil, err
 	}
-	return &TokenFilterer{contract: contract}, nil
+	return &Erc20Filterer{contract: contract}, nil
 }
 
-// bindToken binds a generic wrapper to an already deployed contract.
-func bindToken(address common.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
-	parsed, err := abi.JSON(strings.NewReader(TokenABI))
+// bindErc20 binds a generic wrapper to an already deployed contract.
+func bindErc20(address common.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
+	parsed, err := abi.JSON(strings.NewReader(Erc20ABI))
 	if err != nil {
 		return nil, err
 	}
@@ -145,46 +145,46 @@ func bindToken(address common.Address, caller bind.ContractCaller, transactor bi
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_Token *TokenRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
-	return _Token.Contract.TokenCaller.contract.Call(opts, result, method, params...)
+func (_Erc20 *Erc20Raw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
+	return _Erc20.Contract.Erc20Caller.contract.Call(opts, result, method, params...)
 }
 
 // Transfer initiates a plain transaction to move funds to the contract, calling
 // its default method if one is available.
-func (_Token *TokenRaw) Transfer(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _Token.Contract.TokenTransactor.contract.Transfer(opts)
+func (_Erc20 *Erc20Raw) Transfer(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _Erc20.Contract.Erc20Transactor.contract.Transfer(opts)
 }
 
 // Transact invokes the (paid) contract method with params as input values.
-func (_Token *TokenRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
-	return _Token.Contract.TokenTransactor.contract.Transact(opts, method, params...)
+func (_Erc20 *Erc20Raw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
+	return _Erc20.Contract.Erc20Transactor.contract.Transact(opts, method, params...)
 }
 
 // Call invokes the (constant) contract method with params as input values and
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_Token *TokenCallerRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
-	return _Token.Contract.contract.Call(opts, result, method, params...)
+func (_Erc20 *Erc20CallerRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
+	return _Erc20.Contract.contract.Call(opts, result, method, params...)
 }
 
 // Transfer initiates a plain transaction to move funds to the contract, calling
 // its default method if one is available.
-func (_Token *TokenTransactorRaw) Transfer(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _Token.Contract.contract.Transfer(opts)
+func (_Erc20 *Erc20TransactorRaw) Transfer(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _Erc20.Contract.contract.Transfer(opts)
 }
 
 // Transact invokes the (paid) contract method with params as input values.
-func (_Token *TokenTransactorRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
-	return _Token.Contract.contract.Transact(opts, method, params...)
+func (_Erc20 *Erc20TransactorRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
+	return _Erc20.Contract.contract.Transact(opts, method, params...)
 }
 
 // Allowance is a free data retrieval call binding the contract method 0xdd62ed3e.
 //
 // Solidity: function allowance(address , address ) returns(uint256)
-func (_Token *TokenCaller) Allowance(opts *bind.CallOpts, arg0 common.Address, arg1 common.Address) (*big.Int, error) {
+func (_Erc20 *Erc20Caller) Allowance(opts *bind.CallOpts, arg0 common.Address, arg1 common.Address) (*big.Int, error) {
 	var out []interface{}
-	err := _Token.contract.Call(opts, &out, "allowance", arg0, arg1)
+	err := _Erc20.contract.Call(opts, &out, "allowance", arg0, arg1)
 
 	if err != nil {
 		return *new(*big.Int), err
@@ -199,23 +199,23 @@ func (_Token *TokenCaller) Allowance(opts *bind.CallOpts, arg0 common.Address, a
 // Allowance is a free data retrieval call binding the contract method 0xdd62ed3e.
 //
 // Solidity: function allowance(address , address ) returns(uint256)
-func (_Token *TokenSession) Allowance(arg0 common.Address, arg1 common.Address) (*big.Int, error) {
-	return _Token.Contract.Allowance(&_Token.CallOpts, arg0, arg1)
+func (_Erc20 *Erc20Session) Allowance(arg0 common.Address, arg1 common.Address) (*big.Int, error) {
+	return _Erc20.Contract.Allowance(&_Erc20.CallOpts, arg0, arg1)
 }
 
 // Allowance is a free data retrieval call binding the contract method 0xdd62ed3e.
 //
 // Solidity: function allowance(address , address ) returns(uint256)
-func (_Token *TokenCallerSession) Allowance(arg0 common.Address, arg1 common.Address) (*big.Int, error) {
-	return _Token.Contract.Allowance(&_Token.CallOpts, arg0, arg1)
+func (_Erc20 *Erc20CallerSession) Allowance(arg0 common.Address, arg1 common.Address) (*big.Int, error) {
+	return _Erc20.Contract.Allowance(&_Erc20.CallOpts, arg0, arg1)
 }
 
 // BalanceOf is a free data retrieval call binding the contract method 0x70a08231.
 //
 // Solidity: function balanceOf(address ) returns(uint256)
-func (_Token *TokenCaller) BalanceOf(opts *bind.CallOpts, arg0 common.Address) (*big.Int, error) {
+func (_Erc20 *Erc20Caller) BalanceOf(opts *bind.CallOpts, arg0 common.Address) (*big.Int, error) {
 	var out []interface{}
-	err := _Token.contract.Call(opts, &out, "balanceOf", arg0)
+	err := _Erc20.contract.Call(opts, &out, "balanceOf", arg0)
 
 	if err != nil {
 		return *new(*big.Int), err
@@ -230,23 +230,23 @@ func (_Token *TokenCaller) BalanceOf(opts *bind.CallOpts, arg0 common.Address) (
 // BalanceOf is a free data retrieval call binding the contract method 0x70a08231.
 //
 // Solidity: function balanceOf(address ) returns(uint256)
-func (_Token *TokenSession) BalanceOf(arg0 common.Address) (*big.Int, error) {
-	return _Token.Contract.BalanceOf(&_Token.CallOpts, arg0)
+func (_Erc20 *Erc20Session) BalanceOf(arg0 common.Address) (*big.Int, error) {
+	return _Erc20.Contract.BalanceOf(&_Erc20.CallOpts, arg0)
 }
 
 // BalanceOf is a free data retrieval call binding the contract method 0x70a08231.
 //
 // Solidity: function balanceOf(address ) returns(uint256)
-func (_Token *TokenCallerSession) BalanceOf(arg0 common.Address) (*big.Int, error) {
-	return _Token.Contract.BalanceOf(&_Token.CallOpts, arg0)
+func (_Erc20 *Erc20CallerSession) BalanceOf(arg0 common.Address) (*big.Int, error) {
+	return _Erc20.Contract.BalanceOf(&_Erc20.CallOpts, arg0)
 }
 
 // Decimals is a free data retrieval call binding the contract method 0x313ce567.
 //
 // Solidity: function decimals() returns(uint8)
-func (_Token *TokenCaller) Decimals(opts *bind.CallOpts) (uint8, error) {
+func (_Erc20 *Erc20Caller) Decimals(opts *bind.CallOpts) (uint8, error) {
 	var out []interface{}
-	err := _Token.contract.Call(opts, &out, "decimals")
+	err := _Erc20.contract.Call(opts, &out, "decimals")
 
 	if err != nil {
 		return *new(uint8), err
@@ -261,23 +261,23 @@ func (_Token *TokenCaller) Decimals(opts *bind.CallOpts) (uint8, error) {
 // Decimals is a free data retrieval call binding the contract method 0x313ce567.
 //
 // Solidity: function decimals() returns(uint8)
-func (_Token *TokenSession) Decimals() (uint8, error) {
-	return _Token.Contract.Decimals(&_Token.CallOpts)
+func (_Erc20 *Erc20Session) Decimals() (uint8, error) {
+	return _Erc20.Contract.Decimals(&_Erc20.CallOpts)
 }
 
 // Decimals is a free data retrieval call binding the contract method 0x313ce567.
 //
 // Solidity: function decimals() returns(uint8)
-func (_Token *TokenCallerSession) Decimals() (uint8, error) {
-	return _Token.Contract.Decimals(&_Token.CallOpts)
+func (_Erc20 *Erc20CallerSession) Decimals() (uint8, error) {
+	return _Erc20.Contract.Decimals(&_Erc20.CallOpts)
 }
 
 // Name is a free data retrieval call binding the contract method 0x06fdde03.
 //
 // Solidity: function name() returns(string)
-func (_Token *TokenCaller) Name(opts *bind.CallOpts) (string, error) {
+func (_Erc20 *Erc20Caller) Name(opts *bind.CallOpts) (string, error) {
 	var out []interface{}
-	err := _Token.contract.Call(opts, &out, "name")
+	err := _Erc20.contract.Call(opts, &out, "name")
 
 	if err != nil {
 		return *new(string), err
@@ -292,23 +292,23 @@ func (_Token *TokenCaller) Name(opts *bind.CallOpts) (string, error) {
 // Name is a free data retrieval call binding the contract method 0x06fdde03.
 //
 // Solidity: function name() returns(string)
-func (_Token *TokenSession) Name() (string, error) {
-	return _Token.Contract.Name(&_Token.CallOpts)
+func (_Erc20 *Erc20Session) Name() (string, error) {
+	return _Erc20.Contract.Name(&_Erc20.CallOpts)
 }
 
 // Name is a free data retrieval call binding the contract method 0x06fdde03.
 //
 // Solidity: function name() returns(string)
-func (_Token *TokenCallerSession) Name() (string, error) {
-	return _Token.Contract.Name(&_Token.CallOpts)
+func (_Erc20 *Erc20CallerSession) Name() (string, error) {
+	return _Erc20.Contract.Name(&_Erc20.CallOpts)
 }
 
 // SpentAllowance is a free data retrieval call binding the contract method 0xdc3080f2.
 //
 // Solidity: function spentAllowance(address , address ) returns(uint256)
-func (_Token *TokenCaller) SpentAllowance(opts *bind.CallOpts, arg0 common.Address, arg1 common.Address) (*big.Int, error) {
+func (_Erc20 *Erc20Caller) SpentAllowance(opts *bind.CallOpts, arg0 common.Address, arg1 common.Address) (*big.Int, error) {
 	var out []interface{}
-	err := _Token.contract.Call(opts, &out, "spentAllowance", arg0, arg1)
+	err := _Erc20.contract.Call(opts, &out, "spentAllowance", arg0, arg1)
 
 	if err != nil {
 		return *new(*big.Int), err
@@ -323,23 +323,23 @@ func (_Token *TokenCaller) SpentAllowance(opts *bind.CallOpts, arg0 common.Addre
 // SpentAllowance is a free data retrieval call binding the contract method 0xdc3080f2.
 //
 // Solidity: function spentAllowance(address , address ) returns(uint256)
-func (_Token *TokenSession) SpentAllowance(arg0 common.Address, arg1 common.Address) (*big.Int, error) {
-	return _Token.Contract.SpentAllowance(&_Token.CallOpts, arg0, arg1)
+func (_Erc20 *Erc20Session) SpentAllowance(arg0 common.Address, arg1 common.Address) (*big.Int, error) {
+	return _Erc20.Contract.SpentAllowance(&_Erc20.CallOpts, arg0, arg1)
 }
 
 // SpentAllowance is a free data retrieval call binding the contract method 0xdc3080f2.
 //
 // Solidity: function spentAllowance(address , address ) returns(uint256)
-func (_Token *TokenCallerSession) SpentAllowance(arg0 common.Address, arg1 common.Address) (*big.Int, error) {
-	return _Token.Contract.SpentAllowance(&_Token.CallOpts, arg0, arg1)
+func (_Erc20 *Erc20CallerSession) SpentAllowance(arg0 common.Address, arg1 common.Address) (*big.Int, error) {
+	return _Erc20.Contract.SpentAllowance(&_Erc20.CallOpts, arg0, arg1)
 }
 
 // Symbol is a free data retrieval call binding the contract method 0x95d89b41.
 //
 // Solidity: function symbol() returns(string)
-func (_Token *TokenCaller) Symbol(opts *bind.CallOpts) (string, error) {
+func (_Erc20 *Erc20Caller) Symbol(opts *bind.CallOpts) (string, error) {
 	var out []interface{}
-	err := _Token.contract.Call(opts, &out, "symbol")
+	err := _Erc20.contract.Call(opts, &out, "symbol")
 
 	if err != nil {
 		return *new(string), err
@@ -354,83 +354,83 @@ func (_Token *TokenCaller) Symbol(opts *bind.CallOpts) (string, error) {
 // Symbol is a free data retrieval call binding the contract method 0x95d89b41.
 //
 // Solidity: function symbol() returns(string)
-func (_Token *TokenSession) Symbol() (string, error) {
-	return _Token.Contract.Symbol(&_Token.CallOpts)
+func (_Erc20 *Erc20Session) Symbol() (string, error) {
+	return _Erc20.Contract.Symbol(&_Erc20.CallOpts)
 }
 
 // Symbol is a free data retrieval call binding the contract method 0x95d89b41.
 //
 // Solidity: function symbol() returns(string)
-func (_Token *TokenCallerSession) Symbol() (string, error) {
-	return _Token.Contract.Symbol(&_Token.CallOpts)
+func (_Erc20 *Erc20CallerSession) Symbol() (string, error) {
+	return _Erc20.Contract.Symbol(&_Erc20.CallOpts)
 }
 
 // ApproveAndCall is a paid mutator transaction binding the contract method 0xcae9ca51.
 //
 // Solidity: function approveAndCall(address _spender, uint256 _value, bytes _extraData) returns(bool success)
-func (_Token *TokenTransactor) ApproveAndCall(opts *bind.TransactOpts, _spender common.Address, _value *big.Int, _extraData []byte) (*types.Transaction, error) {
-	return _Token.contract.Transact(opts, "approveAndCall", _spender, _value, _extraData)
+func (_Erc20 *Erc20Transactor) ApproveAndCall(opts *bind.TransactOpts, _spender common.Address, _value *big.Int, _extraData []byte) (*types.Transaction, error) {
+	return _Erc20.contract.Transact(opts, "approveAndCall", _spender, _value, _extraData)
 }
 
 // ApproveAndCall is a paid mutator transaction binding the contract method 0xcae9ca51.
 //
 // Solidity: function approveAndCall(address _spender, uint256 _value, bytes _extraData) returns(bool success)
-func (_Token *TokenSession) ApproveAndCall(_spender common.Address, _value *big.Int, _extraData []byte) (*types.Transaction, error) {
-	return _Token.Contract.ApproveAndCall(&_Token.TransactOpts, _spender, _value, _extraData)
+func (_Erc20 *Erc20Session) ApproveAndCall(_spender common.Address, _value *big.Int, _extraData []byte) (*types.Transaction, error) {
+	return _Erc20.Contract.ApproveAndCall(&_Erc20.TransactOpts, _spender, _value, _extraData)
 }
 
 // ApproveAndCall is a paid mutator transaction binding the contract method 0xcae9ca51.
 //
 // Solidity: function approveAndCall(address _spender, uint256 _value, bytes _extraData) returns(bool success)
-func (_Token *TokenTransactorSession) ApproveAndCall(_spender common.Address, _value *big.Int, _extraData []byte) (*types.Transaction, error) {
-	return _Token.Contract.ApproveAndCall(&_Token.TransactOpts, _spender, _value, _extraData)
+func (_Erc20 *Erc20TransactorSession) ApproveAndCall(_spender common.Address, _value *big.Int, _extraData []byte) (*types.Transaction, error) {
+	return _Erc20.Contract.ApproveAndCall(&_Erc20.TransactOpts, _spender, _value, _extraData)
 }
 
 // Transfer is a paid mutator transaction binding the contract method 0xa9059cbb.
 //
 // Solidity: function transfer(address _to, uint256 _value) returns()
-func (_Token *TokenTransactor) Transfer(opts *bind.TransactOpts, _to common.Address, _value *big.Int) (*types.Transaction, error) {
-	return _Token.contract.Transact(opts, "transfer", _to, _value)
+func (_Erc20 *Erc20Transactor) Transfer(opts *bind.TransactOpts, _to common.Address, _value *big.Int) (*types.Transaction, error) {
+	return _Erc20.contract.Transact(opts, "transfer", _to, _value)
 }
 
 // Transfer is a paid mutator transaction binding the contract method 0xa9059cbb.
 //
 // Solidity: function transfer(address _to, uint256 _value) returns()
-func (_Token *TokenSession) Transfer(_to common.Address, _value *big.Int) (*types.Transaction, error) {
-	return _Token.Contract.Transfer(&_Token.TransactOpts, _to, _value)
+func (_Erc20 *Erc20Session) Transfer(_to common.Address, _value *big.Int) (*types.Transaction, error) {
+	return _Erc20.Contract.Transfer(&_Erc20.TransactOpts, _to, _value)
 }
 
 // Transfer is a paid mutator transaction binding the contract method 0xa9059cbb.
 //
 // Solidity: function transfer(address _to, uint256 _value) returns()
-func (_Token *TokenTransactorSession) Transfer(_to common.Address, _value *big.Int) (*types.Transaction, error) {
-	return _Token.Contract.Transfer(&_Token.TransactOpts, _to, _value)
+func (_Erc20 *Erc20TransactorSession) Transfer(_to common.Address, _value *big.Int) (*types.Transaction, error) {
+	return _Erc20.Contract.Transfer(&_Erc20.TransactOpts, _to, _value)
 }
 
 // TransferFrom is a paid mutator transaction binding the contract method 0x23b872dd.
 //
 // Solidity: function transferFrom(address _from, address _to, uint256 _value) returns(bool success)
-func (_Token *TokenTransactor) TransferFrom(opts *bind.TransactOpts, _from common.Address, _to common.Address, _value *big.Int) (*types.Transaction, error) {
-	return _Token.contract.Transact(opts, "transferFrom", _from, _to, _value)
+func (_Erc20 *Erc20Transactor) TransferFrom(opts *bind.TransactOpts, _from common.Address, _to common.Address, _value *big.Int) (*types.Transaction, error) {
+	return _Erc20.contract.Transact(opts, "transferFrom", _from, _to, _value)
 }
 
 // TransferFrom is a paid mutator transaction binding the contract method 0x23b872dd.
 //
 // Solidity: function transferFrom(address _from, address _to, uint256 _value) returns(bool success)
-func (_Token *TokenSession) TransferFrom(_from common.Address, _to common.Address, _value *big.Int) (*types.Transaction, error) {
-	return _Token.Contract.TransferFrom(&_Token.TransactOpts, _from, _to, _value)
+func (_Erc20 *Erc20Session) TransferFrom(_from common.Address, _to common.Address, _value *big.Int) (*types.Transaction, error) {
+	return _Erc20.Contract.TransferFrom(&_Erc20.TransactOpts, _from, _to, _value)
 }
 
 // TransferFrom is a paid mutator transaction binding the contract method 0x23b872dd.
 //
 // Solidity: function transferFrom(address _from, address _to, uint256 _value) returns(bool success)
-func (_Token *TokenTransactorSession) TransferFrom(_from common.Address, _to common.Address, _value *big.Int) (*types.Transaction, error) {
-	return _Token.Contract.TransferFrom(&_Token.TransactOpts, _from, _to, _value)
+func (_Erc20 *Erc20TransactorSession) TransferFrom(_from common.Address, _to common.Address, _value *big.Int) (*types.Transaction, error) {
+	return _Erc20.Contract.TransferFrom(&_Erc20.TransactOpts, _from, _to, _value)
 }
 
-// TokenTransferIterator is returned from FilterTransfer and is used to iterate over the raw logs and unpacked data for Transfer events raised by the Token contract.
-type TokenTransferIterator struct {
-	Event *TokenTransfer // Event containing the contract specifics and raw log
+// Erc20TransferIterator is returned from FilterTransfer and is used to iterate over the raw logs and unpacked data for Transfer events raised by the Erc20 contract.
+type Erc20TransferIterator struct {
+	Event *Erc20Transfer // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -444,7 +444,7 @@ type TokenTransferIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *TokenTransferIterator) Next() bool {
+func (it *Erc20TransferIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -453,7 +453,7 @@ func (it *TokenTransferIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(TokenTransfer)
+			it.Event = new(Erc20Transfer)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -468,7 +468,7 @@ func (it *TokenTransferIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(TokenTransfer)
+		it.Event = new(Erc20Transfer)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -484,19 +484,19 @@ func (it *TokenTransferIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *TokenTransferIterator) Error() error {
+func (it *Erc20TransferIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *TokenTransferIterator) Close() error {
+func (it *Erc20TransferIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// TokenTransfer represents a Transfer event raised by the Token contract.
-type TokenTransfer struct {
+// Erc20Transfer represents a Transfer event raised by the Erc20 contract.
+type Erc20Transfer struct {
 	From  common.Address
 	To    common.Address
 	Value *big.Int
@@ -506,7 +506,7 @@ type TokenTransfer struct {
 // FilterTransfer is a free log retrieval operation binding the contract event 0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef.
 //
 // Solidity: event Transfer(address indexed from, address indexed to, uint256 value)
-func (_Token *TokenFilterer) FilterTransfer(opts *bind.FilterOpts, from []common.Address, to []common.Address) (*TokenTransferIterator, error) {
+func (_Erc20 *Erc20Filterer) FilterTransfer(opts *bind.FilterOpts, from []common.Address, to []common.Address) (*Erc20TransferIterator, error) {
 
 	var fromRule []interface{}
 	for _, fromItem := range from {
@@ -517,17 +517,17 @@ func (_Token *TokenFilterer) FilterTransfer(opts *bind.FilterOpts, from []common
 		toRule = append(toRule, toItem)
 	}
 
-	logs, sub, err := _Token.contract.FilterLogs(opts, "Transfer", fromRule, toRule)
+	logs, sub, err := _Erc20.contract.FilterLogs(opts, "Transfer", fromRule, toRule)
 	if err != nil {
 		return nil, err
 	}
-	return &TokenTransferIterator{contract: _Token.contract, event: "Transfer", logs: logs, sub: sub}, nil
+	return &Erc20TransferIterator{contract: _Erc20.contract, event: "Transfer", logs: logs, sub: sub}, nil
 }
 
 // WatchTransfer is a free log subscription operation binding the contract event 0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef.
 //
 // Solidity: event Transfer(address indexed from, address indexed to, uint256 value)
-func (_Token *TokenFilterer) WatchTransfer(opts *bind.WatchOpts, sink chan<- *TokenTransfer, from []common.Address, to []common.Address) (event.Subscription, error) {
+func (_Erc20 *Erc20Filterer) WatchTransfer(opts *bind.WatchOpts, sink chan<- *Erc20Transfer, from []common.Address, to []common.Address) (event.Subscription, error) {
 
 	var fromRule []interface{}
 	for _, fromItem := range from {
@@ -538,7 +538,7 @@ func (_Token *TokenFilterer) WatchTransfer(opts *bind.WatchOpts, sink chan<- *To
 		toRule = append(toRule, toItem)
 	}
 
-	logs, sub, err := _Token.contract.WatchLogs(opts, "Transfer", fromRule, toRule)
+	logs, sub, err := _Erc20.contract.WatchLogs(opts, "Transfer", fromRule, toRule)
 	if err != nil {
 		return nil, err
 	}
@@ -548,8 +548,8 @@ func (_Token *TokenFilterer) WatchTransfer(opts *bind.WatchOpts, sink chan<- *To
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(TokenTransfer)
-				if err := _Token.contract.UnpackLog(event, "Transfer", log); err != nil {
+				event := new(Erc20Transfer)
+				if err := _Erc20.contract.UnpackLog(event, "Transfer", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -573,9 +573,9 @@ func (_Token *TokenFilterer) WatchTransfer(opts *bind.WatchOpts, sink chan<- *To
 // ParseTransfer is a log parse operation binding the contract event 0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef.
 //
 // Solidity: event Transfer(address indexed from, address indexed to, uint256 value)
-func (_Token *TokenFilterer) ParseTransfer(log types.Log) (*TokenTransfer, error) {
-	event := new(TokenTransfer)
-	if err := _Token.contract.UnpackLog(event, "Transfer", log); err != nil {
+func (_Erc20 *Erc20Filterer) ParseTransfer(log types.Log) (*Erc20Transfer, error) {
+	event := new(Erc20Transfer)
+	if err := _Erc20.contract.UnpackLog(event, "Transfer", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log

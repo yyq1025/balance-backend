@@ -13,9 +13,13 @@ type Wallet struct {
 }
 
 type Balance struct {
-	Wallet
 	Symbol  string  `json:"symbol"`
 	Balance float64 `json:"balance"`
+}
+
+type Result struct {
+	Wallet
+	Balance
 }
 
 type Pagination struct {
