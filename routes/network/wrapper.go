@@ -1,6 +1,9 @@
 package network
 
 import (
+	"context"
+	"time"
+
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/cache/v8"
 	"gorm.io/gorm"
@@ -11,7 +14,10 @@ func GetNetworksHandler(c *gin.Context) {
 
 	db := c.MustGet("db").(*gorm.DB)
 
-	res := GetNetWorks(rdbCache, db, &Network{})
+	ctx, cancel := context.WithTimeout(context.Background(), 3500*time.Millisecond)
+	defer cancel()
+
+	res := GetNetWorks(ctx, rdbCache, db, &Network{})
 
 	c.JSON(res.Code, res.Data)
 }

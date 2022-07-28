@@ -61,7 +61,7 @@ func CreateWalletHandler(c *gin.Context) {
 	c.JSON(res.Code, res.Data)
 }
 
-func DeleteWalletsHandler(c *gin.Context) {
+func DeleteWalletHandler(c *gin.Context) {
 	rdbCache := c.MustGet("rdbCache").(*cache.Cache)
 
 	db := c.MustGet("db").(*gorm.DB)
@@ -79,7 +79,10 @@ func DeleteWalletsHandler(c *gin.Context) {
 		return
 	}
 
-	res := DeleteBalances(rdbCache, db, &Wallet{ID: id, UserID: userID})
+	ctx, cancel := context.WithTimeout(context.Background(), 3500*time.Millisecond)
+	defer cancel()
+
+	res := DeleteBalance(ctx, rdbCache, db, &Wallet{ID: id, UserID: userID})
 
 	c.JSON(res.Code, res.Data)
 }

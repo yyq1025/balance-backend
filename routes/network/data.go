@@ -9,16 +9,16 @@ import (
 	"gorm.io/gorm"
 )
 
-func QueryNetworks(rdbCache *cache.Cache, db *gorm.DB, condition *Network, networks *[]Network) error {
+func QueryNetworks(ctx context.Context, rdbCache *cache.Cache, db *gorm.DB, condition *Network, networks *[]Network) error {
 	var cachedNetwork Network
-	if err := rdbCache.Get(context.TODO(), fmt.Sprintf("network:%s", condition.Name), &cachedNetwork); err == nil {
+	if err := rdbCache.Get(ctx, fmt.Sprintf("network:%s", condition.Name), &cachedNetwork); err == nil {
 		*networks = []Network{cachedNetwork}
 		return nil
 	}
-	err := db.Where(condition).Order("name asc").Find(networks).Error
+	err := db.WithContext(ctx).Where(condition).Order("name asc").Find(networks).Error
 	for _, network := range *networks {
 		_ = rdbCache.Set(&cache.Item{
-			Ctx:   context.TODO(),
+			Ctx:   ctx,
 			Key:   fmt.Sprintf("network:%s", network.Name),
 			Value: network,
 			TTL:   time.Hour,
@@ -28,14 +28,14 @@ func QueryNetworks(rdbCache *cache.Cache, db *gorm.DB, condition *Network, netwo
 	return err
 }
 
-func QueryNetwork(rdbCache *cache.Cache, db *gorm.DB, condition *Network, network *Network) error {
-	if err := rdbCache.Get(context.TODO(), fmt.Sprintf("network:%s", condition.Name), network); err == nil {
+func QueryNetwork(ctx context.Context, rdbCache *cache.Cache, db *gorm.DB, condition *Network, network *Network) error {
+	if err := rdbCache.Get(ctx, fmt.Sprintf("network:%s", condition.Name), network); err == nil {
 		return nil
 	}
-	err := db.Where(condition).First(network).Error
+	err := db.WithContext(ctx).Where(condition).First(network).Error
 	if err == nil {
 		_ = rdbCache.Set(&cache.Item{
-			Ctx:   context.TODO(),
+			Ctx:   ctx,
 			Key:   fmt.Sprintf("network:%s", network.Name),
 			Value: *network,
 			TTL:   time.Hour,

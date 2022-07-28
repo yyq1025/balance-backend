@@ -1,6 +1,7 @@
 package network
 
 import (
+	"context"
 	"fmt"
 	"testing"
 
@@ -25,7 +26,7 @@ func TestQueryNetworksCached(t *testing.T) {
 	val, _ := rdbCache.Marshal(Network{Name: "Ethereum"})
 	rdbMock.ExpectGet(fmt.Sprintf("network:%s", condition.Name)).SetVal(string(val))
 
-	if err := QueryNetworks(rdbCache, nil, condition, &actual); err != nil {
+	if err := QueryNetworks(context.Background(), rdbCache, nil, condition, &actual); err != nil {
 		t.Error(err)
 	}
 

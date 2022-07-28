@@ -17,7 +17,7 @@ func AddWallet(ctx context.Context, rdbCache *cache.Cache, db *gorm.DB, wallet *
 	if err != nil {
 		return utils.AddWalletError
 	}
-	if err := CreateWallet(rdbCache, db, wallet); err != nil {
+	if err := CreateWallet(ctx, rdbCache, db, wallet); err != nil {
 		log.Print(err)
 		return utils.AddWalletError
 	}
@@ -25,27 +25,24 @@ func AddWallet(ctx context.Context, rdbCache *cache.Cache, db *gorm.DB, wallet *
 	return utils.Response{Code: http.StatusOK, Data: map[string]any{"balance": balance}}
 }
 
-func DeleteBalances(rdbCache *cache.Cache, db *gorm.DB, condition *Wallet) utils.Response {
-	wallets := make([]Wallet, 0)
-	err := DeleteWallets(rdbCache, db, condition, &wallets)
-	if err != nil {
+func DeleteBalance(ctx context.Context, rdbCache *cache.Cache, db *gorm.DB, condition *Wallet) utils.Response {
+	if err := DeleteWallet(ctx, rdbCache, db, condition); err != nil {
 		log.Print(err)
 		return utils.DeleteAddressesError
 	}
-	if len(wallets) == 0 {
-		return utils.FindWalletError
-	}
-	ids := make([]int, 0)
-	for _, wallet := range wallets {
-		ids = append(ids, wallet.ID)
-	}
-	return utils.Response{Code: http.StatusOK, Data: map[string]any{"ids": ids}}
+	// if len(wallets) == 0 {
+	// 	return utils.FindWalletError
+	// }
+	// ids := make([]int, 0)
+	// for _, wallet := range wallets {
+	// 	ids = append(ids, wallet.ID)
+	// }
+	return utils.Response{Code: http.StatusOK, Data: map[string]any{"id": condition.ID}}
 }
 
 func GetBalancesWithPagination(ctx context.Context, rdbCache *cache.Cache, db *gorm.DB, condition *Wallet, p *Pagination) utils.Response {
 	wallets := make([]Wallet, 0)
-	err := QueryWalletsWithPagination(rdbCache, db, condition, &wallets, p)
-	if err != nil {
+	if err := QueryWalletsWithPagination(ctx, rdbCache, db, condition, &wallets, p); err != nil {
 		log.Print(err)
 		return utils.FindWalletError
 	}
@@ -91,7 +88,7 @@ func GetBalancesWithPagination(ctx context.Context, rdbCache *cache.Cache, db *g
 
 func GetBalance(ctx context.Context, rdbCache *cache.Cache, db *gorm.DB, condition *Wallet) utils.Response {
 	var wallet Wallet
-	if err := QueryWallet(rdbCache, db, condition, &wallet); err != nil {
+	if err := QueryWallet(ctx, rdbCache, db, condition, &wallet); err != nil {
 		log.Print(err)
 		return utils.FindWalletError
 	}

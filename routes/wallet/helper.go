@@ -14,7 +14,7 @@ import (
 
 func getBalance(ctx context.Context, rdbCache *cache.Cache, db *gorm.DB, w Wallet) (b Balance, err error) {
 	var walletNetwork network.Network
-	if err = network.QueryNetwork(rdbCache, db, &network.Network{Name: w.Network}, &walletNetwork); err != nil {
+	if err = network.QueryNetwork(ctx, rdbCache, db, &network.Network{Name: w.Network}, &walletNetwork); err != nil {
 		return
 	}
 	rpcClient, err := ethclient.Dial(walletNetwork.URL)

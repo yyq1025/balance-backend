@@ -1,6 +1,7 @@
 package network
 
 import (
+	"context"
 	"log"
 	"net/http"
 
@@ -10,10 +11,10 @@ import (
 	"gorm.io/gorm"
 )
 
-func GetNetWorks(rdbCache *cache.Cache, db *gorm.DB, condition *Network) utils.Response {
+func GetNetWorks(ctx context.Context, rdbCache *cache.Cache, db *gorm.DB, condition *Network) utils.Response {
 	networks := make([]Network, 0)
 
-	if err := QueryNetworks(rdbCache, db, condition, &networks); err != nil {
+	if err := QueryNetworks(ctx, rdbCache, db, condition, &networks); err != nil {
 		log.Print(err)
 		return utils.GetNetworkError
 	}

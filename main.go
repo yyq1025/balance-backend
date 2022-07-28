@@ -38,7 +38,7 @@ func main() {
 	walletGroup.Use(dataMiddleware(rdbCache, db))
 	{
 		walletGroup.POST("", wallet.CreateWalletHandler)
-		walletGroup.DELETE("/:id", wallet.DeleteWalletsHandler)
+		walletGroup.DELETE("/:id", wallet.DeleteWalletHandler)
 		walletGroup.GET("/balances", wallet.GetBalancesHandler)
 		walletGroup.GET("/balances/:id", wallet.GetBalanceHandler)
 	}
