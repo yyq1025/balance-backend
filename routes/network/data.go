@@ -13,12 +13,14 @@ func queryAllNetworks(ctx context.Context, rdbCache *cache.Cache, db *gorm.DB, n
 		return nil
 	}
 	err := db.WithContext(ctx).Order("name asc").Find(networks).Error
-	_ = rdbCache.Set(&cache.Item{
-		Ctx:   ctx,
-		Key:   "networks",
-		Value: *networks,
-		TTL:   time.Hour,
-		SetNX: true,
-	})
+	if err == nil {
+		_ = rdbCache.Set(&cache.Item{
+			Ctx:   ctx,
+			Key:   "networks",
+			Value: *networks,
+			TTL:   time.Hour,
+			SetNX: true,
+		})
+	}
 	return err
 }
