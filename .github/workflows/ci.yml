@@ -44,9 +44,9 @@ jobs:
 
       redis:
         image: redis
-        env:
-          # REDIS_USER: redis
-          REDIS_PASSWORD: redis
+        # env:
+        #   REDIS_USER: redis
+        #   REDIS_PASSWORD: redis
         options: >-
           --health-cmd "redis-cli ping"
           --health-interval 10s
@@ -75,7 +75,7 @@ jobs:
           DB_PASSWORD: postgres
           DB_NAME: postgres
           REDIS_HOST: localhost:6379
-          REDIS_PASSWORD: redis
+          # REDIS_PASSWORD: redis
         run: go test -race -coverprofile=coverage.txt -covermode=atomic ./...
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
