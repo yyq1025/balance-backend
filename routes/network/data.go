@@ -27,19 +27,3 @@ func queryNetworks(ctx context.Context, rdbCache *cache.Cache, db *gorm.DB, cond
 	}
 	return err
 }
-
-// func queryNetwork(ctx context.Context, rdbCache *cache.Cache, db *gorm.DB, condition *Network, network *Network) error {
-// 	if err := rdbCache.Get(ctx, fmt.Sprintf("network:%s", condition.Name), network); err == nil {
-// 		return nil
-// 	}
-// 	err := db.WithContext(ctx).Where(condition).First(network).Error
-// 	if err == nil {
-// 		_ = rdbCache.Set(&cache.Item{
-// 			Ctx:   ctx,
-// 			Key:   fmt.Sprintf("network:%s", network.Name),
-// 			Value: *network,
-// 			TTL:   time.Hour,
-// 		})
-// 	}
-// 	return err
-// }

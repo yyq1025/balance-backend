@@ -24,7 +24,7 @@ type Wallet struct {
 	Network     network.Network `gorm:"foreignKey:NetworkName" json:"network"`
 }
 
-func (w Wallet) getTokenBalance(ctx context.Context) (*big.Int, error) {
+func (w *Wallet) getTokenBalance(ctx context.Context) (*big.Int, error) {
 	rpcClient, err := ethclient.Dial(w.Network.URL)
 	if err != nil {
 		return nil, err
@@ -39,7 +39,7 @@ func (w Wallet) getTokenBalance(ctx context.Context) (*big.Int, error) {
 	return contract.BalanceOf(&bind.CallOpts{Context: ctx}, w.Address)
 }
 
-func (w Wallet) getTokenSymbol(ctx context.Context, rdbCache *cache.Cache) (string, error) {
+func (w *Wallet) getTokenSymbol(ctx context.Context, rdbCache *cache.Cache) (string, error) {
 	if utils.IsZeroAddress(w.Token) {
 		return w.Network.Symbol, nil
 	}
@@ -67,7 +67,7 @@ func (w Wallet) getTokenSymbol(ctx context.Context, rdbCache *cache.Cache) (stri
 	return symbol, err
 }
 
-func (w Wallet) getTokenDecimals(ctx context.Context, rdbCache *cache.Cache) (uint8, error) {
+func (w *Wallet) getTokenDecimals(ctx context.Context, rdbCache *cache.Cache) (uint8, error) {
 	if utils.IsZeroAddress(w.Token) {
 		return 18, nil
 	}
@@ -95,7 +95,7 @@ func (w Wallet) getTokenDecimals(ctx context.Context, rdbCache *cache.Cache) (ui
 	return decimals, err
 }
 
-func (w Wallet) getBalance(ctx context.Context, rdbCache *cache.Cache) (b Balance, err error) {
+func (w *Wallet) getBalance(ctx context.Context, rdbCache *cache.Cache) (b Balance, err error) {
 	balance, err := w.getTokenBalance(ctx)
 	if err != nil {
 		return
@@ -108,19 +108,14 @@ func (w Wallet) getBalance(ctx context.Context, rdbCache *cache.Cache) (b Balanc
 	if err != nil {
 		return
 	}
-	b.Balance = utils.ToDecimal(balance, int(decimals)).InexactFloat64()
-	b.Symbol = symbol
+	b = Balance{w, symbol, utils.ToDecimal(balance, int(decimals)).InexactFloat64()}
 	return
 }
 
 type Balance struct {
+	*Wallet
 	Symbol  string  `json:"symbol"`
 	Balance float64 `json:"balance"`
-}
-
-type Result struct {
-	Wallet
-	Balance
 }
 
 type Pagination struct {

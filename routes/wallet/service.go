@@ -13,7 +13,7 @@ import (
 )
 
 func addWallet(ctx context.Context, rdbCache *cache.Cache, db *gorm.DB, wallet *Wallet) utils.Response {
-	balance, err := (*wallet).getBalance(ctx, rdbCache)
+	balance, err := wallet.getBalance(ctx, rdbCache)
 	if err != nil {
 		return utils.AddWalletError
 	}
@@ -21,7 +21,7 @@ func addWallet(ctx context.Context, rdbCache *cache.Cache, db *gorm.DB, wallet *
 		log.Print(err)
 		return utils.AddWalletError
 	}
-	return utils.Response{Code: http.StatusOK, Data: map[string]any{"balance": Result{*wallet, balance}}}
+	return utils.Response{Code: http.StatusOK, Data: map[string]any{"balance": balance}}
 }
 
 func DeleteBalance(ctx context.Context, rdbCache *cache.Cache, db *gorm.DB, condition *Wallet) utils.Response {
@@ -49,7 +49,7 @@ func getBalancesWithPagination(ctx context.Context, rdbCache *cache.Cache, db *g
 	}
 
 	var wg sync.WaitGroup
-	ch := make(chan Result)
+	ch := make(chan Balance)
 
 	for _, wallet := range wallets {
 		wg.Add(1)
@@ -60,7 +60,7 @@ func getBalancesWithPagination(ctx context.Context, rdbCache *cache.Cache, db *g
 			if err != nil {
 				log.Print(err)
 			}
-			ch <- Result{w, balance}
+			ch <- balance
 		}(wallet)
 	}
 
@@ -69,7 +69,7 @@ func getBalancesWithPagination(ctx context.Context, rdbCache *cache.Cache, db *g
 		close(ch)
 	}()
 
-	results := make([]Result, 0)
+	results := make([]Balance, 0)
 	for result := range ch {
 		results = append(results, result)
 	}
@@ -88,5 +88,5 @@ func getBalance(ctx context.Context, rdbCache *cache.Cache, db *gorm.DB, conditi
 		log.Print(err)
 		return utils.GetBalanceError
 	}
-	return utils.Response{Code: http.StatusOK, Data: map[string]any{"balance": Result{wallet, balance}}}
+	return utils.Response{Code: http.StatusOK, Data: map[string]any{"balance": balance}}
 }
