@@ -36,14 +36,10 @@ func TestQueryNetworks(t *testing.T) {
 
 func TestQueryNetworksNoCache(t *testing.T) {
 	db := utils.GetDB()
-
+	rdbCache := cache.New(&cache.Options{})
 	actual := make([]Network, 0)
 
-	if err := queryAllNetworks(context.Background(), nil, db, &actual); err != nil {
-		t.Error(err)
-	}
-
-	if err := queryAllNetworks(context.Background(), nil, db, &actual); err != nil {
+	if err := queryAllNetworks(context.Background(), rdbCache, db, &actual); err != nil {
 		t.Error(err)
 	}
 }

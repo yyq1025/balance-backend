@@ -26,8 +26,9 @@ func TestGetAllNetworks(t *testing.T) {
 
 func TestGetAllNetworksNoCache(t *testing.T) {
 	db := utils.GetDB()
+	rdbCache := cache.New(&cache.Options{})
 
-	actual := getAllNetWorks(context.Background(), nil, db)
+	actual := getAllNetWorks(context.Background(), rdbCache, db)
 
 	assert.Equal(t, http.StatusOK, actual.Code)
 	assert.Greater(t, len(actual.Data["networks"].([]Network)), 0)
