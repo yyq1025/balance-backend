@@ -7,10 +7,8 @@ import (
 	"yyq1025/balance-backend/utils"
 
 	"github.com/go-redis/cache/v8"
-	_ "github.com/go-redis/redis/v8"
 	"github.com/stretchr/testify/assert"
-	_ "gorm.io/driver/postgres"
-	_ "gorm.io/gorm"
+	"gorm.io/gorm"
 )
 
 func TestQueryNetworks(t *testing.T) {
@@ -54,7 +52,7 @@ func TestQueryNetworksNoDB(t *testing.T) {
 
 	actual := make([]Network, 0)
 
-	if err := queryAllNetworks(context.Background(), rdbCache, nil, &actual); err == nil {
+	if err := queryAllNetworks(context.Background(), rdbCache, &gorm.DB{}, &actual); err == nil {
 		t.Error("expected error")
 	}
 }

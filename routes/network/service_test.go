@@ -9,6 +9,7 @@ import (
 
 	"github.com/go-redis/cache/v8"
 	"github.com/stretchr/testify/assert"
+	"gorm.io/gorm"
 )
 
 func TestGetAllNetworks(t *testing.T) {
@@ -42,7 +43,7 @@ func TestGetAllNetworksNoDB(t *testing.T) {
 		Redis:        rdb,
 		StatsEnabled: true})
 
-	actual := getAllNetWorks(context.Background(), rdbCache, nil)
+	actual := getAllNetWorks(context.Background(), rdbCache, &gorm.DB{})
 
 	assert.Equal(t, utils.GetNetworkError, actual)
 }
