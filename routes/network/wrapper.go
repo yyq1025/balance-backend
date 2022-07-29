@@ -17,7 +17,7 @@ func GetNetworksHandler(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3500*time.Millisecond)
 	defer cancel()
 
-	res := GetNetWorks(ctx, rdbCache, db, &Network{})
+	res := getNetWorks(ctx, rdbCache, db, &Network{})
 
 	c.JSON(res.Code, res.Data)
 }

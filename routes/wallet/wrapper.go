@@ -6,9 +6,6 @@ import (
 	"strconv"
 	"time"
 
-	"yyq1025/balance-backend/utils"
-
-	"github.com/ethereum/go-ethereum/common"
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/cache/v8"
 	"gorm.io/gorm"
@@ -25,38 +22,45 @@ func CreateWalletHandler(c *gin.Context) {
 		return
 	}
 
-	data := make(map[string]string)
+	wallet := Wallet{UserID: userID}
 
-	if err := c.ShouldBindJSON(&data); err != nil {
+	if err := c.ShouldBindJSON(&wallet); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
 
-	address := data["address"]
-	if !utils.IsValidAddress(address) {
-		c.JSON(http.StatusBadRequest, gin.H{"message": "invalid address"})
-		return
-	}
+	// address := data["address"].(string)
+	// if !utils.IsValidAddress(address) {
+	// 	c.JSON(http.StatusBadRequest, gin.H{"message": "invalid address"})
+	// 	return
+	// }
 
-	network := data["network"]
+	// // networkName := data["networkName"].(string)
 
-	token := data["token"]
-	if token != "" && !utils.IsValidAddress(token) {
-		c.JSON(http.StatusBadRequest, gin.H{"message": "invalid token"})
-		return
-	}
+	// token := data["token"].(string)
+	// if token != "" && !utils.IsValidAddress(token) {
+	// 	c.JSON(http.StatusBadRequest, gin.H{"message": "invalid token"})
+	// 	return
+	// }
 
-	wallet := Wallet{
-		UserID:  userID,
-		Address: common.HexToAddress(address),
-		Network: network,
-		Token:   common.HexToAddress(token),
-	}
+	// network := data["network"].(network.Network)
+	// if network.URL == "" {
+	// 	c.JSON(http.StatusBadRequest, gin.H{"message": "invalid network"})
+	// 	return
+	// }
 
+	// wallet := Wallet{
+	// 	UserID:      userID,
+	// 	Address:     common.HexToAddress(address),
+	// 	NetworkName: network.Name,
+	// 	Token:       common.HexToAddress(token),
+	// 	Network:     network,
+	// }
+	wallet.NetworkName = wallet.Network.Name
 	ctx, cancel := context.WithTimeout(context.Background(), 3500*time.Millisecond)
 	defer cancel()
 
-	res := AddWallet(ctx, rdbCache, db, &wallet)
+	res := addWallet(ctx, rdbCache, db, &wallet)
 
 	c.JSON(res.Code, res.Data)
 }
@@ -121,7 +125,7 @@ func GetBalancesHandler(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3500*time.Millisecond)
 	defer cancel()
 
-	res := GetBalancesWithPagination(ctx, rdbCache, db, &Wallet{UserID: userID}, &p)
+	res := getBalancesWithPagination(ctx, rdbCache, db, &Wallet{UserID: userID}, &p)
 
 	c.JSON(res.Code, res.Data)
 }
@@ -142,7 +146,7 @@ func GetBalanceHandler(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3500*time.Millisecond)
 	defer cancel()
 
-	res := GetBalance(ctx, rdbCache, db, &Wallet{ID: id, UserID: userID})
+	res := getBalance(ctx, rdbCache, db, &Wallet{ID: id, UserID: userID})
 
 	c.JSON(res.Code, res.Data)
 }

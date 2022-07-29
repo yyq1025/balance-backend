@@ -3,16 +3,8 @@ package wallet
 import (
 	"context"
 	"fmt"
-	"math/big"
 	"time"
 
-	"yyq1025/balance-backend/erc20"
-	"yyq1025/balance-backend/routes/network"
-	"yyq1025/balance-backend/utils"
-
-	"github.com/ethereum/go-ethereum/accounts/abi/bind"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/go-redis/cache/v8"
 	"gorm.io/gorm"
 )
@@ -34,7 +26,7 @@ func queryWalletsWithPagination(ctx context.Context, rdbCache *cache.Cache, db *
 	if p.IDLte > 0 {
 		db = db.Where("id <= ?", p.IDLte)
 	}
-	err := db.WithContext(ctx).Where(condition).Order("id desc").Offset(p.Page * p.PageSize).Limit(p.PageSize).Find(wallets).Error
+	err := db.WithContext(ctx).Joins("Network").Where(condition).Order("id desc").Offset(p.Page * p.PageSize).Limit(p.PageSize).Find(wallets).Error
 	for _, wallet := range *wallets {
 		_ = rdbCache.Set(&cache.Item{
 			Ctx:   ctx,
@@ -51,7 +43,7 @@ func queryWallet(ctx context.Context, rdbCache *cache.Cache, db *gorm.DB, condit
 	if err := rdbCache.Get(ctx, fmt.Sprintf("wallet:%d", condition.ID), wallet); err == nil {
 		return nil
 	}
-	err := db.WithContext(ctx).Where(condition).First(wallet).Error
+	err := db.WithContext(ctx).Joins("Network").Where(condition).First(wallet).Error
 	if err == nil {
 		_ = rdbCache.Set(&cache.Item{
 			Ctx:   ctx,
@@ -72,73 +64,73 @@ func deleteWallet(ctx context.Context, rdbCache *cache.Cache, db *gorm.DB, condi
 	return err
 }
 
-func getTokenBalance(ctx context.Context, rdbCache *cache.Cache, n network.Network, address, token common.Address) (*big.Int, error) {
-	rpcClient, err := ethclient.Dial(n.URL)
-	if err != nil {
-		return nil, err
-	}
-	if utils.IsZeroAddress(token) {
-		return rpcClient.BalanceAt(ctx, address, nil)
-	}
-	contract, err := erc20.NewErc20(token, rpcClient)
-	if err != nil {
-		return nil, err
-	}
-	return contract.BalanceOf(&bind.CallOpts{Context: ctx}, address)
-}
+// func getTokenBalance(ctx context.Context, rdbCache *cache.Cache, n network.Network, address, token common.Address) (*big.Int, error) {
+// 	rpcClient, err := ethclient.Dial(n.URL)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	if utils.IsZeroAddress(token) {
+// 		return rpcClient.BalanceAt(ctx, address, nil)
+// 	}
+// 	contract, err := erc20.NewErc20(token, rpcClient)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	return contract.BalanceOf(&bind.CallOpts{Context: ctx}, address)
+// }
 
-func getTokenSymbol(ctx context.Context, rdbCache *cache.Cache, n network.Network, token common.Address) (string, error) {
-	if utils.IsZeroAddress(token) {
-		return n.Symbol, nil
-	}
-	var symbol string
-	if err := rdbCache.Get(ctx, fmt.Sprintf("symbol:%s:%s", n.Name, token.String()), &symbol); err == nil {
-		return symbol, nil
-	}
-	rpcClient, err := ethclient.Dial(n.URL)
-	if err != nil {
-		return "", err
-	}
-	contract, err := erc20.NewErc20(token, rpcClient)
-	if err != nil {
-		return "", err
-	}
-	symbol, err = contract.Symbol(&bind.CallOpts{Context: ctx})
-	if err == nil {
-		_ = rdbCache.Set(&cache.Item{
-			Ctx:   ctx,
-			Key:   fmt.Sprintf("symbol:%s:%s", n.Name, token.String()),
-			Value: symbol,
-			TTL:   time.Hour,
-		})
-	}
-	return symbol, err
-}
+// func getTokenSymbol(ctx context.Context, rdbCache *cache.Cache, n network.Network, token common.Address) (string, error) {
+// 	if utils.IsZeroAddress(token) {
+// 		return n.Symbol, nil
+// 	}
+// 	var symbol string
+// 	if err := rdbCache.Get(ctx, fmt.Sprintf("symbol:%s:%s", n.Name, token.String()), &symbol); err == nil {
+// 		return symbol, nil
+// 	}
+// 	rpcClient, err := ethclient.Dial(n.URL)
+// 	if err != nil {
+// 		return "", err
+// 	}
+// 	contract, err := erc20.NewErc20(token, rpcClient)
+// 	if err != nil {
+// 		return "", err
+// 	}
+// 	symbol, err = contract.Symbol(&bind.CallOpts{Context: ctx})
+// 	if err == nil {
+// 		_ = rdbCache.Set(&cache.Item{
+// 			Ctx:   ctx,
+// 			Key:   fmt.Sprintf("symbol:%s:%s", n.Name, token.String()),
+// 			Value: symbol,
+// 			TTL:   time.Hour,
+// 		})
+// 	}
+// 	return symbol, err
+// }
 
-func getTokenDecimals(ctx context.Context, rdbCache *cache.Cache, n network.Network, token common.Address) (uint8, error) {
-	if utils.IsZeroAddress(token) {
-		return 18, nil
-	}
-	var decimals uint8
-	if err := rdbCache.Get(ctx, fmt.Sprintf("decimals:%s:%s", n.Name, token.String()), &decimals); err == nil {
-		return decimals, nil
-	}
-	rpcClient, err := ethclient.Dial(n.URL)
-	if err != nil {
-		return 0, err
-	}
-	contract, err := erc20.NewErc20(token, rpcClient)
-	if err != nil {
-		return 0, err
-	}
-	decimals, err = contract.Decimals(&bind.CallOpts{Context: ctx})
-	if err == nil {
-		_ = rdbCache.Set(&cache.Item{
-			Ctx:   ctx,
-			Key:   fmt.Sprintf("decimals:%s:%s", n.Name, token.String()),
-			Value: decimals,
-			TTL:   time.Hour,
-		})
-	}
-	return decimals, err
-}
+// func getTokenDecimals(ctx context.Context, rdbCache *cache.Cache, n network.Network, token common.Address) (uint8, error) {
+// 	if utils.IsZeroAddress(token) {
+// 		return 18, nil
+// 	}
+// 	var decimals uint8
+// 	if err := rdbCache.Get(ctx, fmt.Sprintf("decimals:%s:%s", n.Name, token.String()), &decimals); err == nil {
+// 		return decimals, nil
+// 	}
+// 	rpcClient, err := ethclient.Dial(n.URL)
+// 	if err != nil {
+// 		return 0, err
+// 	}
+// 	contract, err := erc20.NewErc20(token, rpcClient)
+// 	if err != nil {
+// 		return 0, err
+// 	}
+// 	decimals, err = contract.Decimals(&bind.CallOpts{Context: ctx})
+// 	if err == nil {
+// 		_ = rdbCache.Set(&cache.Item{
+// 			Ctx:   ctx,
+// 			Key:   fmt.Sprintf("decimals:%s:%s", n.Name, token.String()),
+// 			Value: decimals,
+// 			TTL:   time.Hour,
+// 		})
+// 	}
+// 	return decimals, err
+// }

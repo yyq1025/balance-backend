@@ -13,8 +13,8 @@ CREATE TABLE "wallets" (
   "id" SERIAL PRIMARY KEY,
   "user_id" VARCHAR(128) NOT NULL,
   "address" BYTEA NOT NULL,
-  "network" VARCHAR(64) NOT NULL,
+  "network_name" VARCHAR(64) NOT NULL,
   "token" BYTEA NOT NULL,
-  UNIQUE ("user_id", "address", "network", "token"),
-  FOREIGN KEY ("network") REFERENCES networks("name") ON DELETE CASCADE
+  UNIQUE ("user_id", "address", "network_name", "token"),
+  FOREIGN KEY ("network_name") REFERENCES networks("name") ON DELETE CASCADE
 );

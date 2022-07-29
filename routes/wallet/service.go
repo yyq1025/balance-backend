@@ -12,8 +12,8 @@ import (
 	"gorm.io/gorm"
 )
 
-func AddWallet(ctx context.Context, rdbCache *cache.Cache, db *gorm.DB, wallet *Wallet) utils.Response {
-	balance, err := getBalance(ctx, rdbCache, db, *wallet)
+func addWallet(ctx context.Context, rdbCache *cache.Cache, db *gorm.DB, wallet *Wallet) utils.Response {
+	balance, err := (*wallet).getBalance(ctx, rdbCache)
 	if err != nil {
 		return utils.AddWalletError
 	}
@@ -32,7 +32,7 @@ func DeleteBalance(ctx context.Context, rdbCache *cache.Cache, db *gorm.DB, cond
 	return utils.Response{Code: http.StatusOK, Data: map[string]any{"id": condition.ID}}
 }
 
-func GetBalancesWithPagination(ctx context.Context, rdbCache *cache.Cache, db *gorm.DB, condition *Wallet, p *Pagination) utils.Response {
+func getBalancesWithPagination(ctx context.Context, rdbCache *cache.Cache, db *gorm.DB, condition *Wallet, p *Pagination) utils.Response {
 	wallets := make([]Wallet, 0)
 	if err := queryWalletsWithPagination(ctx, rdbCache, db, condition, &wallets, p); err != nil {
 		log.Print(err)
@@ -56,7 +56,7 @@ func GetBalancesWithPagination(ctx context.Context, rdbCache *cache.Cache, db *g
 
 		go func(w Wallet) {
 			defer wg.Done()
-			balance, err := getBalance(ctx, rdbCache, db, w)
+			balance, err := w.getBalance(ctx, rdbCache)
 			if err != nil {
 				log.Print(err)
 			}
@@ -77,13 +77,13 @@ func GetBalancesWithPagination(ctx context.Context, rdbCache *cache.Cache, db *g
 	return utils.Response{Code: http.StatusOK, Data: map[string]any{"balances": results, "next": p}}
 }
 
-func GetBalance(ctx context.Context, rdbCache *cache.Cache, db *gorm.DB, condition *Wallet) utils.Response {
+func getBalance(ctx context.Context, rdbCache *cache.Cache, db *gorm.DB, condition *Wallet) utils.Response {
 	var wallet Wallet
 	if err := queryWallet(ctx, rdbCache, db, condition, &wallet); err != nil {
 		log.Print(err)
 		return utils.FindWalletError
 	}
-	balance, err := getBalance(ctx, rdbCache, db, wallet)
+	balance, err := wallet.getBalance(ctx, rdbCache)
 	if err != nil {
 		log.Print(err)
 		return utils.GetBalanceError
