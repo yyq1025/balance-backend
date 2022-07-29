@@ -16,6 +16,7 @@ import (
 func TestQueryNetworks(t *testing.T) {
 	db := utils.GetDB()
 	rdb := utils.GetRedis()
+	rdb.FlushDB(context.Background())
 	rdbCache := cache.New(&cache.Options{
 		Redis:        rdb,
 		StatsEnabled: true})
@@ -46,6 +47,7 @@ func TestQueryNetworksNoCache(t *testing.T) {
 
 func TestQueryNetworksNoDB(t *testing.T) {
 	rdb := utils.GetRedis()
+	rdb.FlushDB(context.Background())
 	rdbCache := cache.New(&cache.Options{
 		Redis:        rdb,
 		StatsEnabled: true})
@@ -60,6 +62,7 @@ func TestQueryNetworksNoDB(t *testing.T) {
 func TestQueryNetworksTimeout(t *testing.T) {
 	db := utils.GetDB()
 	rdb := utils.GetRedis()
+	rdb.FlushDB(context.Background())
 	rdbCache := cache.New(&cache.Options{
 		Redis:        rdb,
 		StatsEnabled: true})
