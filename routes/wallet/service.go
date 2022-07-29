@@ -24,7 +24,7 @@ func addWallet(ctx context.Context, rdbCache *cache.Cache, db *gorm.DB, wallet *
 	return utils.Response{Code: http.StatusOK, Data: map[string]any{"balance": balance}}
 }
 
-func DeleteBalance(ctx context.Context, rdbCache *cache.Cache, db *gorm.DB, condition *Wallet) utils.Response {
+func deleteBalance(ctx context.Context, rdbCache *cache.Cache, db *gorm.DB, condition *Wallet) utils.Response {
 	if err := deleteWallet(ctx, rdbCache, db, condition); err != nil {
 		log.Print(err)
 		return utils.DeleteAddressesError

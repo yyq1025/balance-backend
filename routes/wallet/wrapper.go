@@ -58,7 +58,7 @@ func DeleteWalletHandler(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3500*time.Millisecond)
 	defer cancel()
 
-	res := DeleteBalance(ctx, rdbCache, db, &Wallet{ID: id, UserID: userID})
+	res := deleteBalance(ctx, rdbCache, db, &Wallet{ID: id, UserID: userID})
 
 	c.JSON(res.Code, res.Data)
 }
