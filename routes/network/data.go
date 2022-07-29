@@ -2,28 +2,23 @@ package network
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/go-redis/cache/v8"
 	"gorm.io/gorm"
 )
 
-func queryNetworks(ctx context.Context, rdbCache *cache.Cache, db *gorm.DB, condition *Network, networks *[]Network) error {
-	var cachedNetwork Network
-	if err := rdbCache.Get(ctx, fmt.Sprintf("network:%s", condition.Name), &cachedNetwork); err == nil {
-		*networks = []Network{cachedNetwork}
+func queryAllNetworks(ctx context.Context, rdbCache *cache.Cache, db *gorm.DB, networks *[]Network) error {
+	if err := rdbCache.Get(ctx, "networks", networks); err == nil {
 		return nil
 	}
-	err := db.WithContext(ctx).Where(condition).Order("name asc").Find(networks).Error
-	for _, network := range *networks {
-		_ = rdbCache.Set(&cache.Item{
-			Ctx:   ctx,
-			Key:   fmt.Sprintf("network:%s", network.Name),
-			Value: network,
-			TTL:   time.Hour,
-			SetNX: true,
-		})
-	}
+	err := db.WithContext(ctx).Order("name asc").Find(networks).Error
+	_ = rdbCache.Set(&cache.Item{
+		Ctx:   ctx,
+		Key:   "networks",
+		Value: *networks,
+		TTL:   time.Hour,
+		SetNX: true,
+	})
 	return err
 }

@@ -28,6 +28,33 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres
+        # env:
+        #   POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+      redis:
+        image: redis
+        # env:
+        #   REDIS_USER: redis
+        #   REDIS_PASSWORD: redis
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
+
     steps:
       - uses: actions/checkout@v3
         with:
@@ -35,7 +62,18 @@ jobs:
       - uses: actions/setup-go@v3
         with:
           go-version: 1.18
+      - name: Run SQL scripts
+        run: |
+          psql -U postgres -d postgres -f ./sql/schema.sql
+          psql -U postgres -d postgres -f ./sql/data.sql
+
       - name: Run coverage
+        env:
+          DB_HOST: postgres
+          DB_PORT: 5432
+          DB_USER: postgres
+          DB_NAME: postgres
+          REDIS_HOST: redis
         run: go test -race -coverprofile=coverage.txt -covermode=atomic ./...
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3

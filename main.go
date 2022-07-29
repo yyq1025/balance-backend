@@ -21,7 +21,7 @@ func main() {
 	limiter := redis_rate.NewLimiter(rdb)
 	rdbCache := cache.New(&cache.Options{
 		Redis:      rdb,
-		LocalCache: cache.NewTinyLFU(1000, time.Minute),
+		LocalCache: cache.NewTinyLFU(10000, time.Minute),
 	})
 	jwtValidator := utils.GetValidator()
 	router := gin.Default()
@@ -29,7 +29,7 @@ func main() {
 	networkGroup := router.Group("/networks")
 	networkGroup.Use(dataMiddleware(rdbCache, db))
 	{
-		networkGroup.GET("", network.GetNetworksHandler)
+		networkGroup.GET("", network.GetAllNetworksHandler)
 	}
 
 	walletGroup := router.Group("/wallet")

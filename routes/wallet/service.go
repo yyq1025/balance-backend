@@ -39,15 +39,6 @@ func getBalancesWithPagination(ctx context.Context, rdbCache *cache.Cache, db *g
 		return utils.FindWalletError
 	}
 
-	if len(wallets) > 0 && p.IDLte == 0 {
-		p.IDLte = wallets[0].ID
-	}
-	if len(wallets) == p.PageSize {
-		p.Page++
-	} else {
-		p.Page = -1
-	}
-
 	var wg sync.WaitGroup
 	ch := make(chan Balance)
 

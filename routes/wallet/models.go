@@ -95,21 +95,20 @@ func (w *Wallet) getTokenDecimals(ctx context.Context, rdbCache *cache.Cache) (u
 	return decimals, err
 }
 
-func (w *Wallet) getBalance(ctx context.Context, rdbCache *cache.Cache) (b Balance, err error) {
+func (w *Wallet) getBalance(ctx context.Context, rdbCache *cache.Cache) (Balance, error) {
 	balance, err := w.getTokenBalance(ctx)
 	if err != nil {
-		return
+		return Balance{w, "", -1}, err
 	}
 	symbol, err := w.getTokenSymbol(ctx, rdbCache)
 	if err != nil {
-		return
+		return Balance{w, "", -1}, err
 	}
 	decimals, err := w.getTokenDecimals(ctx, rdbCache)
 	if err != nil {
-		return
+		return Balance{w, "", -1}, err
 	}
-	b = Balance{w, symbol, utils.ToDecimal(balance, int(decimals)).InexactFloat64()}
-	return
+	return Balance{w, symbol, utils.ToDecimal(balance, int(decimals)).InexactFloat64()}, nil
 }
 
 type Balance struct {

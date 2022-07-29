@@ -2,36 +2,42 @@ package network
 
 import (
 	"context"
-	"fmt"
 	"testing"
+	"yyq1025/balance-backend/utils"
 
 	_ "github.com/DATA-DOG/go-sqlmock"
 	"github.com/go-redis/cache/v8"
 	_ "github.com/go-redis/redis/v8"
-	"github.com/go-redis/redismock/v8"
 	"github.com/stretchr/testify/assert"
 	_ "gorm.io/driver/postgres"
 	_ "gorm.io/gorm"
 )
 
 func TestQueryNetworksCached(t *testing.T) {
-	expected := []Network{{Name: "Ethereum"}}
-	rdb, rdbMock := redismock.NewClientMock()
+	// expected := []Network{{Name: "Ethereum"}}
+	db := utils.GetDB()
+	rdb := utils.GetRedis()
+	// rdb, rdbMock := redismock.NewClientMock()
 	rdbCache := cache.New(&cache.Options{
-		Redis: rdb})
+		Redis:        rdb,
+		StatsEnabled: true})
 
-	condition := &Network{Name: "Ethereum"}
+	// condition := &Network{Name: "Ethereum"}
 	actual := make([]Network, 0)
 
-	val, _ := rdbCache.Marshal(Network{Name: "Ethereum"})
-	rdbMock.ExpectGet(fmt.Sprintf("network:%s", condition.Name)).SetVal(string(val))
+	// val, _ := rdbCache.Marshal(Network{Name: "Ethereum"})
+	// rdbMock.ExpectGet(fmt.Sprintf("network:%s", condition.Name)).SetVal(string(val))
 
-	if err := queryNetworks(context.Background(), rdbCache, nil, condition, &actual); err != nil {
+	if err := queryAllNetworks(context.Background(), rdbCache, db, &actual); err != nil {
 		t.Error(err)
 	}
 
-	if err := rdbMock.ExpectationsWereMet(); err != nil {
+	if err := queryAllNetworks(context.Background(), rdbCache, db, &actual); err != nil {
 		t.Error(err)
 	}
-	assert.Equal(t, expected, actual)
+
+	// if err := rdbMock.ExpectationsWereMet(); err != nil {
+	// 	t.Error(err)
+	// }
+	assert.Equal(t, rdbCache.Stats().Hits, rdbCache.Stats().Misses)
 }

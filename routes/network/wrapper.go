@@ -9,7 +9,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func GetNetworksHandler(c *gin.Context) {
+func GetAllNetworksHandler(c *gin.Context) {
 	rdbCache := c.MustGet("rdbCache").(*cache.Cache)
 
 	db := c.MustGet("db").(*gorm.DB)
@@ -17,7 +17,7 @@ func GetNetworksHandler(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3500*time.Millisecond)
 	defer cancel()
 
-	res := getNetWorks(ctx, rdbCache, db, &Network{})
+	res := getAllNetWorks(ctx, rdbCache, db)
 
 	c.JSON(res.Code, res.Data)
 }

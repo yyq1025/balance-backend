@@ -94,7 +94,7 @@ func GetBalancesHandler(c *gin.Context) {
 
 	p := Pagination{IDLte: idLte, Page: page, PageSize: pageSize}
 
-	ctx, cancel := context.WithTimeout(context.Background(), 3500*time.Millisecond)
+	ctx, cancel := context.WithTimeout(context.Background(), 1000*time.Millisecond)
 	defer cancel()
 
 	res := getBalancesWithPagination(ctx, rdbCache, db, &Wallet{UserID: userID}, &p)

@@ -36,6 +36,14 @@ func queryWalletsWithPagination(ctx context.Context, rdbCache *cache.Cache, db *
 			SetNX: true,
 		})
 	}
+	if len(*wallets) > 0 && p.IDLte == 0 {
+		p.IDLte = (*wallets)[0].ID
+	}
+	if len(*wallets) == p.PageSize {
+		p.Page++
+	} else {
+		p.Page = -1
+	}
 	return err
 }
 

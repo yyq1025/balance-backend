@@ -11,10 +11,10 @@ import (
 	"gorm.io/gorm"
 )
 
-func getNetWorks(ctx context.Context, rdbCache *cache.Cache, db *gorm.DB, condition *Network) utils.Response {
+func getAllNetWorks(ctx context.Context, rdbCache *cache.Cache, db *gorm.DB) utils.Response {
 	networks := make([]Network, 0)
 
-	if err := queryNetworks(ctx, rdbCache, db, condition, &networks); err != nil {
+	if err := queryAllNetworks(ctx, rdbCache, db, &networks); err != nil {
 		log.Print(err)
 		return utils.GetNetworkError
 	}
