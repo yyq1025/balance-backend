@@ -26,6 +26,6 @@ func TestQueryNetworksCached(t *testing.T) {
 	if err := queryAllNetworks(context.Background(), rdbCache, db, &actual); err != nil {
 		t.Error(err)
 	}
-	assert.Equal(t, rdbCache.Stats().Hits, 1)
+	assert.Equal(t, rdbCache.Stats().Hits, uint64(1))
 	assert.Equal(t, rdbCache.Stats().Hits, rdbCache.Stats().Misses)
 }
