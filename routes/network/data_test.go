@@ -8,7 +8,6 @@ import (
 
 	"github.com/go-redis/cache/v8"
 	"github.com/stretchr/testify/assert"
-	"gorm.io/gorm"
 )
 
 func TestQueryNetworks(t *testing.T) {
@@ -40,20 +39,6 @@ func TestQueryNetworksNoCache(t *testing.T) {
 
 	if err := queryAllNetworks(context.Background(), rdbCache, db, &actual); err != nil {
 		t.Error(err)
-	}
-}
-
-func TestQueryNetworksNoDB(t *testing.T) {
-	rdb := utils.GetRedis()
-	rdb.FlushDB(context.Background())
-	rdbCache := cache.New(&cache.Options{
-		Redis:        rdb,
-		StatsEnabled: true})
-
-	actual := make([]Network, 0)
-
-	if err := queryAllNetworks(context.Background(), rdbCache, &gorm.DB{}, &actual); err == nil {
-		t.Error("expected error")
 	}
 }
 
