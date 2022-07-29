@@ -69,12 +69,12 @@ jobs:
 
       - name: Run coverage
         env:
-          DB_HOST: postgres
+          DB_HOST: localhost
           DB_PORT: 5432
           DB_USER: postgres
           DB_PASSWORD: postgres
           DB_NAME: postgres
-          REDIS_HOST: redis
+          REDIS_HOST: localhost:6379
           REDIS_PASSWORD: redis
         run: go test -race -coverprofile=coverage.txt -covermode=atomic ./...
       - name: Upload coverage to Codecov
