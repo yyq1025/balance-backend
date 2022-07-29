@@ -34,6 +34,33 @@ func TestQueryNetworks(t *testing.T) {
 	assert.Equal(t, rdbCache.Stats().Hits, rdbCache.Stats().Misses)
 }
 
+func TestQueryNetworksNoCache(t *testing.T) {
+	db := utils.GetDB()
+
+	actual := make([]Network, 0)
+
+	if err := queryAllNetworks(context.Background(), nil, db, &actual); err != nil {
+		t.Error(err)
+	}
+
+	if err := queryAllNetworks(context.Background(), nil, db, &actual); err != nil {
+		t.Error(err)
+	}
+}
+
+func TestQueryNetworksNoDB(t *testing.T) {
+	rdb := utils.GetRedis()
+	rdbCache := cache.New(&cache.Options{
+		Redis:        rdb,
+		StatsEnabled: true})
+
+	actual := make([]Network, 0)
+
+	if err := queryAllNetworks(context.Background(), rdbCache, nil, &actual); err == nil {
+		t.Error("expected error")
+	}
+}
+
 func TestQueryNetworksTimeout(t *testing.T) {
 	db := utils.GetDB()
 	rdb := utils.GetRedis()
