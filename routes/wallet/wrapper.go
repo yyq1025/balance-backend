@@ -23,40 +23,12 @@ func CreateWalletHandler(c *gin.Context) {
 	}
 
 	wallet := Wallet{UserID: userID}
-
 	if err := c.ShouldBindJSON(&wallet); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
-
-	// address := data["address"].(string)
-	// if !utils.IsValidAddress(address) {
-	// 	c.JSON(http.StatusBadRequest, gin.H{"message": "invalid address"})
-	// 	return
-	// }
-
-	// // networkName := data["networkName"].(string)
-
-	// token := data["token"].(string)
-	// if token != "" && !utils.IsValidAddress(token) {
-	// 	c.JSON(http.StatusBadRequest, gin.H{"message": "invalid token"})
-	// 	return
-	// }
-
-	// network := data["network"].(network.Network)
-	// if network.URL == "" {
-	// 	c.JSON(http.StatusBadRequest, gin.H{"message": "invalid network"})
-	// 	return
-	// }
-
-	// wallet := Wallet{
-	// 	UserID:      userID,
-	// 	Address:     common.HexToAddress(address),
-	// 	NetworkName: network.Name,
-	// 	Token:       common.HexToAddress(token),
-	// 	Network:     network,
-	// }
 	wallet.NetworkName = wallet.Network.Name
+
 	ctx, cancel := context.WithTimeout(context.Background(), 3500*time.Millisecond)
 	defer cancel()
 
