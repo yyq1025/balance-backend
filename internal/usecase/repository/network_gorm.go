@@ -15,6 +15,7 @@ func NewGormNetworkRepository(db *gorm.DB) entity.NetworkRepository {
 	return &gormNetworkRepository{db}
 }
 
-func (g *gormNetworkRepository) GetAll(ctx context.Context, networks *[]entity.Network) error {
+func (g *gormNetworkRepository) GetAll(ctx context.Context, networks *[]entity.Network) (err error) {
 	return g.db.WithContext(ctx).Find(networks).Error
+
 }

@@ -22,9 +22,6 @@ type Balance struct {
 }
 
 type WalletUseCase interface {
-	// GetSymbol(ctx context.Context, wallet *Wallet) (string, error)
-	// GetDecimals(ctx context.Context, wallet *Wallet) (uint8, error)
-	// GetBalance(ctx context.Context, wallet *Wallet) (*big.Int, error)
 	AddOne(context.Context, *Wallet) (Balance, error)
 	GetOne(context.Context, *Wallet) (Balance, error)
 	GetManyWithPagination(context.Context, *Wallet, *Pagination) ([]Balance, *Pagination, error)

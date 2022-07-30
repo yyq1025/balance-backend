@@ -47,9 +47,6 @@ func (w *WalletHandler) GetManyWithPagination(c *gin.Context) {
 
 	p := &entity.Pagination{IDLte: idLte, Page: page, PageSize: pageSize}
 
-	// ctx, cancel := context.WithTimeout(context.Background(), 3500*time.Millisecond)
-	// defer cancel()
-
 	balances, p, err := w.WalletService.GetManyWithPagination(c.Request.Context(), &entity.Wallet{UserID: userID}, p)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, ErrorResponse{Message: err.Error()})
@@ -70,9 +67,6 @@ func (w *WalletHandler) GetOne(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "invalid id"})
 		return
 	}
-
-	// ctx, cancel := context.WithTimeout(context.Background(), 3500*time.Millisecond)
-	// defer cancel()
 
 	balance, err := w.WalletService.GetOne(c.Request.Context(), &entity.Wallet{UserID: userID, ID: id})
 	if err != nil {
@@ -96,9 +90,6 @@ func (w *WalletHandler) AddOne(c *gin.Context) {
 	}
 	wallet.NetworkName = wallet.Network.Name
 
-	// ctx, cancel := context.WithTimeout(context.Background(), 3500*time.Millisecond)
-	// defer cancel()
-
 	balance, err := w.WalletService.AddOne(c.Request.Context(), &wallet)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, ErrorResponse{Message: err.Error()})
@@ -119,9 +110,6 @@ func (w *WalletHandler) DeleteOne(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "invalid id"})
 		return
 	}
-
-	// ctx, cancel := context.WithTimeout(context.Background(), 3500*time.Millisecond)
-	// defer cancel()
 
 	err = w.WalletService.DeleteOne(c.Request.Context(), &entity.Wallet{UserID: userID, ID: id})
 	if err != nil {

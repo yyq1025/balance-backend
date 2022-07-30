@@ -27,7 +27,7 @@ func NewWalletUseCase(w entity.WalletRepository, rdb *redis.Client) entity.Walle
 		walletRepo: w,
 		cache: cache.New(&cache.Options{
 			Redis:      rdb,
-			LocalCache: cache.NewTinyLFU(1000, time.Minute),
+			LocalCache: cache.NewTinyLFU(10000, time.Minute),
 		})}
 }
 
