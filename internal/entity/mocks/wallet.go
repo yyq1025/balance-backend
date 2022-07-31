@@ -36,38 +36,38 @@ func (m *MockWalletUseCase) EXPECT() *MockWalletUseCaseMockRecorder {
 }
 
 // AddOne mocks base method.
-func (m *MockWalletUseCase) AddOne(arg0 context.Context, arg1 *entity.Wallet) (entity.Balance, error) {
+func (m *MockWalletUseCase) AddOne(ctx context.Context, wallet *entity.Wallet) (entity.Balance, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "AddOne", arg0, arg1)
+	ret := m.ctrl.Call(m, "AddOne", ctx, wallet)
 	ret0, _ := ret[0].(entity.Balance)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // AddOne indicates an expected call of AddOne.
-func (mr *MockWalletUseCaseMockRecorder) AddOne(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockWalletUseCaseMockRecorder) AddOne(ctx, wallet interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddOne", reflect.TypeOf((*MockWalletUseCase)(nil).AddOne), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddOne", reflect.TypeOf((*MockWalletUseCase)(nil).AddOne), ctx, wallet)
 }
 
 // DeleteOne mocks base method.
-func (m *MockWalletUseCase) DeleteOne(arg0 context.Context, arg1 *entity.Wallet) error {
+func (m *MockWalletUseCase) DeleteOne(ctx context.Context, condition entity.Wallet) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "DeleteOne", arg0, arg1)
+	ret := m.ctrl.Call(m, "DeleteOne", ctx, condition)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // DeleteOne indicates an expected call of DeleteOne.
-func (mr *MockWalletUseCaseMockRecorder) DeleteOne(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockWalletUseCaseMockRecorder) DeleteOne(ctx, condition interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteOne", reflect.TypeOf((*MockWalletUseCase)(nil).DeleteOne), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteOne", reflect.TypeOf((*MockWalletUseCase)(nil).DeleteOne), ctx, condition)
 }
 
 // GetManyWithPagination mocks base method.
-func (m *MockWalletUseCase) GetManyWithPagination(arg0 context.Context, arg1 *entity.Wallet, arg2 *entity.Pagination) ([]entity.Balance, *entity.Pagination, error) {
+func (m *MockWalletUseCase) GetManyWithPagination(ctx context.Context, condition entity.Wallet, pagination *entity.Pagination) ([]entity.Balance, *entity.Pagination, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetManyWithPagination", arg0, arg1, arg2)
+	ret := m.ctrl.Call(m, "GetManyWithPagination", ctx, condition, pagination)
 	ret0, _ := ret[0].([]entity.Balance)
 	ret1, _ := ret[1].(*entity.Pagination)
 	ret2, _ := ret[2].(error)
@@ -75,24 +75,24 @@ func (m *MockWalletUseCase) GetManyWithPagination(arg0 context.Context, arg1 *en
 }
 
 // GetManyWithPagination indicates an expected call of GetManyWithPagination.
-func (mr *MockWalletUseCaseMockRecorder) GetManyWithPagination(arg0, arg1, arg2 interface{}) *gomock.Call {
+func (mr *MockWalletUseCaseMockRecorder) GetManyWithPagination(ctx, condition, pagination interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetManyWithPagination", reflect.TypeOf((*MockWalletUseCase)(nil).GetManyWithPagination), arg0, arg1, arg2)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetManyWithPagination", reflect.TypeOf((*MockWalletUseCase)(nil).GetManyWithPagination), ctx, condition, pagination)
 }
 
 // GetOne mocks base method.
-func (m *MockWalletUseCase) GetOne(arg0 context.Context, arg1 *entity.Wallet) (entity.Balance, error) {
+func (m *MockWalletUseCase) GetOne(ctx context.Context, condition entity.Wallet) (entity.Balance, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetOne", arg0, arg1)
+	ret := m.ctrl.Call(m, "GetOne", ctx, condition)
 	ret0, _ := ret[0].(entity.Balance)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetOne indicates an expected call of GetOne.
-func (mr *MockWalletUseCaseMockRecorder) GetOne(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockWalletUseCaseMockRecorder) GetOne(ctx, condition interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOne", reflect.TypeOf((*MockWalletUseCase)(nil).GetOne), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOne", reflect.TypeOf((*MockWalletUseCase)(nil).GetOne), ctx, condition)
 }
 
 // MockWalletRepository is a mock of WalletRepository interface.
@@ -133,7 +133,7 @@ func (mr *MockWalletRepositoryMockRecorder) AddOne(ctx, wallet interface{}) *gom
 }
 
 // DeleteOne mocks base method.
-func (m *MockWalletRepository) DeleteOne(ctx context.Context, condition *entity.Wallet) error {
+func (m *MockWalletRepository) DeleteOne(ctx context.Context, condition entity.Wallet) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "DeleteOne", ctx, condition)
 	ret0, _ := ret[0].(error)
@@ -147,21 +147,21 @@ func (mr *MockWalletRepositoryMockRecorder) DeleteOne(ctx, condition interface{}
 }
 
 // GetManyWithPagination mocks base method.
-func (m *MockWalletRepository) GetManyWithPagination(ctx context.Context, condition *entity.Wallet, wallet *[]entity.Wallet, p *entity.Pagination) error {
+func (m *MockWalletRepository) GetManyWithPagination(ctx context.Context, condition entity.Wallet, wallets *[]entity.Wallet, pagination *entity.Pagination) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetManyWithPagination", ctx, condition, wallet, p)
+	ret := m.ctrl.Call(m, "GetManyWithPagination", ctx, condition, wallets, pagination)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // GetManyWithPagination indicates an expected call of GetManyWithPagination.
-func (mr *MockWalletRepositoryMockRecorder) GetManyWithPagination(ctx, condition, wallet, p interface{}) *gomock.Call {
+func (mr *MockWalletRepositoryMockRecorder) GetManyWithPagination(ctx, condition, wallets, pagination interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetManyWithPagination", reflect.TypeOf((*MockWalletRepository)(nil).GetManyWithPagination), ctx, condition, wallet, p)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetManyWithPagination", reflect.TypeOf((*MockWalletRepository)(nil).GetManyWithPagination), ctx, condition, wallets, pagination)
 }
 
 // GetOne mocks base method.
-func (m *MockWalletRepository) GetOne(ctx context.Context, condition, wallet *entity.Wallet) error {
+func (m *MockWalletRepository) GetOne(ctx context.Context, condition entity.Wallet, wallet *entity.Wallet) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetOne", ctx, condition, wallet)
 	ret0, _ := ret[0].(error)
@@ -172,4 +172,57 @@ func (m *MockWalletRepository) GetOne(ctx context.Context, condition, wallet *en
 func (mr *MockWalletRepositoryMockRecorder) GetOne(ctx, condition, wallet interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOne", reflect.TypeOf((*MockWalletRepository)(nil).GetOne), ctx, condition, wallet)
+}
+
+// MockWalletEthAPI is a mock of WalletEthAPI interface.
+type MockWalletEthAPI struct {
+	ctrl     *gomock.Controller
+	recorder *MockWalletEthAPIMockRecorder
+}
+
+// MockWalletEthAPIMockRecorder is the mock recorder for MockWalletEthAPI.
+type MockWalletEthAPIMockRecorder struct {
+	mock *MockWalletEthAPI
+}
+
+// NewMockWalletEthAPI creates a new mock instance.
+func NewMockWalletEthAPI(ctrl *gomock.Controller) *MockWalletEthAPI {
+	mock := &MockWalletEthAPI{ctrl: ctrl}
+	mock.recorder = &MockWalletEthAPIMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockWalletEthAPI) EXPECT() *MockWalletEthAPIMockRecorder {
+	return m.recorder
+}
+
+// GetBalance mocks base method.
+func (m *MockWalletEthAPI) GetBalance(ctx context.Context, condition entity.Wallet) (float64, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetBalance", ctx, condition)
+	ret0, _ := ret[0].(float64)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetBalance indicates an expected call of GetBalance.
+func (mr *MockWalletEthAPIMockRecorder) GetBalance(ctx, condition interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBalance", reflect.TypeOf((*MockWalletEthAPI)(nil).GetBalance), ctx, condition)
+}
+
+// GetSymbol mocks base method.
+func (m *MockWalletEthAPI) GetSymbol(ctx context.Context, condition entity.Wallet) (string, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetSymbol", ctx, condition)
+	ret0, _ := ret[0].(string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetSymbol indicates an expected call of GetSymbol.
+func (mr *MockWalletEthAPIMockRecorder) GetSymbol(ctx, condition interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetSymbol", reflect.TypeOf((*MockWalletEthAPI)(nil).GetSymbol), ctx, condition)
 }

@@ -22,15 +22,20 @@ type Balance struct {
 }
 
 type WalletUseCase interface {
-	AddOne(context.Context, *Wallet) (Balance, error)
-	GetOne(context.Context, *Wallet) (Balance, error)
-	GetManyWithPagination(context.Context, *Wallet, *Pagination) ([]Balance, *Pagination, error)
-	DeleteOne(context.Context, *Wallet) error
+	AddOne(ctx context.Context, wallet *Wallet) (Balance, error)
+	GetOne(ctx context.Context, condition Wallet) (Balance, error)
+	GetManyWithPagination(ctx context.Context, condition Wallet, pagination *Pagination) ([]Balance, *Pagination, error)
+	DeleteOne(ctx context.Context, condition Wallet) error
 }
 
 type WalletRepository interface {
 	AddOne(ctx context.Context, wallet *Wallet) error
-	GetOne(ctx context.Context, condition, wallet *Wallet) error
-	GetManyWithPagination(ctx context.Context, condition *Wallet, wallet *[]Wallet, p *Pagination) error
-	DeleteOne(ctx context.Context, condition *Wallet) error
+	GetOne(ctx context.Context, condition Wallet, wallet *Wallet) error
+	GetManyWithPagination(ctx context.Context, condition Wallet, wallets *[]Wallet, pagination *Pagination) error
+	DeleteOne(ctx context.Context, condition Wallet) error
+}
+
+type WalletEthAPI interface {
+	GetSymbol(ctx context.Context, condition Wallet) (string, error)
+	GetBalance(ctx context.Context, condition Wallet) (float64, error)
 }

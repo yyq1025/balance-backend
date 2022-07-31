@@ -1,145 +1,101 @@
-package usecase
+package usecase_test
 
 import (
 	"context"
+	"sync"
 	"testing"
-	"time"
 	"yyq1025/balance-backend/internal/entity"
 	"yyq1025/balance-backend/internal/entity/mocks"
+	"yyq1025/balance-backend/internal/usecase"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/go-redis/redismock/v8"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
 )
 
-func wallet(t *testing.T) (*entity.WalletUseCase, *mocks.MockWalletRepository) {
+func wallet(t *testing.T) (entity.WalletUseCase, *mocks.MockWalletRepository, *mocks.MockWalletEthAPI) {
 	t.Helper()
 
 	mockCtl := gomock.NewController(t)
 	defer mockCtl.Finish()
 
-	rdb, _ := redismock.NewClientMock()
-	mockWalletRepo := mocks.NewMockWalletRepository(mockCtl)
-	mockWalletUseCase := NewWalletUseCase(mockWalletRepo, rdb)
+	repo := mocks.NewMockWalletRepository(mockCtl)
+	ethAPI := mocks.NewMockWalletEthAPI(mockCtl)
+	mockWalletUseCase := usecase.NewWalletUseCase(repo, ethAPI)
 
-	return &mockWalletUseCase, mockWalletRepo
+	return mockWalletUseCase, repo, ethAPI
 }
 
 func TestAddOne(t *testing.T) {
 	t.Parallel()
 
-	wallet, mockWalletRepo := wallet(t)
+	wallet, repo, ethAPI := wallet(t)
 
-	tests := []struct {
-		name     string
-		ctx      context.Context
-		wallet   *entity.Wallet
-		mock     func()
-		validate func(entity.Balance) bool
-		err      error
-	}{
+	var mu sync.Mutex
+
+	tests := []test{
 		{
-			name: "Ethereum zero address",
-			ctx:  context.Background(),
-			wallet: &entity.Wallet{
-				Network: entity.Network{
-					URL:    "https://eth.public-rpc.com",
-					Symbol: "ETH",
-				}},
+			name: "Success",
 			mock: func() {
-				mockWalletRepo.EXPECT().AddOne(gomock.AssignableToTypeOf(ctxType), gomock.AssignableToTypeOf(&entity.Wallet{})).DoAndReturn(
+				ethAPI.EXPECT().GetSymbol(gomock.AssignableToTypeOf(ctxType), gomock.AssignableToTypeOf(entity.Wallet{})).Return("ETH", nil)
+				ethAPI.EXPECT().GetBalance(gomock.AssignableToTypeOf(ctxType), gomock.AssignableToTypeOf(entity.Wallet{})).Return(1.1, nil)
+				repo.EXPECT().AddOne(gomock.AssignableToTypeOf(ctxType), gomock.AssignableToTypeOf(&entity.Wallet{})).DoAndReturn(
 					func(ctx context.Context, wallet *entity.Wallet) error {
 						wallet.ID = 1
 						return nil
 					},
 				)
 			},
-			validate: func(balance entity.Balance) bool {
-				return balance.ID == 1 && balance.Symbol == "ETH" && balance.Balance > 0
+			res: entity.Balance{
+				Wallet: entity.Wallet{
+					ID:     1,
+					UserID: "1",
+				},
+				Symbol:  "ETH",
+				Balance: 1.1,
 			},
 			err: nil,
 		},
 		{
-			name: "DAI zero address",
-			ctx:  context.Background(),
-			wallet: &entity.Wallet{
-				Token: common.HexToAddress("0x6B175474E89094C44Da98b954EedeAC495271d0F"),
-				Network: entity.Network{
-					URL: "https://eth.public-rpc.com",
-				}},
+			name: "GetSymbol error",
 			mock: func() {
-				mockWalletRepo.EXPECT().AddOne(gomock.AssignableToTypeOf(ctxType), gomock.AssignableToTypeOf(&entity.Wallet{})).DoAndReturn(
-					func(ctx context.Context, wallet *entity.Wallet) error {
-						wallet.ID = 2
-						return nil
-					},
-				)
+				ethAPI.EXPECT().GetSymbol(gomock.AssignableToTypeOf(ctxType), gomock.AssignableToTypeOf(entity.Wallet{})).Return("", errInternalServErr)
 			},
-			validate: func(balance entity.Balance) bool {
-				return balance.ID == 2 && balance.Symbol == "DAI" && balance.Balance > 0
+			res: entity.Balance{},
+			err: entity.ErrAddWallet,
+		},
+		{
+			name: "GetBalance error",
+			mock: func() {
+				ethAPI.EXPECT().GetSymbol(gomock.AssignableToTypeOf(ctxType), gomock.AssignableToTypeOf(entity.Wallet{})).Return("ETH", nil)
+				ethAPI.EXPECT().GetBalance(gomock.AssignableToTypeOf(ctxType), gomock.AssignableToTypeOf(entity.Wallet{})).Return(float64(0), errInternalServErr)
 			},
-			err: nil,
+			res: entity.Balance{},
+			err: entity.ErrAddWallet,
 		},
 		{
 			name: "Repository error",
-			ctx:  context.Background(),
-			wallet: &entity.Wallet{
-				Network: entity.Network{
-					URL:    "https://eth.public-rpc.com",
-					Symbol: "ETH",
-				}},
 			mock: func() {
-				mockWalletRepo.EXPECT().AddOne(gomock.AssignableToTypeOf(ctxType), gomock.AssignableToTypeOf(&entity.Wallet{})).DoAndReturn(
-					func(ctx context.Context, wallet *entity.Wallet) error {
-						return errInternalServErr
-					},
-				)
+				ethAPI.EXPECT().GetSymbol(gomock.AssignableToTypeOf(ctxType), gomock.AssignableToTypeOf(entity.Wallet{})).Return("ETH", nil)
+				ethAPI.EXPECT().GetBalance(gomock.AssignableToTypeOf(ctxType), gomock.AssignableToTypeOf(entity.Wallet{})).Return(1.1, nil)
+				repo.EXPECT().AddOne(gomock.AssignableToTypeOf(ctxType), gomock.AssignableToTypeOf(&entity.Wallet{})).Return(errInternalServErr)
 			},
-			validate: func(balance entity.Balance) bool {
-				return true
-			},
-			err: entity.ErrAddWallet,
-		},
-		{
-			name: "ETH rpc error",
-			ctx:  context.Background(),
-			wallet: &entity.Wallet{
-				Network: entity.Network{
-					URL: "abc",
-				},
-			},
-			mock: func() {},
-			validate: func(balance entity.Balance) bool {
-				return true
-			},
-			err: entity.ErrAddWallet,
-		},
-		{
-			name: "Token rpc error",
-			ctx:  context.Background(),
-			wallet: &entity.Wallet{
-				Token: common.HexToAddress("0xdAC17F958D2ee523a2206206994597C13D831ec7"),
-				Network: entity.Network{
-					URL: "abc",
-				},
-			},
-			mock: func() {},
-			validate: func(balance entity.Balance) bool {
-				return true
-			},
+			res: entity.Balance{},
 			err: entity.ErrAddWallet,
 		},
 	}
 
-	for _, test := range tests {
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 
-		t.Run(test.name, func(t *testing.T) {
+			mu.Lock()
+			tt.mock()
+			res, err := wallet.AddOne(context.Background(), &entity.Wallet{UserID: "1"})
+			mu.Unlock()
 
-			test.mock()
-			balance, err := (*wallet).AddOne(test.ctx, test.wallet)
-			require.ErrorIs(t, err, test.err)
-			require.True(t, test.validate(balance))
+			require.Equal(t, tt.res, res)
+			require.ErrorIs(t, err, tt.err)
 		})
 	}
 }
@@ -147,315 +103,262 @@ func TestAddOne(t *testing.T) {
 func TestGetOne(t *testing.T) {
 	t.Parallel()
 
-	wallet, mockWalletRepo := wallet(t)
+	wallet, repo, ethAPI := wallet(t)
 
-	timeout, cancel := context.WithDeadline(context.Background(), time.Now())
-	defer cancel()
+	var mu sync.Mutex
 
-	tests := []struct {
-		name      string
-		ctx       context.Context
-		condition *entity.Wallet
-		mock      func()
-		validate  func(entity.Balance) bool
-		err       error
-	}{
+	tests := []test{
 		{
-			name: "Ethereum zero address",
-			ctx:  context.Background(),
-			condition: &entity.Wallet{
-				ID:     1,
-				UserID: "1",
-			},
+			name: "Success",
 			mock: func() {
-				mockWalletRepo.EXPECT().GetOne(gomock.AssignableToTypeOf(ctxType), gomock.AssignableToTypeOf(&entity.Wallet{}), gomock.AssignableToTypeOf(&entity.Wallet{})).DoAndReturn(
-					func(ctx context.Context, condition, wallet *entity.Wallet) error {
-						*wallet = entity.Wallet{
-							ID:     1,
-							UserID: "1",
-							Network: entity.Network{
-								URL:    "https://eth.public-rpc.com",
-								Symbol: "ETH",
-							},
-						}
+				repo.EXPECT().GetOne(gomock.AssignableToTypeOf(ctxType), gomock.AssignableToTypeOf(entity.Wallet{}), gomock.AssignableToTypeOf(&entity.Wallet{})).DoAndReturn(
+					func(ctx context.Context, condition entity.Wallet, wallet *entity.Wallet) error {
+						wallet.ID = condition.ID
+						wallet.UserID = condition.UserID
 						return nil
 					},
 				)
+				ethAPI.EXPECT().GetSymbol(gomock.AssignableToTypeOf(ctxType), gomock.AssignableToTypeOf(entity.Wallet{})).Return("ETH", nil)
+				ethAPI.EXPECT().GetBalance(gomock.AssignableToTypeOf(ctxType), gomock.AssignableToTypeOf(entity.Wallet{})).Return(1.1, nil)
 			},
-			validate: func(balance entity.Balance) bool {
-				return balance.ID == 1 && balance.Symbol == "ETH" && balance.Balance > 0
-			},
-			err: nil,
-		},
-		{
-			name: "DAI zero address",
-			ctx:  context.Background(),
-			condition: &entity.Wallet{
-				ID:     2,
-				UserID: "1",
-			},
-			mock: func() {
-				mockWalletRepo.EXPECT().GetOne(gomock.AssignableToTypeOf(ctxType), gomock.AssignableToTypeOf(&entity.Wallet{}), gomock.AssignableToTypeOf(&entity.Wallet{})).DoAndReturn(
-					func(ctx context.Context, condition, wallet *entity.Wallet) error {
-						*wallet = entity.Wallet{
-							ID:     2,
-							UserID: "1",
-							Token:  common.HexToAddress("0x6B175474E89094C44Da98b954EedeAC495271d0F"),
-							Network: entity.Network{
-								URL: "https://eth.public-rpc.com",
-							},
-						}
-						return nil
-					},
-				)
-			},
-			validate: func(balance entity.Balance) bool {
-				return balance.ID == 2 && balance.Symbol == "DAI" && balance.Balance > 0
+			res: entity.Balance{
+				Wallet: entity.Wallet{
+					ID:     1,
+					UserID: "1",
+				},
+				Symbol:  "ETH",
+				Balance: 1.1,
 			},
 			err: nil,
 		},
 		{
 			name: "Repository error",
-			ctx:  context.Background(),
-			condition: &entity.Wallet{
-				ID:     3,
-				UserID: "1",
-			},
 			mock: func() {
-				mockWalletRepo.EXPECT().GetOne(gomock.AssignableToTypeOf(ctxType), gomock.AssignableToTypeOf(&entity.Wallet{}), gomock.AssignableToTypeOf(&entity.Wallet{})).DoAndReturn(
-					func(ctx context.Context, condition, wallet *entity.Wallet) error {
-						return errInternalServErr
-					},
-				)
+				repo.EXPECT().GetOne(gomock.AssignableToTypeOf(ctxType), gomock.AssignableToTypeOf(entity.Wallet{}), gomock.AssignableToTypeOf(&entity.Wallet{})).Return(errInternalServErr)
 			},
-			validate: func(balance entity.Balance) bool {
-				return true
-			},
+			res: entity.Balance{},
 			err: entity.ErrGetBalance,
 		},
 		{
-			name: "RPC timeout error",
-			ctx:  timeout,
-			condition: &entity.Wallet{
-				ID:     4,
-				UserID: "1",
-			},
+			name: "GetSymbol error",
 			mock: func() {
-				mockWalletRepo.EXPECT().GetOne(gomock.AssignableToTypeOf(ctxType), gomock.AssignableToTypeOf(&entity.Wallet{}), gomock.AssignableToTypeOf(&entity.Wallet{})).DoAndReturn(
-					func(ctx context.Context, condition, wallet *entity.Wallet) error {
-						*wallet = entity.Wallet{
-							ID:     4,
-							UserID: "1",
-							Network: entity.Network{
-								URL:    "https://eth.public-rpc.com",
-								Symbol: "ETH",
-							},
-						}
+				repo.EXPECT().GetOne(gomock.AssignableToTypeOf(ctxType), gomock.AssignableToTypeOf(entity.Wallet{}), gomock.AssignableToTypeOf(&entity.Wallet{})).DoAndReturn(
+					func(ctx context.Context, condition entity.Wallet, wallet *entity.Wallet) error {
+						wallet.ID = condition.ID
+						wallet.UserID = condition.UserID
 						return nil
 					},
 				)
+				ethAPI.EXPECT().GetSymbol(gomock.AssignableToTypeOf(ctxType), gomock.AssignableToTypeOf(entity.Wallet{})).Return("", errInternalServErr)
 			},
-			validate: func(balance entity.Balance) bool {
-				return true
-			},
+			res: entity.Balance{},
 			err: entity.ErrGetBalance,
 		},
 		{
-			name: "RPC token timeout error",
-			ctx:  timeout,
-			condition: &entity.Wallet{
-				ID:     5,
-				UserID: "1",
-			},
+			name: "GetBalance error",
 			mock: func() {
-				mockWalletRepo.EXPECT().GetOne(gomock.AssignableToTypeOf(ctxType), gomock.AssignableToTypeOf(&entity.Wallet{}), gomock.AssignableToTypeOf(&entity.Wallet{})).DoAndReturn(
-					func(ctx context.Context, condtion, wallet *entity.Wallet) error {
-						*wallet = entity.Wallet{
-							ID:     5,
-							UserID: "1",
-							Token:  common.HexToAddress("0x6B175474E89094C44Da98b954EedeAC495271d0F"),
-							Network: entity.Network{
-								URL: "https://eth.public-rpc.com",
-							},
-						}
+				repo.EXPECT().GetOne(gomock.AssignableToTypeOf(ctxType), gomock.AssignableToTypeOf(entity.Wallet{}), gomock.AssignableToTypeOf(&entity.Wallet{})).DoAndReturn(
+					func(ctx context.Context, condition entity.Wallet, wallet *entity.Wallet) error {
+						wallet.ID = condition.ID
+						wallet.UserID = condition.UserID
 						return nil
 					},
 				)
+				ethAPI.EXPECT().GetSymbol(gomock.AssignableToTypeOf(ctxType), gomock.AssignableToTypeOf(entity.Wallet{})).Return("ETH", nil)
+				ethAPI.EXPECT().GetBalance(gomock.AssignableToTypeOf(ctxType), gomock.AssignableToTypeOf(entity.Wallet{})).Return(float64(0), errInternalServErr)
 			},
-			validate: func(balance entity.Balance) bool {
-				return true
-			},
+			res: entity.Balance{},
 			err: entity.ErrGetBalance,
 		},
 	}
-	for _, tt := range tests {
 
+	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			mu.Lock()
 			tt.mock()
-			res, err := (*wallet).GetOne(tt.ctx, tt.condition)
+			res, err := wallet.GetOne(context.Background(), entity.Wallet{ID: 1, UserID: "1"})
+			mu.Unlock()
+
+			require.Equal(t, tt.res, res)
 			require.ErrorIs(t, err, tt.err)
-			require.True(t, tt.validate(res))
 		})
 	}
-
 }
 
 func TestGetManyWithPagination(t *testing.T) {
 	t.Parallel()
 
-	wallet, mockWalletRepo := wallet(t)
+	wallet, repo, ethAPI := wallet(t)
+
+	var mu sync.Mutex
 
 	tests := []struct {
-		name       string
-		ctx        context.Context
-		condition  *entity.Wallet
-		pagination *entity.Pagination
-		mock       func()
-		validate   func(balances []entity.Balance, pagination *entity.Pagination) bool
-		err        error
+		test
+		res1 any
 	}{
 		{
-			name: "First page success",
-			ctx:  context.Background(),
-			condition: &entity.Wallet{
-				UserID: "1",
-			},
-			pagination: &entity.Pagination{
-				PageSize: 2,
-			},
-			mock: func() {
-				mockWalletRepo.EXPECT().GetManyWithPagination(gomock.AssignableToTypeOf(ctxType), gomock.AssignableToTypeOf(&entity.Wallet{}), gomock.AssignableToTypeOf(&[]entity.Wallet{}), gomock.AssignableToTypeOf(&entity.Pagination{})).DoAndReturn(
-					func(ctx context.Context, condition *entity.Wallet, wallets *[]entity.Wallet, pagination *entity.Pagination) error {
-						*wallets = []entity.Wallet{
-							{
-								ID:     2,
-								UserID: "1",
-								Network: entity.Network{
-									URL:    "https://eth.public-rpc.com",
-									Symbol: "ETH",
-								},
-							},
-							{
-								ID:     1,
-								UserID: "1",
-								Token:  common.HexToAddress("0x6B175474E89094C44Da98b954EedeAC495271d0F"),
-								Network: entity.Network{
-									URL: "https://eth.public-rpc.com",
-								},
-							},
-						}
-						return nil
+			test: test{
+				name: "First page success",
+				mock: func() {
+					repo.EXPECT().GetManyWithPagination(gomock.AssignableToTypeOf(ctxType), gomock.AssignableToTypeOf(entity.Wallet{}), gomock.AssignableToTypeOf(&[]entity.Wallet{}), gomock.AssignableToTypeOf(&entity.Pagination{})).DoAndReturn(
+						func(ctx context.Context, condition entity.Wallet, wallets *[]entity.Wallet, pagination *entity.Pagination) error {
+							*wallets = []entity.Wallet{
+								{ID: 2, UserID: condition.UserID},
+								{ID: 1, UserID: condition.UserID},
+							}
+							return nil
+						})
+					ethAPI.EXPECT().GetSymbol(gomock.AssignableToTypeOf(ctxType), gomock.AssignableToTypeOf(entity.Wallet{})).Return("ETH", nil).Times(2)
+					ethAPI.EXPECT().GetBalance(gomock.AssignableToTypeOf(ctxType), gomock.AssignableToTypeOf(entity.Wallet{})).Return(1.1, nil).Times(2)
+				},
+				res: []entity.Balance{
+					{
+						Wallet: entity.Wallet{
+							ID:     2,
+							UserID: "1",
+						},
+						Symbol:  "ETH",
+						Balance: 1.1,
 					},
-				)
+					{
+						Wallet: entity.Wallet{
+							ID:     1,
+							UserID: "1",
+						},
+						Symbol:  "ETH",
+						Balance: 1.1,
+					},
+				},
+				err: nil,
 			},
-			validate: func(balances []entity.Balance, pagination *entity.Pagination) bool {
-				return len(balances) == 2 && pagination.IDLte == 2 && pagination.Page == 1 && pagination.PageSize == 2
-			},
-			err: nil,
-		},
-		{
-			name: "Second page success",
-			ctx:  context.Background(),
-			condition: &entity.Wallet{
-				UserID: "1",
-			},
-			pagination: &entity.Pagination{
-				IDLte:    4,
+			res1: &entity.Pagination{
+				IDLte:    2,
 				Page:     1,
 				PageSize: 2,
 			},
-			mock: func() {
-				mockWalletRepo.EXPECT().GetManyWithPagination(gomock.AssignableToTypeOf(ctxType), gomock.AssignableToTypeOf(&entity.Wallet{}), gomock.AssignableToTypeOf(&[]entity.Wallet{}), gomock.AssignableToTypeOf(&entity.Pagination{})).DoAndReturn(
-					func(ctx context.Context, condition *entity.Wallet, wallets *[]entity.Wallet, pagination *entity.Pagination) error {
-						*wallets = []entity.Wallet{
-							{
-								ID:     2,
-								UserID: "1",
-								Network: entity.Network{
-									URL:    "https://eth.public-rpc.com",
-									Symbol: "ETH",
-								},
-							},
-							{
-								ID:     1,
-								UserID: "1",
-								Network: entity.Network{
-									URL:    "https://eth.public-rpc.com",
-									Symbol: "ETH",
-								},
-							},
-						}
-						return nil
-					},
-				)
-			},
-			validate: func(balances []entity.Balance, pagination *entity.Pagination) bool {
-				return len(balances) == 2 && pagination.IDLte == 4 && pagination.Page == 2 && pagination.PageSize == 2
-			},
-			err: nil,
 		},
 		{
-			name: "Last page success",
-			ctx:  context.Background(),
-			condition: &entity.Wallet{
-				UserID: "1",
-			},
-			pagination: &entity.Pagination{
-				IDLte:    4,
-				Page:     2,
-				PageSize: 2,
-			},
-			mock: func() {
-				mockWalletRepo.EXPECT().GetManyWithPagination(gomock.AssignableToTypeOf(ctxType), gomock.AssignableToTypeOf(&entity.Wallet{}), gomock.AssignableToTypeOf(&[]entity.Wallet{}), gomock.AssignableToTypeOf(&entity.Pagination{})).DoAndReturn(
-					func(ctx context.Context, condition *entity.Wallet, wallets *[]entity.Wallet, pagination *entity.Pagination) error {
-						*wallets = []entity.Wallet{
-							{
-								ID:     1,
-								UserID: "1",
-								Network: entity.Network{
-									URL:    "https://eth.public-rpc.com",
-									Symbol: "ETH",
-								},
-							},
-						}
-						return nil
+			test: test{
+				name: "Last page success",
+				mock: func() {
+					repo.EXPECT().GetManyWithPagination(gomock.AssignableToTypeOf(ctxType), gomock.AssignableToTypeOf(entity.Wallet{}), gomock.AssignableToTypeOf(&[]entity.Wallet{}), gomock.AssignableToTypeOf(&entity.Pagination{})).DoAndReturn(
+						func(ctx context.Context, condition entity.Wallet, wallets *[]entity.Wallet, pagination *entity.Pagination) error {
+							*wallets = []entity.Wallet{
+								{ID: 1, UserID: condition.UserID},
+							}
+							return nil
+						})
+					ethAPI.EXPECT().GetSymbol(gomock.AssignableToTypeOf(ctxType), gomock.AssignableToTypeOf(entity.Wallet{})).Return("ETH", nil)
+					ethAPI.EXPECT().GetBalance(gomock.AssignableToTypeOf(ctxType), gomock.AssignableToTypeOf(entity.Wallet{})).Return(1.1, nil)
+				},
+				res: []entity.Balance{
+					{
+						Wallet: entity.Wallet{
+							ID:     1,
+							UserID: "1",
+						},
+						Symbol:  "ETH",
+						Balance: 1.1,
 					},
-				)
+				},
+				err: nil,
 			},
-			validate: func(balances []entity.Balance, pagination *entity.Pagination) bool {
-				return len(balances) == 1 && pagination == nil
-			},
-			err: nil,
+			res1: (*entity.Pagination)(nil),
 		},
 		{
-			name: "Repository error",
-			ctx:  context.Background(),
-			condition: &entity.Wallet{
-				UserID: "1",
+			test: test{
+				name: "Repository error",
+				mock: func() {
+					repo.EXPECT().GetManyWithPagination(gomock.AssignableToTypeOf(ctxType), gomock.AssignableToTypeOf(entity.Wallet{}), gomock.AssignableToTypeOf(&[]entity.Wallet{}), gomock.AssignableToTypeOf(&entity.Pagination{})).Return(errInternalServErr)
+				},
+				res: []entity.Balance(nil),
+				err: entity.ErrFindWallet,
 			},
-			pagination: &entity.Pagination{
+			res1: (*entity.Pagination)(nil),
+		},
+		{
+			test: test{
+				name: "GetSymbol error",
+				mock: func() {
+					repo.EXPECT().GetManyWithPagination(gomock.AssignableToTypeOf(ctxType), gomock.AssignableToTypeOf(entity.Wallet{}), gomock.AssignableToTypeOf(&[]entity.Wallet{}), gomock.AssignableToTypeOf(&entity.Pagination{})).DoAndReturn(
+						func(ctx context.Context, condition entity.Wallet, wallets *[]entity.Wallet, pagination *entity.Pagination) error {
+							*wallets = []entity.Wallet{
+								{ID: 2, UserID: condition.UserID},
+								{ID: 1, UserID: condition.UserID},
+							}
+							return nil
+						})
+					ethAPI.EXPECT().GetSymbol(gomock.AssignableToTypeOf(ctxType), gomock.AssignableToTypeOf(entity.Wallet{})).Return("", errInternalServErr).Times(2)
+				},
+				res: []entity.Balance{
+					{
+						Wallet: entity.Wallet{
+							ID:     2,
+							UserID: "1",
+						},
+						Balance: -1,
+					},
+					{
+						Wallet: entity.Wallet{
+							ID:     1,
+							UserID: "1",
+						},
+						Balance: -1,
+					},
+				},
+				err: nil,
+			},
+			res1: &entity.Pagination{
+				IDLte:    2,
+				Page:     1,
 				PageSize: 2,
 			},
-			mock: func() {
-				mockWalletRepo.EXPECT().GetManyWithPagination(gomock.AssignableToTypeOf(ctxType), gomock.AssignableToTypeOf(&entity.Wallet{}), gomock.AssignableToTypeOf(&[]entity.Wallet{}), gomock.AssignableToTypeOf(&entity.Pagination{})).DoAndReturn(
-					func(ctx context.Context, condition *entity.Wallet, wallets *[]entity.Wallet, pagination *entity.Pagination) error {
-						return errInternalServErr
+		},
+		{
+			test: test{
+				name: "GetBalance error",
+				mock: func() {
+					repo.EXPECT().GetManyWithPagination(gomock.AssignableToTypeOf(ctxType), gomock.AssignableToTypeOf(entity.Wallet{}), gomock.AssignableToTypeOf(&[]entity.Wallet{}), gomock.AssignableToTypeOf(&entity.Pagination{})).DoAndReturn(
+						func(ctx context.Context, condition entity.Wallet, wallets *[]entity.Wallet, pagination *entity.Pagination) error {
+							*wallets = []entity.Wallet{
+								{ID: 1, UserID: condition.UserID},
+							}
+							return nil
+						})
+					ethAPI.EXPECT().GetSymbol(gomock.AssignableToTypeOf(ctxType), gomock.AssignableToTypeOf(entity.Wallet{})).Return("ETH", nil)
+					ethAPI.EXPECT().GetBalance(gomock.AssignableToTypeOf(ctxType), gomock.AssignableToTypeOf(entity.Wallet{})).Return(float64(0), errInternalServErr)
+				},
+				res: []entity.Balance{
+					{
+						Wallet: entity.Wallet{
+							ID:     1,
+							UserID: "1",
+						},
+						Balance: -1,
 					},
-				)
+				},
+				err: nil,
 			},
-			validate: func(balances []entity.Balance, pagination *entity.Pagination) bool {
-				return true
-			},
-			err: entity.ErrFindWallet,
+			res1: (*entity.Pagination)(nil),
 		},
 	}
 
-	for _, test := range tests {
-		t.Run(test.name, func(t *testing.T) {
-			test.mock()
-			balances, pagination, err := (*wallet).GetManyWithPagination(test.ctx, test.condition, test.pagination)
-			require.Equal(t, test.err, err)
-			require.True(t, test.validate(balances, pagination))
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			mu.Lock()
+			tt.mock()
+			res, res1, err := wallet.GetManyWithPagination(context.Background(), entity.Wallet{UserID: "1"}, &entity.Pagination{PageSize: 2})
+			mu.Unlock()
+
+			require.Equal(t, tt.res, res)
+			require.Equal(t, tt.res1, res1)
+			require.ErrorIs(t, err, tt.err)
 		})
 	}
 }
@@ -463,46 +366,38 @@ func TestGetManyWithPagination(t *testing.T) {
 func TestDeleteOne(t *testing.T) {
 	t.Parallel()
 
-	wallet, mockWalletRepo := wallet(t)
+	wallet, repo, _ := wallet(t)
 
-	tests := []struct {
-		name      string
-		ctx       context.Context
-		condition *entity.Wallet
-		mock      func()
-		err       error
-	}{
+	var mu sync.Mutex
+
+	tests := []test{
 		{
 			name: "Success",
-			ctx:  context.Background(),
-			condition: &entity.Wallet{
-				ID:     1,
-				UserID: "1",
-			},
 			mock: func() {
-				mockWalletRepo.EXPECT().DeleteOne(gomock.AssignableToTypeOf(ctxType), gomock.AssignableToTypeOf(&entity.Wallet{})).Return(nil)
+				repo.EXPECT().DeleteOne(gomock.AssignableToTypeOf(ctxType), gomock.AssignableToTypeOf(entity.Wallet{})).Return(nil)
 			},
 			err: nil,
 		},
 		{
 			name: "Repository error",
-			ctx:  context.Background(),
-			condition: &entity.Wallet{
-				ID:     1,
-				UserID: "1",
-			},
 			mock: func() {
-				mockWalletRepo.EXPECT().DeleteOne(gomock.AssignableToTypeOf(ctxType), gomock.AssignableToTypeOf(&entity.Wallet{})).Return(errInternalServErr)
+				repo.EXPECT().DeleteOne(gomock.AssignableToTypeOf(ctxType), gomock.AssignableToTypeOf(entity.Wallet{})).Return(errInternalServErr)
 			},
 			err: entity.ErrDeleteWallet,
 		},
 	}
 
-	for _, test := range tests {
-		t.Run(test.name, func(t *testing.T) {
-			test.mock()
-			err := (*wallet).DeleteOne(test.ctx, test.condition)
-			require.Equal(t, test.err, err)
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			mu.Lock()
+			tt.mock()
+			err := wallet.DeleteOne(context.Background(), entity.Wallet{})
+			mu.Unlock()
+
+			require.ErrorIs(t, err, tt.err)
 		})
 	}
 }

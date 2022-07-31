@@ -10,11 +10,13 @@ import (
 	"yyq1025/balance-backend/internal/controller"
 	"yyq1025/balance-backend/internal/controller/middleware"
 	"yyq1025/balance-backend/internal/usecase"
+	"yyq1025/balance-backend/internal/usecase/ethapi"
 	"yyq1025/balance-backend/internal/usecase/repository"
 
 	"github.com/auth0/go-jwt-middleware/v2/jwks"
 	"github.com/auth0/go-jwt-middleware/v2/validator"
 	"github.com/gin-gonic/gin"
+	"github.com/go-redis/cache/v8"
 	"github.com/go-redis/redis/v8"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -36,6 +38,11 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	rdbCache := cache.New(&cache.Options{
+		Redis:      rdb,
+		LocalCache: cache.NewTinyLFU(10000, time.Minute),
+	})
 
 	issuerURL, err := url.Parse("https://" + os.Getenv("AUTH0_DOMAIN") + "/")
 	if err != nil {
@@ -60,12 +67,13 @@ func main() {
 	router := gin.Default()
 	router.Use(m.CORS())
 	router.Use(m.Timeout())
-	nr := repository.NewGormNetworkRepository(db)
-	ns := usecase.NewNetworkUseCase(nr, rdb)
+	nr := repository.NewNetworkRepository(db, rdbCache)
+	ns := usecase.NewNetworkUseCase(nr)
 	controller.NewNetworkHandler(router, ns)
 
-	wr := repository.NewGormWalletRepository(db)
-	ws := usecase.NewWalletUseCase(wr, rdb)
+	wr := repository.NewWalletRepository(db, rdbCache)
+	we := ethapi.NewWalletEthAPI(rdbCache)
+	ws := usecase.NewWalletUseCase(wr, we)
 	router.Use(m.Auth())
 	controller.NewWalletHandler(router, ws)
 
