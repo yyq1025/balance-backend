@@ -33,6 +33,8 @@ func network(t *testing.T) entity.NetworkRepository {
 		t.Fatal(err)
 	}
 
+	rdb.FlushDB(context.Background())
+
 	rdbCache := cache.New(&cache.Options{
 		Redis: rdb,
 	})
@@ -41,8 +43,6 @@ func network(t *testing.T) entity.NetworkRepository {
 }
 
 func TestGetAll(t *testing.T) {
-	t.Parallel()
-
 	repo := network(t)
 
 	expect := []entity.Network{
@@ -79,7 +79,7 @@ func TestGetAll(t *testing.T) {
 
 	// error
 	var networks2 []entity.Network
-	ctx, cancel := context.WithDeadline(context.Background(), time.Now())
+	ctx, cancel := context.WithDeadline(context.Background(), time.Now().Add(-time.Minute))
 	defer cancel()
 
 	if err := repo.GetAll(ctx, &networks2); err == nil {
