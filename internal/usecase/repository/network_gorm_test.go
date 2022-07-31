@@ -34,8 +34,7 @@ func network(t *testing.T) entity.NetworkRepository {
 	}
 
 	rdbCache := cache.New(&cache.Options{
-		Redis:      rdb,
-		LocalCache: cache.NewTinyLFU(1000, time.Minute),
+		Redis: rdb,
 	})
 
 	return repository.NewNetworkRepository(db, rdbCache)
@@ -80,7 +79,7 @@ func TestGetAll(t *testing.T) {
 
 	// error
 	var networks2 []entity.Network
-	ctx, cancel := context.WithDeadline(context.Background(), time.Now().Add(-time.Minute))
+	ctx, cancel := context.WithDeadline(context.Background(), time.Now())
 	defer cancel()
 
 	if err := repo.GetAll(ctx, &networks2); err == nil {
