@@ -28,7 +28,7 @@ func wallet(t *testing.T) (entity.WalletUseCase, *mocks.MockWalletRepository, *m
 func TestAddOne(t *testing.T) {
 	t.Parallel()
 
-	wallet, repo, ethAPI := wallet(t)
+	walletUseCase, repo, ethAPI := wallet(t)
 
 	var mu sync.Mutex
 
@@ -91,7 +91,7 @@ func TestAddOne(t *testing.T) {
 
 			mu.Lock()
 			tt.mock()
-			res, err := wallet.AddOne(context.Background(), &entity.Wallet{UserID: "1"})
+			res, err := walletUseCase.AddOne(context.Background(), &entity.Wallet{UserID: "1"})
 			mu.Unlock()
 
 			require.Equal(t, tt.res, res)
@@ -103,7 +103,7 @@ func TestAddOne(t *testing.T) {
 func TestGetOne(t *testing.T) {
 	t.Parallel()
 
-	wallet, repo, ethAPI := wallet(t)
+	walletUseCase, repo, ethAPI := wallet(t)
 
 	var mu sync.Mutex
 
@@ -179,7 +179,7 @@ func TestGetOne(t *testing.T) {
 
 			mu.Lock()
 			tt.mock()
-			res, err := wallet.GetOne(context.Background(), entity.Wallet{ID: 1, UserID: "1"})
+			res, err := walletUseCase.GetOne(context.Background(), entity.Wallet{ID: 1, UserID: "1"})
 			mu.Unlock()
 
 			require.Equal(t, tt.res, res)
@@ -191,7 +191,7 @@ func TestGetOne(t *testing.T) {
 func TestGetManyWithPagination(t *testing.T) {
 	t.Parallel()
 
-	wallet, repo, ethAPI := wallet(t)
+	walletUseCase, repo, ethAPI := wallet(t)
 
 	var mu sync.Mutex
 
@@ -353,7 +353,7 @@ func TestGetManyWithPagination(t *testing.T) {
 
 			mu.Lock()
 			tt.mock()
-			res, res1, err := wallet.GetManyWithPagination(context.Background(), entity.Wallet{UserID: "1"}, &entity.Pagination{PageSize: 2})
+			res, res1, err := walletUseCase.GetManyWithPagination(context.Background(), entity.Wallet{UserID: "1"}, &entity.Pagination{PageSize: 2})
 			mu.Unlock()
 
 			require.Equal(t, tt.res, res)
@@ -366,7 +366,7 @@ func TestGetManyWithPagination(t *testing.T) {
 func TestDeleteOne(t *testing.T) {
 	t.Parallel()
 
-	wallet, repo, _ := wallet(t)
+	walletUseCase, repo, _ := wallet(t)
 
 	var mu sync.Mutex
 
@@ -394,7 +394,7 @@ func TestDeleteOne(t *testing.T) {
 
 			mu.Lock()
 			tt.mock()
-			err := wallet.DeleteOne(context.Background(), entity.Wallet{})
+			err := walletUseCase.DeleteOne(context.Background(), entity.Wallet{})
 			mu.Unlock()
 
 			require.ErrorIs(t, err, tt.err)
