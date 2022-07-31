@@ -125,7 +125,7 @@ func (w *walletUseCase) AddOne(ctx context.Context, wallet *entity.Wallet) (enti
 		Key:   fmt.Sprintf("wallet:%d", wallet.ID),
 		Value: *wallet,
 		TTL:   time.Hour})
-	return entity.Balance{Wallet: wallet, Symbol: symbol, Balance: util.ToDecimal(balance, int(decimals)).InexactFloat64()}, nil
+	return entity.Balance{Wallet: *wallet, Symbol: symbol, Balance: util.ToDecimal(balance, int(decimals)).InexactFloat64()}, nil
 }
 
 func (w *walletUseCase) GetOne(ctx context.Context, condition *entity.Wallet) (entity.Balance, error) {
@@ -156,7 +156,7 @@ func (w *walletUseCase) GetOne(ctx context.Context, condition *entity.Wallet) (e
 		log.Print(err)
 		return entity.Balance{}, entity.ErrGetBalance
 	}
-	return entity.Balance{Wallet: &wallet, Symbol: symbol, Balance: util.ToDecimal(balance, int(decimals)).InexactFloat64()}, nil
+	return entity.Balance{Wallet: wallet, Symbol: symbol, Balance: util.ToDecimal(balance, int(decimals)).InexactFloat64()}, nil
 }
 
 func (w *walletUseCase) GetManyWithPagination(ctx context.Context, condition *entity.Wallet, pagination *entity.Pagination) ([]entity.Balance, *entity.Pagination, error) {
@@ -182,22 +182,22 @@ func (w *walletUseCase) GetManyWithPagination(ctx context.Context, condition *en
 			symbol, err := w.getSymbol(ctx, &wallet)
 			if err != nil {
 				log.Print(err)
-				balances[i] = entity.Balance{Wallet: &wallet, Symbol: "", Balance: -1}
+				balances[i] = entity.Balance{Wallet: wallet, Symbol: "", Balance: -1}
 				return
 			}
 			decimals, err := w.getDecimals(ctx, &wallet)
 			if err != nil {
 				log.Print(err)
-				balances[i] = entity.Balance{Wallet: &wallet, Symbol: "", Balance: -1}
+				balances[i] = entity.Balance{Wallet: wallet, Symbol: "", Balance: -1}
 				return
 			}
 			balance, err := w.getBalance(ctx, &wallet)
 			if err != nil {
 				log.Print(err)
-				balances[i] = entity.Balance{Wallet: &wallet, Symbol: "", Balance: -1}
+				balances[i] = entity.Balance{Wallet: wallet, Symbol: "", Balance: -1}
 				return
 			}
-			balances[i] = entity.Balance{Wallet: &wallet, Symbol: symbol, Balance: util.ToDecimal(balance, int(decimals)).InexactFloat64()}
+			balances[i] = entity.Balance{Wallet: wallet, Symbol: symbol, Balance: util.ToDecimal(balance, int(decimals)).InexactFloat64()}
 		}(i, wallet)
 	}
 	wg.Wait()

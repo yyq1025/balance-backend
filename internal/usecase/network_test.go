@@ -14,13 +14,6 @@ import (
 
 var errInternalServErr = errors.New("cannot get networks")
 
-type test struct {
-	name string
-	mock func()
-	res  any
-	err  error
-}
-
 func network(t *testing.T) (*entity.NetworkUseCase, *mocks.MockNetworkRepository) {
 	t.Helper()
 
@@ -39,7 +32,12 @@ func TestGetAll(t *testing.T) {
 
 	network, mockNetworkRepo := network(t)
 
-	tests := []test{
+	tests := []struct {
+		name string
+		mock func()
+		res  any
+		err  error
+	}{
 		{
 			name: "not cached",
 			mock: func() {
@@ -70,7 +68,7 @@ func TestGetAll(t *testing.T) {
 	for _, tt := range tests {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
-			t.Parallel()
+			// t.Parallel()
 
 			tt.mock()
 			res, err := (*network).GetAll(context.Background())
