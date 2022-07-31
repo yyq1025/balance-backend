@@ -2,7 +2,6 @@ package usecase
 
 import (
 	"context"
-	"errors"
 	"testing"
 	"yyq1025/balance-backend/internal/entity"
 	"yyq1025/balance-backend/internal/entity/mocks"
@@ -11,8 +10,6 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
 )
-
-var errInternalServErr = errors.New("cannot get networks")
 
 func network(t *testing.T) (*entity.NetworkUseCase, *mocks.MockNetworkRepository) {
 	t.Helper()
