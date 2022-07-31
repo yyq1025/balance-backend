@@ -63,6 +63,13 @@ func TestWallet(t *testing.T) {
 	wallet1 := entity.Wallet{
 		UserID:      "1",
 		NetworkName: "BSC",
+		Network: entity.Network{
+			ChainID:  "0x38",
+			Name:     "BSC",
+			URL:      "https://bsc-dataseed.binance.org/",
+			Symbol:   "BNB",
+			Explorer: "https://bscscan.com",
+		},
 	}
 	if err := repo.AddOne(context.Background(), &wallet1); err != nil {
 		t.Error(err)
@@ -73,6 +80,13 @@ func TestWallet(t *testing.T) {
 		UserID:      "1",
 		NetworkName: "Ethereum",
 		Token:       common.HexToAddress("0x6B175474E89094C44Da98b954EedeAC495271d0F"),
+		Network: entity.Network{
+			ChainID:  "0x1",
+			Name:     "Ethereum",
+			URL:      "https://eth.public-rpc.com",
+			Symbol:   "ETH",
+			Explorer: "https://etherscan.io",
+		},
 	}
 	if err := repo.AddOne(context.Background(), &wallet2); err != nil {
 		t.Error(err)
