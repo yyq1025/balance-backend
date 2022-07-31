@@ -20,7 +20,7 @@ func NewNetworkRepository(db *gorm.DB, c *cache.Cache) entity.NetworkRepository 
 
 func (n *NetworkRepository) GetAll(ctx context.Context, networks *[]entity.Network) (err error) {
 	if err = n.cache.Get(ctx, "networks", networks); err != nil {
-		if err = n.db.WithContext(ctx).Find(networks).Error; err != nil {
+		if err = n.db.WithContext(ctx).Order("name asc").Find(networks).Error; err != nil {
 			return
 		}
 		_ = n.cache.Set(&cache.Item{
