@@ -18,13 +18,12 @@ func NewNetworkUseCase(n entity.NetworkRepository, rdb *redis.Client) entity.Net
 	return &networkUseCase{
 		networkRepo: n,
 		cache: cache.New(&cache.Options{
-			Redis: rdb,
-			// LocalCache: cache.NewTinyLFU(1000, time.Minute),
+			Redis:      rdb,
+			LocalCache: cache.NewTinyLFU(1000, time.Minute),
 		})}
 }
 
 func (n *networkUseCase) GetAll(ctx context.Context) (networks []entity.Network, err error) {
-	// var networks []entity.Network
 	if err = n.cache.Get(ctx, "networks", &networks); err != nil {
 		if err = n.networkRepo.GetAll(ctx, &networks); err != nil {
 			err = entity.ErrGetNetwork
@@ -38,9 +37,6 @@ func (n *networkUseCase) GetAll(ctx context.Context) (networks []entity.Network,
 			SetNX: true,
 		})
 	}
-	// if err := n.networkRepo.GetAll(ctx, &networks); err != nil {
-	// 	return nil, entity.ErrGetNetwork
-	// }
 
 	return networks, nil
 }

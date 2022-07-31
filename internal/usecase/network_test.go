@@ -39,9 +39,21 @@ func TestGetAll(t *testing.T) {
 		err  error
 	}{
 		{
+			name: "error",
+			mock: func() {
+				mockNetworkRepo.EXPECT().GetAll(gomock.AssignableToTypeOf(ctxType), gomock.AssignableToTypeOf(&[]entity.Network{})).DoAndReturn(
+					func(ctx context.Context, networks *[]entity.Network) error {
+						return errInternalServErr
+					},
+				)
+			},
+			res: []entity.Network(nil),
+			err: entity.ErrGetNetwork,
+		},
+		{
 			name: "not cached",
 			mock: func() {
-				mockNetworkRepo.EXPECT().GetAll(context.Background(), gomock.AssignableToTypeOf(&[]entity.Network{})).DoAndReturn(
+				mockNetworkRepo.EXPECT().GetAll(gomock.AssignableToTypeOf(ctxType), gomock.AssignableToTypeOf(&[]entity.Network{})).DoAndReturn(
 					func(ctx context.Context, networks *[]entity.Network) error {
 						*networks = []entity.Network{{Name: "test"}}
 						return nil
@@ -52,23 +64,16 @@ func TestGetAll(t *testing.T) {
 			err: nil,
 		},
 		{
-			name: "error",
-			mock: func() {
-				mockNetworkRepo.EXPECT().GetAll(context.Background(), gomock.AssignableToTypeOf(&[]entity.Network{})).DoAndReturn(
-					func(ctx context.Context, networks *[]entity.Network) error {
-						return errInternalServErr
-					},
-				)
-			},
-			res: []entity.Network(nil),
-			err: entity.ErrGetNetwork,
+			name: "cached",
+			mock: func() {},
+			res:  []entity.Network{{Name: "test"}},
+			err:  nil,
 		},
 	}
 
 	for _, tt := range tests {
-		tt := tt
+		// tt := tt
 		t.Run(tt.name, func(t *testing.T) {
-			// t.Parallel()
 
 			tt.mock()
 			res, err := (*network).GetAll(context.Background())
