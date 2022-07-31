@@ -50,12 +50,14 @@ func TestGetAll(t *testing.T) {
 		{
 			ChainID:  "0x38",
 			Name:     "BSC",
+			URL:      "https://bsc-dataseed.binance.org/",
 			Symbol:   "BNB",
 			Explorer: "https://bscscan.com",
 		},
 		{
 			ChainID:  "0x1",
 			Name:     "Ethereum",
+			URL:      "https://eth.public-rpc.com",
 			Symbol:   "ETH",
 			Explorer: "https://etherscan.io",
 		},
