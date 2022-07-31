@@ -51,7 +51,13 @@ func TestWallet(t *testing.T) {
 	if err := repo.GetOne(context.Background(), entity.Wallet{ID: 1, UserID: "1"}, &wallet); err != nil {
 		t.Error(err)
 	}
-	require.Equal(t, wallet, entity.Wallet{ID: 1, UserID: "1", NetworkName: "Ethereum"})
+	require.Equal(t, entity.Wallet{ID: 1, UserID: "1", NetworkName: "Ethereum", Network: entity.Network{
+		ChainID:  "0x1",
+		Name:     "Ethereum",
+		URL:      "https://eth.public-rpc.com",
+		Symbol:   "ETH",
+		Explorer: "https://etherscan.io",
+	}}, wallet)
 
 	// Add wallet
 	wallet1 := entity.Wallet{
