@@ -67,7 +67,7 @@ func TestEthAPI(t *testing.T) {
 	require.Equal(t, "DAI", symbol)
 
 	// get symbol invalid url
-	symbol, err = api.GetSymbol(context.Background(), entity.Wallet{Network: entity.Network{URL: "abcd"}, Token: common.HexToAddress("0xdAC17F958D2ee523a2206206994597C13D831ec7")})
+	_, err = api.GetSymbol(context.Background(), entity.Wallet{Network: entity.Network{URL: "abcd"}, Token: common.HexToAddress("0xdAC17F958D2ee523a2206206994597C13D831ec7")})
 	if err == nil {
 		t.Error("should be error")
 	}
@@ -75,7 +75,7 @@ func TestEthAPI(t *testing.T) {
 	// get symbol timeout
 	ctx, cancel := context.WithDeadline(context.Background(), time.Now().Add(-time.Minute))
 	defer cancel()
-	symbol, err = api.GetSymbol(ctx, entity.Wallet{Network: ethChain, Token: common.HexToAddress("0xdAC17F958D2ee523a2206206994597C13D831ec7")})
+	_, err = api.GetSymbol(ctx, entity.Wallet{Network: ethChain, Token: common.HexToAddress("0xdAC17F958D2ee523a2206206994597C13D831ec7")})
 	if err == nil {
 		t.Error("should be error")
 	}
@@ -85,7 +85,7 @@ func TestEthAPI(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	require.Greater(t, balance, 0)
+	require.Greater(t, balance, float64(0))
 
 	// get DAI token balance
 	balance, err = api.GetBalance(context.Background(), entity.Wallet{Network: ethChain, Token: common.HexToAddress("0x6B175474E89094C44Da98b954EedeAC495271d0F")})
