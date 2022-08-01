@@ -338,6 +338,7 @@ func TestGetManyWithPagination(t *testing.T) {
 							ID:     1,
 							UserID: "1",
 						},
+						Symbol:  "ETH",
 						Balance: -1,
 					},
 				},

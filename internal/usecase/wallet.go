@@ -82,7 +82,7 @@ func (w *walletUseCase) GetManyWithPagination(ctx context.Context, condition ent
 			balance, err := w.ethAPI.GetBalance(ctx, wallet)
 			if err != nil {
 				log.Print(err)
-				balances[i] = entity.Balance{Wallet: wallet, Symbol: "", Balance: -1}
+				balances[i] = entity.Balance{Wallet: wallet, Symbol: symbol, Balance: -1}
 				return
 			}
 			balances[i] = entity.Balance{Wallet: wallet, Symbol: symbol, Balance: balance}
