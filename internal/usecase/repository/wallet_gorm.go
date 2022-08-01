@@ -34,14 +34,14 @@ func (w *WalletRepository) AddOne(ctx context.Context, wallet *entity.Wallet) (e
 	return
 }
 
-func (w *WalletRepository) GetOne(ctx context.Context, condition entity.Wallet, wallet *entity.Wallet) (err error) {
-	if err = w.cache.Get(ctx, fmt.Sprintf("wallet:%d", condition.ID), wallet); err != nil {
-		if err = w.db.WithContext(ctx).Joins("Network").Where(&condition).First(wallet).Error; err != nil {
+func (w *WalletRepository) GetOne(ctx context.Context, userID string, id int, wallet *entity.Wallet) (err error) {
+	if err = w.cache.Get(ctx, fmt.Sprintf("wallet:%d", id), wallet); err != nil {
+		if err = w.db.WithContext(ctx).Joins("Network").Where(&entity.Wallet{UserID: userID, ID: id}).First(wallet).Error; err != nil {
 			return
 		}
 		_ = w.cache.Set(&cache.Item{
 			Ctx:   ctx,
-			Key:   fmt.Sprintf("wallet:%d", condition.ID),
+			Key:   fmt.Sprintf("wallet:%d", id),
 			Value: *wallet,
 			TTL:   time.Hour,
 			SetNX: true,
@@ -50,12 +50,12 @@ func (w *WalletRepository) GetOne(ctx context.Context, condition entity.Wallet, 
 	return
 }
 
-func (w *WalletRepository) GetManyWithPagination(ctx context.Context, condition entity.Wallet, wallets *[]entity.Wallet, p *entity.Pagination) (err error) {
+func (w *WalletRepository) GetManyWithPagination(ctx context.Context, userID string, p *entity.Pagination, wallets *[]entity.Wallet) (err error) {
 	db := w.db
 	if p.IDLte > 0 {
 		db = db.Where("id <= ?", p.IDLte)
 	}
-	if err = db.WithContext(ctx).Joins("Network").Where(&condition).Order("id desc").Offset(p.Page * p.PageSize).Limit(p.PageSize).Find(wallets).Error; err != nil {
+	if err = db.WithContext(ctx).Joins("Network").Where(&entity.Wallet{UserID: userID}).Order("id desc").Offset(p.Page * p.PageSize).Limit(p.PageSize).Find(wallets).Error; err != nil {
 		return
 	}
 	for _, wallet := range *wallets {
@@ -70,10 +70,10 @@ func (w *WalletRepository) GetManyWithPagination(ctx context.Context, condition 
 	return
 }
 
-func (w *WalletRepository) DeleteOne(ctx context.Context, condition entity.Wallet) (err error) {
-	if err = w.db.WithContext(ctx).Where(&condition).Delete(&entity.Wallet{}).Error; err != nil {
+func (w *WalletRepository) DeleteOne(ctx context.Context, userID string, id int) (err error) {
+	if err = w.db.WithContext(ctx).Where(&entity.Wallet{UserID: userID, ID: id}).Delete(&entity.Wallet{}).Error; err != nil {
 		return
 	}
-	_ = w.cache.Delete(ctx, fmt.Sprintf("wallet:%d", condition.ID))
+	_ = w.cache.Delete(ctx, fmt.Sprintf("wallet:%d", id))
 	return
 }

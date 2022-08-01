@@ -35,9 +35,9 @@ func (w *walletUseCase) AddOne(ctx context.Context, wallet *entity.Wallet) (enti
 	return entity.Balance{Wallet: *wallet, Symbol: symbol, Balance: balance}, nil
 }
 
-func (w *walletUseCase) GetOne(ctx context.Context, condition entity.Wallet) (entity.Balance, error) {
+func (w *walletUseCase) GetOne(ctx context.Context, userID string, id int) (entity.Balance, error) {
 	var wallet entity.Wallet
-	if err := w.repo.GetOne(ctx, condition, &wallet); err != nil {
+	if err := w.repo.GetOne(ctx, userID, id, &wallet); err != nil {
 		return entity.Balance{}, entity.ErrGetBalance
 	}
 	symbol, err := w.ethAPI.GetSymbol(ctx, wallet)
@@ -53,9 +53,9 @@ func (w *walletUseCase) GetOne(ctx context.Context, condition entity.Wallet) (en
 	return entity.Balance{Wallet: wallet, Symbol: symbol, Balance: balance}, nil
 }
 
-func (w *walletUseCase) GetManyWithPagination(ctx context.Context, condition entity.Wallet, pagination *entity.Pagination) ([]entity.Balance, *entity.Pagination, error) {
+func (w *walletUseCase) GetManyWithPagination(ctx context.Context, userID string, pagination *entity.Pagination) ([]entity.Balance, *entity.Pagination, error) {
 	var wallets []entity.Wallet
-	if err := w.repo.GetManyWithPagination(ctx, condition, &wallets, pagination); err != nil {
+	if err := w.repo.GetManyWithPagination(ctx, userID, pagination, &wallets); err != nil {
 		log.Print(err)
 		return nil, nil, entity.ErrFindWallet
 	}
@@ -92,8 +92,8 @@ func (w *walletUseCase) GetManyWithPagination(ctx context.Context, condition ent
 	return balances, pagination, nil
 }
 
-func (w *walletUseCase) DeleteOne(ctx context.Context, condition entity.Wallet) error {
-	if err := w.repo.DeleteOne(ctx, condition); err != nil {
+func (w *walletUseCase) DeleteOne(ctx context.Context, userID string, id int) error {
+	if err := w.repo.DeleteOne(ctx, userID, id); err != nil {
 		log.Print(err)
 		return entity.ErrDeleteWallet
 	}

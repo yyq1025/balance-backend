@@ -112,10 +112,10 @@ func TestGetOne(t *testing.T) {
 		{
 			name: "Success",
 			mock: func() {
-				repo.EXPECT().GetOne(gomock.AssignableToTypeOf(ctxType), gomock.AssignableToTypeOf(entity.Wallet{}), gomock.AssignableToTypeOf(&entity.Wallet{})).DoAndReturn(
-					func(ctx context.Context, condition entity.Wallet, wallet *entity.Wallet) error {
-						wallet.ID = condition.ID
-						wallet.UserID = condition.UserID
+				repo.EXPECT().GetOne(gomock.AssignableToTypeOf(ctxType), gomock.AssignableToTypeOf(""), gomock.AssignableToTypeOf(0), gomock.AssignableToTypeOf(&entity.Wallet{})).DoAndReturn(
+					func(ctx context.Context, userID string, id int, wallet *entity.Wallet) error {
+						wallet.ID = id
+						wallet.UserID = userID
 						return nil
 					},
 				)
@@ -135,7 +135,7 @@ func TestGetOne(t *testing.T) {
 		{
 			name: "Repository error",
 			mock: func() {
-				repo.EXPECT().GetOne(gomock.AssignableToTypeOf(ctxType), gomock.AssignableToTypeOf(entity.Wallet{}), gomock.AssignableToTypeOf(&entity.Wallet{})).Return(errInternalServErr)
+				repo.EXPECT().GetOne(gomock.AssignableToTypeOf(ctxType), gomock.AssignableToTypeOf(""), gomock.AssignableToTypeOf(0), gomock.AssignableToTypeOf(&entity.Wallet{})).Return(errInternalServErr)
 			},
 			res: entity.Balance{},
 			err: entity.ErrGetBalance,
@@ -143,10 +143,10 @@ func TestGetOne(t *testing.T) {
 		{
 			name: "GetSymbol error",
 			mock: func() {
-				repo.EXPECT().GetOne(gomock.AssignableToTypeOf(ctxType), gomock.AssignableToTypeOf(entity.Wallet{}), gomock.AssignableToTypeOf(&entity.Wallet{})).DoAndReturn(
-					func(ctx context.Context, condition entity.Wallet, wallet *entity.Wallet) error {
-						wallet.ID = condition.ID
-						wallet.UserID = condition.UserID
+				repo.EXPECT().GetOne(gomock.AssignableToTypeOf(ctxType), gomock.AssignableToTypeOf(""), gomock.AssignableToTypeOf(0), gomock.AssignableToTypeOf(&entity.Wallet{})).DoAndReturn(
+					func(ctx context.Context, userID string, id int, wallet *entity.Wallet) error {
+						wallet.ID = id
+						wallet.UserID = userID
 						return nil
 					},
 				)
@@ -158,10 +158,10 @@ func TestGetOne(t *testing.T) {
 		{
 			name: "GetBalance error",
 			mock: func() {
-				repo.EXPECT().GetOne(gomock.AssignableToTypeOf(ctxType), gomock.AssignableToTypeOf(entity.Wallet{}), gomock.AssignableToTypeOf(&entity.Wallet{})).DoAndReturn(
-					func(ctx context.Context, condition entity.Wallet, wallet *entity.Wallet) error {
-						wallet.ID = condition.ID
-						wallet.UserID = condition.UserID
+				repo.EXPECT().GetOne(gomock.AssignableToTypeOf(ctxType), gomock.AssignableToTypeOf(""), gomock.AssignableToTypeOf(0), gomock.AssignableToTypeOf(&entity.Wallet{})).DoAndReturn(
+					func(ctx context.Context, userID string, id int, wallet *entity.Wallet) error {
+						wallet.ID = id
+						wallet.UserID = userID
 						return nil
 					},
 				)
@@ -180,7 +180,7 @@ func TestGetOne(t *testing.T) {
 
 			mu.Lock()
 			tt.mock()
-			res, err := walletUseCase.GetOne(context.Background(), entity.Wallet{ID: 1, UserID: "1"})
+			res, err := walletUseCase.GetOne(context.Background(), "1", 1)
 			mu.Unlock()
 
 			require.Equal(t, tt.res, res)
@@ -204,11 +204,11 @@ func TestGetManyWithPagination(t *testing.T) {
 			test: test{
 				name: "First page success",
 				mock: func() {
-					repo.EXPECT().GetManyWithPagination(gomock.AssignableToTypeOf(ctxType), gomock.AssignableToTypeOf(entity.Wallet{}), gomock.AssignableToTypeOf(&[]entity.Wallet{}), gomock.AssignableToTypeOf(&entity.Pagination{})).DoAndReturn(
-						func(ctx context.Context, condition entity.Wallet, wallets *[]entity.Wallet, pagination *entity.Pagination) error {
+					repo.EXPECT().GetManyWithPagination(gomock.AssignableToTypeOf(ctxType), gomock.AssignableToTypeOf(""), gomock.AssignableToTypeOf(&entity.Pagination{}), gomock.AssignableToTypeOf(&[]entity.Wallet{})).DoAndReturn(
+						func(ctx context.Context, userID string, pagination *entity.Pagination, wallets *[]entity.Wallet) error {
 							*wallets = []entity.Wallet{
-								{ID: 2, UserID: condition.UserID},
-								{ID: 1, UserID: condition.UserID},
+								{ID: 2, UserID: userID},
+								{ID: 1, UserID: userID},
 							}
 							return nil
 						})
@@ -245,10 +245,10 @@ func TestGetManyWithPagination(t *testing.T) {
 			test: test{
 				name: "Last page success",
 				mock: func() {
-					repo.EXPECT().GetManyWithPagination(gomock.AssignableToTypeOf(ctxType), gomock.AssignableToTypeOf(entity.Wallet{}), gomock.AssignableToTypeOf(&[]entity.Wallet{}), gomock.AssignableToTypeOf(&entity.Pagination{})).DoAndReturn(
-						func(ctx context.Context, condition entity.Wallet, wallets *[]entity.Wallet, pagination *entity.Pagination) error {
+					repo.EXPECT().GetManyWithPagination(gomock.AssignableToTypeOf(ctxType), gomock.AssignableToTypeOf(""), gomock.AssignableToTypeOf(&entity.Pagination{}), gomock.AssignableToTypeOf(&[]entity.Wallet{})).DoAndReturn(
+						func(ctx context.Context, userID string, pagination *entity.Pagination, wallets *[]entity.Wallet) error {
 							*wallets = []entity.Wallet{
-								{ID: 1, UserID: condition.UserID},
+								{ID: 1, UserID: userID},
 							}
 							return nil
 						})
@@ -273,7 +273,7 @@ func TestGetManyWithPagination(t *testing.T) {
 			test: test{
 				name: "Repository error",
 				mock: func() {
-					repo.EXPECT().GetManyWithPagination(gomock.AssignableToTypeOf(ctxType), gomock.AssignableToTypeOf(entity.Wallet{}), gomock.AssignableToTypeOf(&[]entity.Wallet{}), gomock.AssignableToTypeOf(&entity.Pagination{})).Return(errInternalServErr)
+					repo.EXPECT().GetManyWithPagination(gomock.AssignableToTypeOf(ctxType), gomock.AssignableToTypeOf(""), gomock.AssignableToTypeOf(&entity.Pagination{}), gomock.AssignableToTypeOf(&[]entity.Wallet{})).Return(errInternalServErr)
 				},
 				res: []entity.Balance(nil),
 				err: entity.ErrFindWallet,
@@ -284,11 +284,11 @@ func TestGetManyWithPagination(t *testing.T) {
 			test: test{
 				name: "GetSymbol error",
 				mock: func() {
-					repo.EXPECT().GetManyWithPagination(gomock.AssignableToTypeOf(ctxType), gomock.AssignableToTypeOf(entity.Wallet{}), gomock.AssignableToTypeOf(&[]entity.Wallet{}), gomock.AssignableToTypeOf(&entity.Pagination{})).DoAndReturn(
-						func(ctx context.Context, condition entity.Wallet, wallets *[]entity.Wallet, pagination *entity.Pagination) error {
+					repo.EXPECT().GetManyWithPagination(gomock.AssignableToTypeOf(ctxType), gomock.AssignableToTypeOf(""), gomock.AssignableToTypeOf(&entity.Pagination{}), gomock.AssignableToTypeOf(&[]entity.Wallet{})).DoAndReturn(
+						func(ctx context.Context, userID string, pagination *entity.Pagination, wallets *[]entity.Wallet) error {
 							*wallets = []entity.Wallet{
-								{ID: 2, UserID: condition.UserID},
-								{ID: 1, UserID: condition.UserID},
+								{ID: 2, UserID: userID},
+								{ID: 1, UserID: userID},
 							}
 							return nil
 						})
@@ -322,10 +322,10 @@ func TestGetManyWithPagination(t *testing.T) {
 			test: test{
 				name: "GetBalance error",
 				mock: func() {
-					repo.EXPECT().GetManyWithPagination(gomock.AssignableToTypeOf(ctxType), gomock.AssignableToTypeOf(entity.Wallet{}), gomock.AssignableToTypeOf(&[]entity.Wallet{}), gomock.AssignableToTypeOf(&entity.Pagination{})).DoAndReturn(
-						func(ctx context.Context, condition entity.Wallet, wallets *[]entity.Wallet, pagination *entity.Pagination) error {
+					repo.EXPECT().GetManyWithPagination(gomock.AssignableToTypeOf(ctxType), gomock.AssignableToTypeOf(""), gomock.AssignableToTypeOf(&entity.Pagination{}), gomock.AssignableToTypeOf(&[]entity.Wallet{})).DoAndReturn(
+						func(ctx context.Context, userID string, pagination *entity.Pagination, wallets *[]entity.Wallet) error {
 							*wallets = []entity.Wallet{
-								{ID: 1, UserID: condition.UserID},
+								{ID: 1, UserID: userID},
 							}
 							return nil
 						})
@@ -355,7 +355,7 @@ func TestGetManyWithPagination(t *testing.T) {
 
 			mu.Lock()
 			tt.mock()
-			res, res1, err := walletUseCase.GetManyWithPagination(context.Background(), entity.Wallet{UserID: "1"}, &entity.Pagination{PageSize: 2})
+			res, res1, err := walletUseCase.GetManyWithPagination(context.Background(), "1", &entity.Pagination{PageSize: 2})
 			mu.Unlock()
 
 			require.Equal(t, tt.res, res)
@@ -376,14 +376,14 @@ func TestDeleteOne(t *testing.T) {
 		{
 			name: "Success",
 			mock: func() {
-				repo.EXPECT().DeleteOne(gomock.AssignableToTypeOf(ctxType), gomock.AssignableToTypeOf(entity.Wallet{})).Return(nil)
+				repo.EXPECT().DeleteOne(gomock.AssignableToTypeOf(ctxType), gomock.AssignableToTypeOf(""), gomock.AssignableToTypeOf(0)).Return(nil)
 			},
 			err: nil,
 		},
 		{
 			name: "Repository error",
 			mock: func() {
-				repo.EXPECT().DeleteOne(gomock.AssignableToTypeOf(ctxType), gomock.AssignableToTypeOf(entity.Wallet{})).Return(errInternalServErr)
+				repo.EXPECT().DeleteOne(gomock.AssignableToTypeOf(ctxType), gomock.AssignableToTypeOf(""), gomock.AssignableToTypeOf(0)).Return(errInternalServErr)
 			},
 			err: entity.ErrDeleteWallet,
 		},
@@ -396,7 +396,7 @@ func TestDeleteOne(t *testing.T) {
 
 			mu.Lock()
 			tt.mock()
-			err := walletUseCase.DeleteOne(context.Background(), entity.Wallet{})
+			err := walletUseCase.DeleteOne(context.Background(), "", 0)
 			mu.Unlock()
 
 			require.ErrorIs(t, err, tt.err)
