@@ -96,11 +96,11 @@ func (e *WalletEthAPI) GetSymbol(ctx context.Context, wallet entity.Wallet) (str
 }
 
 func (e *WalletEthAPI) GetBalance(ctx context.Context, wallet entity.Wallet) (float64, error) {
-	balance, err := e.getBalance(ctx, wallet)
+	decimals, err := e.getDecimals(ctx, wallet)
 	if err != nil {
 		return 0, err
 	}
-	decimals, err := e.getDecimals(ctx, wallet)
+	balance, err := e.getBalance(ctx, wallet)
 	if err != nil {
 		return 0, err
 	}
