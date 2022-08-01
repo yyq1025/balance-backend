@@ -3,7 +3,8 @@ package controller
 import (
 	"net/http"
 	"strconv"
-	"yyq1025/balance-backend/internal/entity"
+
+	"github.com/yyq1025/balance-backend/internal/entity"
 
 	"github.com/gin-gonic/gin"
 )
@@ -47,7 +48,7 @@ func (w *WalletHandler) GetManyWithPagination(c *gin.Context) {
 
 	p := &entity.Pagination{IDLte: idLte, Page: page, PageSize: pageSize}
 
-	balances, p, err := w.WalletService.GetManyWithPagination(c.Request.Context(), &entity.Wallet{UserID: userID}, p)
+	balances, p, err := w.WalletService.GetManyWithPagination(c.Request.Context(), entity.Wallet{UserID: userID}, p)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, ErrorResponse{Message: err.Error()})
 		return
@@ -68,7 +69,7 @@ func (w *WalletHandler) GetOne(c *gin.Context) {
 		return
 	}
 
-	balance, err := w.WalletService.GetOne(c.Request.Context(), &entity.Wallet{UserID: userID, ID: id})
+	balance, err := w.WalletService.GetOne(c.Request.Context(), entity.Wallet{UserID: userID, ID: id})
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, ErrorResponse{Message: err.Error()})
 		return
@@ -111,7 +112,7 @@ func (w *WalletHandler) DeleteOne(c *gin.Context) {
 		return
 	}
 
-	err = w.WalletService.DeleteOne(c.Request.Context(), &entity.Wallet{UserID: userID, ID: id})
+	err = w.WalletService.DeleteOne(c.Request.Context(), entity.Wallet{UserID: userID, ID: id})
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, ErrorResponse{Message: err.Error()})
 		return

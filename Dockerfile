@@ -11,7 +11,7 @@ COPY . /app
 
 RUN go mod download
 
-RUN go build -o /balance-backend ./app
+RUN go build -o /balance-backend ./cmd
 
 ##
 ## Deploy

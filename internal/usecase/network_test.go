@@ -1,27 +1,28 @@
-package usecase
+package usecase_test
 
 import (
 	"context"
+	"sync"
 	"testing"
-	"yyq1025/balance-backend/internal/entity"
-	"yyq1025/balance-backend/internal/entity/mocks"
 
-	"github.com/go-redis/redismock/v8"
+	"github.com/yyq1025/balance-backend/internal/entity"
+	"github.com/yyq1025/balance-backend/internal/entity/mocks"
+	"github.com/yyq1025/balance-backend/internal/usecase"
+
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
 )
 
-func network(t *testing.T) (*entity.NetworkUseCase, *mocks.MockNetworkRepository) {
+func network(t *testing.T) (entity.NetworkUseCase, *mocks.MockNetworkRepository) {
 	t.Helper()
 
 	mockCtl := gomock.NewController(t)
 	defer mockCtl.Finish()
 
-	rdb, _ := redismock.NewClientMock()
 	mockNetworkRepo := mocks.NewMockNetworkRepository(mockCtl)
-	mockNetworkUseCase := NewNetworkUseCase(mockNetworkRepo, rdb)
+	mockNetworkUseCase := usecase.NewNetworkUseCase(mockNetworkRepo)
 
-	return &mockNetworkUseCase, mockNetworkRepo
+	return mockNetworkUseCase, mockNetworkRepo
 }
 
 func TestGetAll(t *testing.T) {
@@ -29,26 +30,11 @@ func TestGetAll(t *testing.T) {
 
 	network, mockNetworkRepo := network(t)
 
-	tests := []struct {
-		name string
-		mock func()
-		res  any
-		err  error
-	}{
+	var mu sync.Mutex
+
+	tests := []test{
 		{
-			name: "error",
-			mock: func() {
-				mockNetworkRepo.EXPECT().GetAll(gomock.AssignableToTypeOf(ctxType), gomock.AssignableToTypeOf(&[]entity.Network{})).DoAndReturn(
-					func(ctx context.Context, networks *[]entity.Network) error {
-						return errInternalServErr
-					},
-				)
-			},
-			res: []entity.Network(nil),
-			err: entity.ErrGetNetwork,
-		},
-		{
-			name: "not cached",
+			name: "Success",
 			mock: func() {
 				mockNetworkRepo.EXPECT().GetAll(gomock.AssignableToTypeOf(ctxType), gomock.AssignableToTypeOf(&[]entity.Network{})).DoAndReturn(
 					func(ctx context.Context, networks *[]entity.Network) error {
@@ -61,21 +47,31 @@ func TestGetAll(t *testing.T) {
 			err: nil,
 		},
 		{
-			name: "cached",
-			mock: func() {},
-			res:  []entity.Network{{Name: "test"}},
-			err:  nil,
+			name: "Error",
+			mock: func() {
+				mockNetworkRepo.EXPECT().GetAll(gomock.AssignableToTypeOf(ctxType), gomock.AssignableToTypeOf(&[]entity.Network{})).DoAndReturn(
+					func(ctx context.Context, networks *[]entity.Network) error {
+						return errInternalServErr
+					},
+				)
+			},
+			res: []entity.Network(nil),
+			err: entity.ErrGetNetwork,
 		},
 	}
 
 	for _, tt := range tests {
-		// tt := tt
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 
+			mu.Lock()
 			tt.mock()
-			res, err := (*network).GetAll(context.Background())
+			res, err := network.GetAll(context.Background())
+			mu.Unlock()
+
 			require.Equal(t, tt.res, res)
-			require.ErrorIs(t, tt.err, err)
+			require.ErrorIs(t, err, tt.err)
 		})
 	}
 }

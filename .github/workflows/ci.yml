@@ -62,7 +62,7 @@ jobs:
       - name: Run SQL scripts
         run: |
           psql -f ./sql/schema.sql postgresql://postgres:postgres@localhost:5432/postgres
-          psql -f ./sql/data.sql postgresql://postgres:postgres@localhost:5432/postgres
+          psql -f ./sql/test_data.sql postgresql://postgres:postgres@localhost:5432/postgres
 
       - name: Run coverage
         env:
@@ -71,8 +71,9 @@ jobs:
           DB_USER: postgres
           DB_PASSWORD: postgres
           DB_NAME: postgres
-          REDIS_HOST: localhost:6379
-        run: go test -race -coverprofile=coverage.txt -covermode=atomic ./...
+          REDIS_HOST: localhost
+          REDIS_PORT: 6379
+        run: go test -race -coverprofile=coverage.txt -covermode=atomic ./internal/...
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
 
