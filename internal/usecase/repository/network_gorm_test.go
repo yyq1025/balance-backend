@@ -3,10 +3,11 @@ package repository_test
 import (
 	"context"
 	"fmt"
-	"os"
 	"testing"
 	"time"
 
+	"github.com/caarlos0/env/v6"
+	"github.com/yyq1025/balance-backend/config"
 	"github.com/yyq1025/balance-backend/internal/entity"
 	"github.com/yyq1025/balance-backend/internal/usecase/repository"
 
@@ -20,14 +21,19 @@ import (
 func network(t *testing.T) entity.NetworkRepository {
 	t.Helper()
 
-	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s", os.Getenv("DB_HOST"), os.Getenv("DB_USER"), os.Getenv("DB_PASSWORD"), os.Getenv("DB_NAME"), os.Getenv("DB_PORT"))
+	cfg := &config.Config{}
+	if err := env.Parse(cfg); err != nil {
+		t.Fatal(err)
+	}
+
+	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s", cfg.DB.Host, cfg.DB.User, cfg.DB.Password, cfg.DB.Name, cfg.DB.Port)
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	rdb := redis.NewClient(&redis.Options{
-		Addr: os.Getenv("REDIS_HOST"),
+		Addr: cfg.Redis.Host + ":" + cfg.Redis.Port,
 	})
 	_, err = rdb.Ping(context.Background()).Result()
 	if err != nil {

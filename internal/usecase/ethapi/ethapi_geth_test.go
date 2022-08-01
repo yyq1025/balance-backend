@@ -2,10 +2,11 @@ package ethapi_test
 
 import (
 	"context"
-	"os"
 	"testing"
 	"time"
 
+	"github.com/caarlos0/env/v6"
+	"github.com/yyq1025/balance-backend/config"
 	"github.com/yyq1025/balance-backend/internal/entity"
 	"github.com/yyq1025/balance-backend/internal/usecase/ethapi"
 
@@ -26,8 +27,13 @@ var ethChain = entity.Network{
 func ethAPI(t *testing.T) entity.WalletEthAPI {
 	t.Helper()
 
+	cfg := &config.Config{}
+	if err := env.Parse(cfg); err != nil {
+		t.Fatal(err)
+	}
+
 	rdb := redis.NewClient(&redis.Options{
-		Addr: os.Getenv("REDIS_HOST"),
+		Addr: cfg.Redis.Host + ":" + cfg.Redis.Port,
 	})
 	_, err := rdb.Ping(context.Background()).Result()
 	if err != nil {

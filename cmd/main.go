@@ -14,6 +14,6 @@ func main() {
 	if err := env.Parse(cfg); err != nil {
 		log.Fatal(err)
 	}
-	log.Print(cfg.Timeout)
+
 	app.Run(cfg)
 }
