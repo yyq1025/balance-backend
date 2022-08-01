@@ -92,14 +92,14 @@ func TestEthAPI(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	require.Greater(t, balance, 0)
+	require.Greater(t, balance, float64(0))
 
 	// get DAI token balance with cached decimals
 	balance, err = api.GetBalance(context.Background(), entity.Wallet{Network: ethChain, Token: common.HexToAddress("0x6B175474E89094C44Da98b954EedeAC495271d0F")})
 	if err != nil {
 		t.Error(err)
 	}
-	require.Greater(t, balance, 0)
+	require.Greater(t, balance, float64(0))
 
 	// get native token balance with invalid url
 	_, err = api.GetBalance(context.Background(), entity.Wallet{Network: entity.Network{URL: "abcd"}})
