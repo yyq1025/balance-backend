@@ -5,8 +5,9 @@ import (
 	"os"
 	"testing"
 	"time"
-	"yyq1025/balance-backend/internal/entity"
-	"yyq1025/balance-backend/internal/usecase/ethapi"
+
+	"github.com/yyq1025/balance-backend/internal/entity"
+	"github.com/yyq1025/balance-backend/internal/usecase/ethapi"
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/go-redis/cache/v8"

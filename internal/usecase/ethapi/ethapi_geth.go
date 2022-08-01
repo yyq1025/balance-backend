@@ -5,9 +5,10 @@ import (
 	"fmt"
 	"math/big"
 	"time"
-	"yyq1025/balance-backend/internal/entity"
-	"yyq1025/balance-backend/pkg/erc20"
-	"yyq1025/balance-backend/pkg/util"
+
+	"github.com/yyq1025/balance-backend/internal/entity"
+	"github.com/yyq1025/balance-backend/pkg/erc20"
+	"github.com/yyq1025/balance-backend/pkg/util"
 
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/ethclient"

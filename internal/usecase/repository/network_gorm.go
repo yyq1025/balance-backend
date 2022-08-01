@@ -3,7 +3,8 @@ package repository
 import (
 	"context"
 	"time"
-	"yyq1025/balance-backend/internal/entity"
+
+	"github.com/yyq1025/balance-backend/internal/entity"
 
 	"github.com/go-redis/cache/v8"
 	"gorm.io/gorm"

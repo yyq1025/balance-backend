@@ -4,9 +4,10 @@ import (
 	"context"
 	"sync"
 	"testing"
-	"yyq1025/balance-backend/internal/entity"
-	"yyq1025/balance-backend/internal/entity/mocks"
-	"yyq1025/balance-backend/internal/usecase"
+
+	"github.com/yyq1025/balance-backend/internal/entity"
+	"github.com/yyq1025/balance-backend/internal/entity/mocks"
+	"github.com/yyq1025/balance-backend/internal/usecase"
 
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"

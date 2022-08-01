@@ -3,7 +3,8 @@ package controller
 import (
 	"net/http"
 	"strconv"
-	"yyq1025/balance-backend/internal/entity"
+
+	"github.com/yyq1025/balance-backend/internal/entity"
 
 	"github.com/gin-gonic/gin"
 )

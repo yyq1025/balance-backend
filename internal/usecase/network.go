@@ -3,7 +3,8 @@ package usecase
 import (
 	"context"
 	"log"
-	"yyq1025/balance-backend/internal/entity"
+
+	"github.com/yyq1025/balance-backend/internal/entity"
 )
 
 type networkUseCase struct {

@@ -7,7 +7,7 @@ package mocks
 import (
 	context "context"
 	reflect "reflect"
-	entity "yyq1025/balance-backend/internal/entity"
+	entity "github.com/yyq1025/balance-backend/internal/entity"
 
 	gomock "github.com/golang/mock/gomock"
 )

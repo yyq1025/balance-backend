@@ -1,17 +1,18 @@
-package main
+package app
 
 import (
 	"context"
 	"fmt"
 	"log"
 	"net/url"
-	"os"
 	"time"
-	"yyq1025/balance-backend/internal/controller"
-	"yyq1025/balance-backend/internal/controller/middleware"
-	"yyq1025/balance-backend/internal/usecase"
-	"yyq1025/balance-backend/internal/usecase/ethapi"
-	"yyq1025/balance-backend/internal/usecase/repository"
+
+	"github.com/yyq1025/balance-backend/config"
+	"github.com/yyq1025/balance-backend/internal/controller"
+	"github.com/yyq1025/balance-backend/internal/controller/middleware"
+	"github.com/yyq1025/balance-backend/internal/usecase"
+	"github.com/yyq1025/balance-backend/internal/usecase/ethapi"
+	"github.com/yyq1025/balance-backend/internal/usecase/repository"
 
 	"github.com/auth0/go-jwt-middleware/v2/jwks"
 	"github.com/auth0/go-jwt-middleware/v2/validator"
@@ -22,17 +23,17 @@ import (
 	"gorm.io/gorm"
 )
 
-func main() {
-	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s", os.Getenv("DB_HOST"), os.Getenv("DB_USER"), os.Getenv("DB_PASSWORD"), os.Getenv("DB_NAME"), os.Getenv("DB_PORT"))
+func Run(cfg *config.Config) {
+	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s", cfg.DB.Host, cfg.DB.User, cfg.DB.Password, cfg.DB.Name, cfg.DB.Port)
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	rdb := redis.NewClient(&redis.Options{
-		Addr:     os.Getenv("REDIS_HOST"),
-		Username: os.Getenv("REDIS_USER"),
-		Password: os.Getenv("REDIS_PASSWORD"),
+		Addr:     cfg.Redis.Host + ":" + cfg.Redis.Port,
+		Username: cfg.Redis.User,
+		Password: cfg.Redis.Password,
 	})
 	_, err = rdb.Ping(context.Background()).Result()
 	if err != nil {
@@ -44,7 +45,7 @@ func main() {
 		LocalCache: cache.NewTinyLFU(10000, time.Minute),
 	})
 
-	issuerURL, err := url.Parse("https://" + os.Getenv("AUTH0_DOMAIN") + "/")
+	issuerURL, err := url.Parse("https://" + cfg.Auth0.Domain + "/")
 	if err != nil {
 		log.Fatalf("Failed to parse the issuer url: %v", err)
 	}
@@ -55,14 +56,14 @@ func main() {
 		provider.KeyFunc,
 		validator.RS256,
 		issuerURL.String(),
-		[]string{os.Getenv("AUTH0_AUDIENCE")},
+		[]string{cfg.Auth0.Aud},
 		validator.WithAllowedClockSkew(time.Minute),
 	)
 	if err != nil {
 		log.Fatalf("Failed to set up the jwt validator")
 	}
 
-	m := middleware.InitMiddleware(jwtValidator, rdb, 3500*time.Millisecond)
+	m := middleware.InitMiddleware(jwtValidator, rdb, cfg.Timeout)
 
 	router := gin.Default()
 	router.Use(m.CORS())
@@ -77,5 +78,5 @@ func main() {
 	router.Use(m.Auth())
 	controller.NewWalletHandler(router, ws)
 
-	log.Fatal(router.Run(":8080"))
+	log.Fatal(router.Run(":" + cfg.Port))
 }

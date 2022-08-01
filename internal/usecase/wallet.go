@@ -4,7 +4,8 @@ import (
 	"context"
 	"log"
 	"sync"
-	"yyq1025/balance-backend/internal/entity"
+
+	"github.com/yyq1025/balance-backend/internal/entity"
 )
 
 type walletUseCase struct {

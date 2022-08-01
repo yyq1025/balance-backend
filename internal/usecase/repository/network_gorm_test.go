@@ -6,8 +6,9 @@ import (
 	"os"
 	"testing"
 	"time"
-	"yyq1025/balance-backend/internal/entity"
-	"yyq1025/balance-backend/internal/usecase/repository"
+
+	"github.com/yyq1025/balance-backend/internal/entity"
+	"github.com/yyq1025/balance-backend/internal/usecase/repository"
 
 	"github.com/go-redis/cache/v8"
 	"github.com/go-redis/redis/v8"
