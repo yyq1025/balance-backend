@@ -71,7 +71,8 @@ jobs:
           DB_USER: postgres
           DB_PASSWORD: postgres
           DB_NAME: postgres
-          REDIS_HOST: localhost:6379
+          REDIS_HOST: localhost
+          REDIS_PORT: 6379
         run: go test -race -coverprofile=coverage.txt -covermode=atomic ./internal/...
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
