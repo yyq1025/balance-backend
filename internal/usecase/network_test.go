@@ -33,7 +33,7 @@ func TestGetAll(t *testing.T) {
 		{
 			name: "Success",
 			mock: func() {
-				mockNetworkRepo.EXPECT().GetAll(gomock.AssignableToTypeOf(ctxType), gomock.AssignableToTypeOf(&[]entity.Network{})).DoAndReturn(
+				mockNetworkRepo.EXPECT().GetAll(context.Background(), gomock.AssignableToTypeOf(&[]entity.Network{})).DoAndReturn(
 					func(ctx context.Context, networks *[]entity.Network) error {
 						*networks = []entity.Network{{Name: "test"}}
 						return nil
@@ -46,7 +46,7 @@ func TestGetAll(t *testing.T) {
 		{
 			name: "Error",
 			mock: func() {
-				mockNetworkRepo.EXPECT().GetAll(gomock.AssignableToTypeOf(ctxType), gomock.AssignableToTypeOf(&[]entity.Network{})).DoAndReturn(
+				mockNetworkRepo.EXPECT().GetAll(context.Background(), gomock.AssignableToTypeOf(&[]entity.Network{})).DoAndReturn(
 					func(ctx context.Context, networks *[]entity.Network) error {
 						return errInternalServErr
 					},
