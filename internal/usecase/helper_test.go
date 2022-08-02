@@ -4,7 +4,7 @@ import (
 	"errors"
 )
 
-var errInternalServErr = errors.New("cannot get networks")
+var errInternalServerErr = errors.New("internal server error")
 
 type test struct {
 	name string

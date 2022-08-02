@@ -20,9 +20,9 @@ func wallet(t *testing.T) (entity.WalletUseCase, *mocks.MockWalletRepository, *m
 
 	repo := mocks.NewMockWalletRepository(mockCtl)
 	ethAPI := mocks.NewMockWalletEthAPI(mockCtl)
-	mockWalletUseCase := usecase.NewWalletUseCase(repo, ethAPI)
+	walletUseCase := usecase.NewWalletUseCase(repo, ethAPI)
 
-	return mockWalletUseCase, repo, ethAPI
+	return walletUseCase, repo, ethAPI
 }
 
 func TestAddOne(t *testing.T) {
@@ -56,7 +56,7 @@ func TestAddOne(t *testing.T) {
 		{
 			name: "GetSymbol error",
 			mock: func() {
-				ethAPI.EXPECT().GetSymbol(context.Background(), entity.Wallet{UserID: "1"}).Return("", errInternalServErr)
+				ethAPI.EXPECT().GetSymbol(context.Background(), entity.Wallet{UserID: "1"}).Return("", errInternalServerErr)
 			},
 			res: entity.Balance{},
 			err: entity.ErrAddWallet,
@@ -65,7 +65,7 @@ func TestAddOne(t *testing.T) {
 			name: "GetBalance error",
 			mock: func() {
 				ethAPI.EXPECT().GetSymbol(context.Background(), entity.Wallet{UserID: "1"}).Return("ETH", nil)
-				ethAPI.EXPECT().GetBalance(context.Background(), entity.Wallet{UserID: "1"}).Return(float64(0), errInternalServErr)
+				ethAPI.EXPECT().GetBalance(context.Background(), entity.Wallet{UserID: "1"}).Return(float64(0), errInternalServerErr)
 			},
 			res: entity.Balance{},
 			err: entity.ErrAddWallet,
@@ -75,7 +75,7 @@ func TestAddOne(t *testing.T) {
 			mock: func() {
 				ethAPI.EXPECT().GetSymbol(context.Background(), entity.Wallet{UserID: "1"}).Return("ETH", nil)
 				ethAPI.EXPECT().GetBalance(context.Background(), entity.Wallet{UserID: "1"}).Return(1.1, nil)
-				repo.EXPECT().AddOne(context.Background(), &entity.Wallet{UserID: "1"}).Return(errInternalServErr)
+				repo.EXPECT().AddOne(context.Background(), &entity.Wallet{UserID: "1"}).Return(errInternalServerErr)
 			},
 			res: entity.Balance{},
 			err: entity.ErrAddWallet,
@@ -126,7 +126,7 @@ func TestGetOne(t *testing.T) {
 		{
 			name: "Repository error",
 			mock: func() {
-				repo.EXPECT().GetOne(context.Background(), "1", 1, gomock.AssignableToTypeOf(&entity.Wallet{})).Return(errInternalServErr)
+				repo.EXPECT().GetOne(context.Background(), "1", 1, gomock.AssignableToTypeOf(&entity.Wallet{})).Return(errInternalServerErr)
 			},
 			res: entity.Balance{},
 			err: entity.ErrGetBalance,
@@ -141,7 +141,7 @@ func TestGetOne(t *testing.T) {
 						return nil
 					},
 				)
-				ethAPI.EXPECT().GetSymbol(context.Background(), entity.Wallet{ID: 1, UserID: "1"}).Return("", errInternalServErr)
+				ethAPI.EXPECT().GetSymbol(context.Background(), entity.Wallet{ID: 1, UserID: "1"}).Return("", errInternalServerErr)
 			},
 			res: entity.Balance{},
 			err: entity.ErrGetBalance,
@@ -157,7 +157,7 @@ func TestGetOne(t *testing.T) {
 					},
 				)
 				ethAPI.EXPECT().GetSymbol(context.Background(), entity.Wallet{ID: 1, UserID: "1"}).Return("ETH", nil)
-				ethAPI.EXPECT().GetBalance(context.Background(), entity.Wallet{ID: 1, UserID: "1"}).Return(float64(0), errInternalServErr)
+				ethAPI.EXPECT().GetBalance(context.Background(), entity.Wallet{ID: 1, UserID: "1"}).Return(float64(0), errInternalServerErr)
 			},
 			res: entity.Balance{},
 			err: entity.ErrGetBalance,
@@ -258,7 +258,7 @@ func TestGetManyWithPagination(t *testing.T) {
 			test: test{
 				name: "Repository error",
 				mock: func() {
-					repo.EXPECT().GetManyWithPagination(context.Background(), "1", &entity.Pagination{PageSize: 2}, gomock.AssignableToTypeOf(&[]entity.Wallet{})).Return(errInternalServErr)
+					repo.EXPECT().GetManyWithPagination(context.Background(), "1", &entity.Pagination{PageSize: 2}, gomock.AssignableToTypeOf(&[]entity.Wallet{})).Return(errInternalServerErr)
 				},
 				res: []entity.Balance(nil),
 				err: entity.ErrFindWallet,
@@ -277,7 +277,7 @@ func TestGetManyWithPagination(t *testing.T) {
 							}
 							return nil
 						})
-					ethAPI.EXPECT().GetSymbol(context.Background(), gomock.AssignableToTypeOf(entity.Wallet{})).Return("", errInternalServErr).Times(2)
+					ethAPI.EXPECT().GetSymbol(context.Background(), gomock.AssignableToTypeOf(entity.Wallet{})).Return("", errInternalServerErr).Times(2)
 				},
 				res: []entity.Balance{
 					{
@@ -315,7 +315,7 @@ func TestGetManyWithPagination(t *testing.T) {
 							return nil
 						})
 					ethAPI.EXPECT().GetSymbol(context.Background(), entity.Wallet{ID: 1, UserID: "1"}).Return("ETH", nil)
-					ethAPI.EXPECT().GetBalance(context.Background(), entity.Wallet{ID: 1, UserID: "1"}).Return(float64(0), errInternalServErr)
+					ethAPI.EXPECT().GetBalance(context.Background(), entity.Wallet{ID: 1, UserID: "1"}).Return(float64(0), errInternalServerErr)
 				},
 				res: []entity.Balance{
 					{
@@ -362,7 +362,7 @@ func TestDeleteOne(t *testing.T) {
 		{
 			name: "Repository error",
 			mock: func() {
-				repo.EXPECT().DeleteOne(context.Background(), "", 0).Return(errInternalServErr)
+				repo.EXPECT().DeleteOne(context.Background(), "", 0).Return(errInternalServerErr)
 			},
 			err: entity.ErrDeleteWallet,
 		},

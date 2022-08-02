@@ -28,25 +28,11 @@ func (w *WalletHandler) GetManyWithPagination(c *gin.Context) {
 		return
 	}
 
-	idLte, err := strconv.Atoi(c.DefaultQuery("idLte", "0"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"message": "invalid idLte"})
+	p := &entity.Pagination{PageSize: 6}
+	if err := c.ShouldBindQuery(p); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
-
-	page, err := strconv.Atoi(c.DefaultQuery("page", "0"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"message": "invalid page"})
-		return
-	}
-
-	pageSize, err := strconv.Atoi(c.DefaultQuery("pageSize", "6"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"message": "invalid page size"})
-		return
-	}
-
-	p := &entity.Pagination{IDLte: idLte, Page: page, PageSize: pageSize}
 
 	balances, p, err := w.WalletService.GetManyWithPagination(c.Request.Context(), userID, p)
 	if err != nil {

@@ -19,15 +19,15 @@ func network(t *testing.T) (entity.NetworkUseCase, *mocks.MockNetworkRepository)
 	defer mockCtl.Finish()
 
 	mockNetworkRepo := mocks.NewMockNetworkRepository(mockCtl)
-	mockNetworkUseCase := usecase.NewNetworkUseCase(mockNetworkRepo)
+	networkUseCase := usecase.NewNetworkUseCase(mockNetworkRepo)
 
-	return mockNetworkUseCase, mockNetworkRepo
+	return networkUseCase, mockNetworkRepo
 }
 
 func TestGetAll(t *testing.T) {
 	t.Parallel()
 
-	network, mockNetworkRepo := network(t)
+	networkUseCase, mockNetworkRepo := network(t)
 
 	tests := []test{
 		{
@@ -48,7 +48,7 @@ func TestGetAll(t *testing.T) {
 			mock: func() {
 				mockNetworkRepo.EXPECT().GetAll(context.Background(), gomock.AssignableToTypeOf(&[]entity.Network{})).DoAndReturn(
 					func(ctx context.Context, networks *[]entity.Network) error {
-						return errInternalServErr
+						return errInternalServerErr
 					},
 				)
 			},
@@ -61,7 +61,7 @@ func TestGetAll(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			tt.mock()
 
-			res, err := network.GetAll(context.Background())
+			res, err := networkUseCase.GetAll(context.Background())
 
 			require.Equal(t, tt.res, res)
 			require.ErrorIs(t, err, tt.err)
