@@ -2,7 +2,6 @@ package usecase_test
 
 import (
 	"context"
-	"sync"
 	"testing"
 
 	"github.com/yyq1025/balance-backend/internal/entity"
@@ -30,8 +29,6 @@ func TestAddOne(t *testing.T) {
 	t.Parallel()
 
 	walletUseCase, repo, ethAPI := wallet(t)
-
-	var mu sync.Mutex
 
 	tests := []test{
 		{
@@ -86,14 +83,10 @@ func TestAddOne(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
-			t.Parallel()
-
-			mu.Lock()
 			tt.mock()
+
 			res, err := walletUseCase.AddOne(context.Background(), &entity.Wallet{UserID: "1"})
-			mu.Unlock()
 
 			require.Equal(t, tt.res, res)
 			require.ErrorIs(t, err, tt.err)
@@ -105,8 +98,6 @@ func TestGetOne(t *testing.T) {
 	t.Parallel()
 
 	walletUseCase, repo, ethAPI := wallet(t)
-
-	var mu sync.Mutex
 
 	tests := []test{
 		{
@@ -174,14 +165,10 @@ func TestGetOne(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
-			t.Parallel()
-
-			mu.Lock()
 			tt.mock()
+
 			res, err := walletUseCase.GetOne(context.Background(), "1", 1)
-			mu.Unlock()
 
 			require.Equal(t, tt.res, res)
 			require.ErrorIs(t, err, tt.err)
@@ -193,8 +180,6 @@ func TestGetManyWithPagination(t *testing.T) {
 	t.Parallel()
 
 	walletUseCase, repo, ethAPI := wallet(t)
-
-	var mu sync.Mutex
 
 	tests := []struct {
 		test
@@ -349,14 +334,10 @@ func TestGetManyWithPagination(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
-			t.Parallel()
-
-			mu.Lock()
 			tt.mock()
+
 			res, res1, err := walletUseCase.GetManyWithPagination(context.Background(), "1", &entity.Pagination{PageSize: 2})
-			mu.Unlock()
 
 			require.Equal(t, tt.res, res)
 			require.Equal(t, tt.res1, res1)
@@ -369,8 +350,6 @@ func TestDeleteOne(t *testing.T) {
 	t.Parallel()
 
 	walletUseCase, repo, _ := wallet(t)
-
-	var mu sync.Mutex
 
 	tests := []test{
 		{
@@ -390,14 +369,10 @@ func TestDeleteOne(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
-			t.Parallel()
-
-			mu.Lock()
 			tt.mock()
+
 			err := walletUseCase.DeleteOne(context.Background(), "", 0)
-			mu.Unlock()
 
 			require.ErrorIs(t, err, tt.err)
 		})

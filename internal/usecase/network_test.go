@@ -2,7 +2,6 @@ package usecase_test
 
 import (
 	"context"
-	"sync"
 	"testing"
 
 	"github.com/yyq1025/balance-backend/internal/entity"
@@ -29,8 +28,6 @@ func TestGetAll(t *testing.T) {
 	t.Parallel()
 
 	network, mockNetworkRepo := network(t)
-
-	var mu sync.Mutex
 
 	tests := []test{
 		{
@@ -61,14 +58,10 @@ func TestGetAll(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
-			t.Parallel()
-
-			mu.Lock()
 			tt.mock()
+
 			res, err := network.GetAll(context.Background())
-			mu.Unlock()
 
 			require.Equal(t, tt.res, res)
 			require.ErrorIs(t, err, tt.err)
