@@ -1,6 +1,6 @@
 module github.com/yyq1025/balance-backend
 
-go 1.18
+go 1.19
 
 require (
 	github.com/auth0/go-jwt-middleware/v2 v2.0.1
