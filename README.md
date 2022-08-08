@@ -12,8 +12,8 @@
 
 | Name | Required | Default | Description |
 | ---- | -------- | ------- | ----------- |
-| `AUTH0_DOMAIN` | Yes || Auth0 domain, learn more [here](https://auth0.com/docs/quickstart/backend/golang/interactive) |
-| `AUTH0_AUDIENCE` | Yes || Auth0 audience, learn more [here](https://auth0.com/docs/quickstart/backend/golang/interactive) |
+| `AUTH0_DOMAIN` | Yes || Auth0 domain, learn more [here](https://auth0.com/docs/quickstart/backend/golang) |
+| `AUTH0_AUDIENCE` | Yes || Auth0 audience, learn more [here](https://auth0.com/docs/quickstart/backend/golang) |
 | `PORT` | No | `8080` | Http port to serve |
 | `TIMEOUT` | No | `3.5s` | Response timeout |
 | `DB_HOST` | No | `localhost` | PostgreSQL host |
