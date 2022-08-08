@@ -78,5 +78,5 @@ func Run(cfg *config.Config) {
 	router.Use(m.Auth())
 	controller.NewWalletHandler(router, ws)
 
-	log.Fatal(router.Run(":" + cfg.Port))
+	log.Fatal(router.Run())
 }

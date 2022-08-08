@@ -20,8 +20,8 @@ type Config struct {
 		Password string `env:"REDIS_PASSWORD" envDefault:""`
 	}
 	Auth0 struct {
-		Domain string `env:"AUTH0_DOMAIN" envDefault:""`
-		Aud    string `env:"AUTH0_AUDIENCE" envDefault:""`
+		Domain string `env:"AUTH0_DOMAIN,required"`
+		Aud    string `env:"AUTH0_AUDIENCE,required"`
 	}
 	Timeout time.Duration `env:"TIMEOUT" envDefault:"3.5s"`
 }
