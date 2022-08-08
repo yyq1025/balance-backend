@@ -5,8 +5,7 @@ import (
 )
 
 type Config struct {
-	Port string `env:"PORT" envDefault:"8080"`
-	DB   struct {
+	DB struct {
 		Host     string `env:"DB_HOST" envDefault:"localhost"`
 		Port     string `env:"DB_PORT" envDefault:"5432"`
 		User     string `env:"DB_USER" envDefault:"postgres"`
