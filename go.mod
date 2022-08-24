@@ -5,7 +5,7 @@ go 1.19
 require (
 	github.com/auth0/go-jwt-middleware/v2 v2.0.1
 	github.com/caarlos0/env/v6 v6.10.0
-	github.com/ethereum/go-ethereum v1.10.22
+	github.com/ethereum/go-ethereum v1.10.23
 	github.com/gin-gonic/gin v1.8.1
 	github.com/go-redis/cache/v8 v8.4.3
 	github.com/go-redis/redis/v8 v8.11.5
