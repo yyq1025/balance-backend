@@ -13,7 +13,7 @@ require (
 	github.com/golang/mock v1.6.0
 	github.com/shopspring/decimal v1.3.1
 	github.com/stretchr/testify v1.8.0
-	golang.org/x/crypto v0.0.0-20221005025214-4161e89ecf1b
+	golang.org/x/crypto v0.0.0-20221010152910-d6f0a8c073c2
 	gorm.io/driver/postgres v1.4.1
 	gorm.io/gorm v1.23.10
 )
