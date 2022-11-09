@@ -13,7 +13,7 @@ require (
 	github.com/golang/mock v1.6.0
 	github.com/shopspring/decimal v1.3.1
 	github.com/stretchr/testify v1.8.1
-	golang.org/x/crypto v0.1.0
+	golang.org/x/crypto v0.2.0
 	gorm.io/driver/postgres v1.4.5
 	gorm.io/gorm v1.24.1
 )
@@ -65,9 +65,9 @@ require (
 	github.com/vmihailenco/tagparser/v2 v2.0.0 // indirect
 	github.com/yusufpapurcu/wmi v1.2.2 // indirect
 	golang.org/x/exp v0.0.0-20220722155223-a9213eeb770e // indirect
-	golang.org/x/net v0.1.0 // indirect
+	golang.org/x/net v0.2.0 // indirect
 	golang.org/x/sync v0.0.0-20220722155255-886fb9371eb4 // indirect
-	golang.org/x/sys v0.1.0 // indirect
+	golang.org/x/sys v0.2.0 // indirect
 	golang.org/x/text v0.4.0 // indirect
 	google.golang.org/protobuf v1.28.1 // indirect
 	gopkg.in/natefinch/npipe.v2 v2.0.0-20160621034901-c1b8fa8bdcce // indirect
