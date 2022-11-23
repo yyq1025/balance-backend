@@ -7,7 +7,7 @@ require (
 	github.com/caarlos0/env/v6 v6.10.1
 	github.com/ethereum/go-ethereum v1.10.26
 	github.com/gin-gonic/gin v1.8.1
-	github.com/go-redis/cache/v8 v8.4.3
+	github.com/go-redis/cache/v8 v8.4.4
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/go-redis/redis_rate/v9 v9.1.2
 	github.com/golang/mock v1.6.0
