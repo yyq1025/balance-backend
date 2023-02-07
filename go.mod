@@ -9,6 +9,7 @@ require (
 	github.com/ethereum/go-ethereum v1.10.26
 	github.com/gin-gonic/gin v1.8.2
 	github.com/go-redis/cache/v8 v8.4.4
+	github.com/go-redis/cache/v9 v9.0.0
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/go-redis/redis_rate/v9 v9.1.2
 	github.com/golang/mock v1.6.0
@@ -21,7 +22,7 @@ require (
 
 require (
 	github.com/btcsuite/btcd/btcec/v2 v2.2.0 // indirect
-	github.com/cespare/xxhash/v2 v2.1.2 // indirect
+	github.com/cespare/xxhash/v2 v2.2.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/deckarep/golang-set v1.8.0 // indirect
 	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.0.1 // indirect
@@ -68,7 +69,7 @@ require (
 	github.com/yusufpapurcu/wmi v1.2.2 // indirect
 	golang.org/x/exp v0.0.0-20220722155223-a9213eeb770e // indirect
 	golang.org/x/net v0.5.0 // indirect
-	golang.org/x/sync v0.0.0-20220923202941-7f9b1623fab7 // indirect
+	golang.org/x/sync v0.1.0 // indirect
 	golang.org/x/sys v0.4.0 // indirect
 	golang.org/x/text v0.6.0 // indirect
 	google.golang.org/protobuf v1.28.1 // indirect
