@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/caarlos0/env/v6"
+	"github.com/caarlos0/env/v7"
 	"github.com/yyq1025/balance-backend/config"
 	"github.com/yyq1025/balance-backend/internal/entity"
 	"github.com/yyq1025/balance-backend/internal/usecase/repository"

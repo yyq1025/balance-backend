@@ -6,7 +6,7 @@ import (
 	"github.com/yyq1025/balance-backend/config"
 	"github.com/yyq1025/balance-backend/internal/app"
 
-	"github.com/caarlos0/env/v6"
+	"github.com/caarlos0/env/v7"
 )
 
 func main() {
