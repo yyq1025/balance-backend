@@ -11,6 +11,7 @@ require (
 	github.com/go-redis/cache/v8 v8.4.4
 	github.com/go-redis/cache/v9 v9.0.0
 	github.com/go-redis/redis/v8 v8.11.5
+	github.com/go-redis/redis_rate/v10 v10.0.0
 	github.com/go-redis/redis_rate/v9 v9.1.2
 	github.com/golang/mock v1.6.0
 	github.com/shopspring/decimal v1.3.1
