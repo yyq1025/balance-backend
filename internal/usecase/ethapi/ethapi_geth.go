@@ -12,7 +12,7 @@ import (
 
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/ethclient"
-	"github.com/go-redis/cache/v8"
+	"github.com/go-redis/cache/v9"
 )
 
 type WalletEthAPI struct {

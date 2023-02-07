@@ -17,8 +17,8 @@ import (
 	"github.com/auth0/go-jwt-middleware/v2/jwks"
 	"github.com/auth0/go-jwt-middleware/v2/validator"
 	"github.com/gin-gonic/gin"
-	"github.com/go-redis/cache/v8"
-	"github.com/go-redis/redis/v8"
+	"github.com/go-redis/cache/v9"
+	"github.com/redis/go-redis/v9"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )

@@ -11,8 +11,8 @@ import (
 	"github.com/yyq1025/balance-backend/internal/usecase/ethapi"
 
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/go-redis/cache/v8"
-	"github.com/go-redis/redis/v8"
+	"github.com/go-redis/cache/v9"
+	"github.com/redis/go-redis/v9"
 	"github.com/stretchr/testify/require"
 )
 

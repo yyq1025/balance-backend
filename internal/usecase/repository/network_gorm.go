@@ -6,7 +6,7 @@ import (
 
 	"github.com/yyq1025/balance-backend/internal/entity"
 
-	"github.com/go-redis/cache/v8"
+	"github.com/go-redis/cache/v9"
 	"gorm.io/gorm"
 )
 
