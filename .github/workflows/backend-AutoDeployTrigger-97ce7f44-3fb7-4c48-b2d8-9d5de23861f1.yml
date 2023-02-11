@@ -19,20 +19,20 @@ jobs:
 
     steps:
       - name: Checkout to the branch
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v1
 
       - name: Log in to container registry
-        uses: docker/login-action@v2
+        uses: docker/login-action@v1
         with:
           registry: docker.io
           username: ${{ secrets.BACKEND_REGISTRY_USERNAME }}
           password: ${{ secrets.BACKEND_REGISTRY_PASSWORD }}
 
       - name: Build and push container image to registry
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v2
         with:
           push: true
           tags: yyq1025/backend:${{ github.sha }}
