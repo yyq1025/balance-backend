@@ -462,4 +462,6 @@ gorm.io/gorm v1.24.7-0.20230323060235-5d1cdfef2e6c h1:NI+I5CNzVA2F4X37yeYsyiWUlZ
 gorm.io/gorm v1.24.7-0.20230323060235-5d1cdfef2e6c/go.mod h1:L4uxeKpfBml98NYqVqwAdmV1a2nBtAec/cf3fpucW/k=
 gorm.io/gorm v1.24.7-0.20230324020705-b444011d094d h1:o2hb3NvNXoGh3GO7pPxr8umG23SNHm86Qedbs9wpmsE=
 gorm.io/gorm v1.24.7-0.20230324020705-b444011d094d/go.mod h1:L4uxeKpfBml98NYqVqwAdmV1a2nBtAec/cf3fpucW/k=
+gorm.io/gorm v1.24.7-0.20230411040123-4b0da0e97a15 h1:pIPVOOSlY/pQlyj6a9+Lh0eQ+WZaQ6s090tZArJIFnA=
+gorm.io/gorm v1.24.7-0.20230411040123-4b0da0e97a15/go.mod h1:L4uxeKpfBml98NYqVqwAdmV1a2nBtAec/cf3fpucW/k=
 rsc.io/pdf v0.1.1/go.mod h1:n8OzWcQ6Sp37PL01nO98y4iUCRdTGarVfzxY20ICaU4=
