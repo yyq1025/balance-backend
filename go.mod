@@ -5,7 +5,7 @@ go 1.19
 require (
 	github.com/auth0/go-jwt-middleware/v2 v2.1.0
 	github.com/caarlos0/env/v7 v7.1.0
-	github.com/ethereum/go-ethereum v1.11.5
+	github.com/ethereum/go-ethereum v1.11.6
 	github.com/gin-gonic/gin v1.9.0
 	github.com/go-redis/cache/v9 v9.0.0
 	github.com/go-redis/redis_rate/v10 v10.0.1
@@ -39,7 +39,7 @@ require (
 	github.com/golang-jwt/jwt/v4 v4.4.2 // indirect
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/gorilla/websocket v1.5.0 // indirect
-	github.com/holiman/uint256 v1.2.0 // indirect
+	github.com/holiman/uint256 v1.2.2-0.20230321075855-87b91420868c // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20221227161230-091c0ba34f0a // indirect
 	github.com/jackc/pgx/v5 v5.3.0 // indirect
