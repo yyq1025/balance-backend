@@ -63,8 +63,8 @@ jobs:
           cache: true
       - name: Run SQL scripts
         run: |
-          mysql -h localhost -u root -proot < ./sql/schema.sql
-          mysql -h localhost -u root -proot < ./sql/test_data.sql
+          mysql -h mysql -u root -proot < ./sql/schema.sql
+          mysql -h mysql -u root -proot < ./sql/test_data.sql
 
       - name: Run coverage
         env:
