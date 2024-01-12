@@ -6,7 +6,7 @@ package repository_test
 // 	"testing"
 // 	"time"
 
-// 	"github.com/caarlos0/env/v8"
+// 	"github.com/caarlos0/env/v10"
 // 	"github.com/yyq1025/balance-backend/config"
 // 	"github.com/yyq1025/balance-backend/internal/entity"
 // 	"github.com/yyq1025/balance-backend/internal/usecase/repository"
