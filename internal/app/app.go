@@ -2,7 +2,6 @@ package app
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"net/url"
 	"time"
@@ -19,13 +18,12 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/cache/v9"
 	"github.com/redis/go-redis/v9"
-	"gorm.io/driver/postgres"
+	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
 
 func Run(cfg *config.Config) {
-	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s", cfg.DB.Host, cfg.DB.User, cfg.DB.Password, cfg.DB.Name, cfg.DB.Port)
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	db, err := gorm.Open(mysql.Open(cfg.DB.Dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatal(err)
 	}

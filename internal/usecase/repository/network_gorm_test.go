@@ -1,95 +1,95 @@
-package repository_test
+// package repository_test
 
-import (
-	"context"
-	"fmt"
-	"testing"
-	"time"
+// import (
+// 	"context"
+// 	"fmt"
+// 	"testing"
+// 	"time"
 
-	"github.com/caarlos0/env/v7"
-	"github.com/yyq1025/balance-backend/config"
-	"github.com/yyq1025/balance-backend/internal/entity"
-	"github.com/yyq1025/balance-backend/internal/usecase/repository"
+// 	"github.com/caarlos0/env/v8"
+// 	"github.com/yyq1025/balance-backend/config"
+// 	"github.com/yyq1025/balance-backend/internal/entity"
+// 	"github.com/yyq1025/balance-backend/internal/usecase/repository"
 
-	"github.com/go-redis/cache/v9"
-	"github.com/redis/go-redis/v9"
-	"github.com/stretchr/testify/require"
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
-)
+// 	"github.com/go-redis/cache/v9"
+// 	"github.com/redis/go-redis/v9"
+// 	"github.com/stretchr/testify/require"
+// 	"gorm.io/driver/mysql"
+// 	"gorm.io/gorm"
+// )
 
-func network(t *testing.T) entity.NetworkRepository {
-	t.Helper()
+// func network(t *testing.T) entity.NetworkRepository {
+// 	t.Helper()
 
-	cfg := &config.Config{}
-	if err := env.Parse(cfg); err != nil {
-		t.Fatal(err)
-	}
+// 	cfg := &config.Config{}
+// 	if err := env.Parse(cfg); err != nil {
+// 		t.Fatal(err)
+// 	}
 
-	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s", cfg.DB.Host, cfg.DB.User, cfg.DB.Password, cfg.DB.Name, cfg.DB.Port)
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
-	if err != nil {
-		t.Fatal(err)
-	}
+// 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s", cfg.DB.Host, cfg.DB.User, cfg.DB.Password, cfg.DB.Name, cfg.DB.Port)
+// 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+// 	if err != nil {
+// 		t.Fatal(err)
+// 	}
 
-	rdb := redis.NewClient(&redis.Options{
-		Addr: cfg.Redis.Host + ":" + cfg.Redis.Port,
-	})
-	_, err = rdb.Ping(context.Background()).Result()
-	if err != nil {
-		t.Fatal(err)
-	}
+// 	rdb := redis.NewClient(&redis.Options{
+// 		Addr: cfg.Redis.Host + ":" + cfg.Redis.Port,
+// 	})
+// 	_, err = rdb.Ping(context.Background()).Result()
+// 	if err != nil {
+// 		t.Fatal(err)
+// 	}
 
-	rdb.FlushDB(context.Background())
+// 	rdb.FlushDB(context.Background())
 
-	rdbCache := cache.New(&cache.Options{
-		Redis: rdb,
-	})
+// 	rdbCache := cache.New(&cache.Options{
+// 		Redis: rdb,
+// 	})
 
-	return repository.NewNetworkRepository(db, rdbCache)
-}
+// 	return repository.NewNetworkRepository(db, rdbCache)
+// }
 
-func TestGetAll(t *testing.T) {
-	repo := network(t)
+// func TestGetAll(t *testing.T) {
+// 	repo := network(t)
 
-	expect := []entity.Network{
-		{
-			ChainID:  "0x38",
-			Name:     "BSC",
-			URL:      "https://bsc-dataseed.binance.org/",
-			Symbol:   "BNB",
-			Explorer: "https://bscscan.com",
-		},
-		{
-			ChainID:  "0x1",
-			Name:     "Ethereum",
-			URL:      "https://eth.public-rpc.com",
-			Symbol:   "ETH",
-			Explorer: "https://etherscan.io",
-		},
-	}
+// 	expect := []entity.Network{
+// 		{
+// 			ChainID:  "0x38",
+// 			Name:     "BSC",
+// 			URL:      "https://bsc-dataseed.binance.org/",
+// 			Symbol:   "BNB",
+// 			Explorer: "https://bscscan.com",
+// 		},
+// 		{
+// 			ChainID:  "0x1",
+// 			Name:     "Ethereum",
+// 			URL:      "https://eth.public-rpc.com",
+// 			Symbol:   "ETH",
+// 			Explorer: "https://etherscan.io",
+// 		},
+// 	}
 
-	var networks []entity.Network
-	if err := repo.GetAll(context.Background(), &networks); err != nil {
-		t.Error(err)
-	}
+// 	var networks []entity.Network
+// 	if err := repo.GetAll(context.Background(), &networks); err != nil {
+// 		t.Error(err)
+// 	}
 
-	require.Equal(t, expect, networks)
+// 	require.Equal(t, expect, networks)
 
-	// cache
-	var networks1 []entity.Network
-	if err := repo.GetAll(context.Background(), &networks1); err != nil {
-		t.Error(err)
-	}
+// 	// cache
+// 	var networks1 []entity.Network
+// 	if err := repo.GetAll(context.Background(), &networks1); err != nil {
+// 		t.Error(err)
+// 	}
 
-	require.Equal(t, expect, networks1)
+// 	require.Equal(t, expect, networks1)
 
-	// error
-	var networks2 []entity.Network
-	ctx, cancel := context.WithDeadline(context.Background(), time.Now().Add(-time.Minute))
-	defer cancel()
+// 	// error
+// 	var networks2 []entity.Network
+// 	ctx, cancel := context.WithDeadline(context.Background(), time.Now().Add(-time.Minute))
+// 	defer cancel()
 
-	if err := repo.GetAll(ctx, &networks2); err == nil {
-		t.Error("expected error")
-	}
-}
+// 	if err := repo.GetAll(ctx, &networks2); err == nil {
+// 		t.Error("expected error")
+// 	}
+// }

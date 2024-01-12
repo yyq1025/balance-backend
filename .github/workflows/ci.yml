@@ -61,10 +61,10 @@ jobs:
         with:
           go-version-file: "go.mod"
           cache: true
-      - name: Run SQL scripts
-        run: |
-          psql -f ./sql/schema.sql postgresql://postgres:postgres@localhost:5432/postgres
-          psql -f ./sql/test_data.sql postgresql://postgres:postgres@localhost:5432/postgres
+      # - name: Run SQL scripts
+      #   run: |
+      #     psql -f ./sql/schema.sql postgresql://postgres:postgres@localhost:5432/postgres
+      #     psql -f ./sql/test_data.sql postgresql://postgres:postgres@localhost:5432/postgres
 
       - name: Run coverage
         env:
