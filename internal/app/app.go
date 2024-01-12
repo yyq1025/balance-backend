@@ -29,7 +29,7 @@ func Run(cfg *config.Config) {
 	}
 
 	rdb := redis.NewClient(&redis.Options{
-		Addr:     cfg.Redis.Host + ":" + cfg.Redis.Port,
+		Addr:     cfg.Redis.EndPoint,
 		Username: cfg.Redis.User,
 		Password: cfg.Redis.Password,
 	})

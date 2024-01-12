@@ -33,7 +33,7 @@ func ethAPI(t *testing.T) entity.WalletEthAPI {
 	}
 
 	rdb := redis.NewClient(&redis.Options{
-		Addr: cfg.Redis.Host + ":" + cfg.Redis.Port,
+		Addr: cfg.Redis.EndPoint,
 	})
 	_, err := rdb.Ping(context.Background()).Result()
 	if err != nil {
