@@ -31,17 +31,17 @@ jobs:
     runs-on: ubuntu-latest
 
     services:
-      postgres:
-        image: postgres
+      mysql:
+        image: mysql
         env:
-          POSTGRES_PASSWORD: postgres
+          MYSQL_ROOT_PASSWORD: root
         options: >-
-          --health-cmd pg_isready
+          --health-cmd "mysqladmin ping"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
         ports:
-          - 5432:5432
+          - 3306:3306
 
       redis:
         image: redis
@@ -61,10 +61,10 @@ jobs:
         with:
           go-version-file: "go.mod"
           cache: true
-      # - name: Run SQL scripts
-      #   run: |
-      #     psql -f ./sql/schema.sql postgresql://postgres:postgres@localhost:5432/postgres
-      #     psql -f ./sql/test_data.sql postgresql://postgres:postgres@localhost:5432/postgres
+      - name: Run SQL scripts
+        run: |
+          mysql -h localhost -u root -proot < ./sql/schema.sql
+          mysql -h localhost -u root -proot < ./sql/test_data.sql
 
       - name: Run coverage
         env:
