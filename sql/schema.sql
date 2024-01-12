@@ -1,8 +1,8 @@
-DROP TABLE IF EXISTS `wallets`;
-DROP TABLE IF EXISTS `networks`;
+DROP TABLE IF EXISTS wallets;
+DROP TABLE IF EXISTS networks;
 
-CREATE TABLE `networks` (
-  `chain_id` VARCHAR(64) NOT NULL,
+CREATE TABLE networks (
+  chain_id VARCHAR(64) NOT NULL,
   name VARCHAR(64) NOT NULL,
   url VARCHAR(128) NOT NULL,
   symbol VARCHAR(16) NOT NULL,
