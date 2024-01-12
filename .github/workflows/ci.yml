@@ -63,9 +63,9 @@ jobs:
           cache: true
       - name: Run SQL scripts
         run: |
-          mysql -h 127.0.0.1 -u root -proot -e "CREATE DATABASE IF NOT EXISTS database;"
-          mysql -h 127.0.0.1 -u root -D database -proot < ./sql/schema.sql
-          mysql -h 127.0.0.1 -u root -D database -proot < ./sql/test_data.sql
+            mysql -h 127.0.0.1 -u root -proot -e "CREATE DATABASE IF NOT EXISTS \`database\`;"
+            mysql -h 127.0.0.1 -u root -D \`database\` -proot < ./sql/schema.sql
+            mysql -h 127.0.0.1 -u root -D \`database\` -proot < ./sql/test_data.sql
 
       - name: Run coverage
         env:
