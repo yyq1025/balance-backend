@@ -3,7 +3,7 @@
 ##
 ## Build
 ##
-FROM golang:1.21 AS build
+FROM golang:1.21.0-bullseye AS build
 
 WORKDIR /app
 
@@ -16,7 +16,7 @@ RUN go build -o /balance-backend ./cmd
 ##
 ## Deploy
 ##
-FROM gcr.io/distroless/base-debian11:nonroot
+FROM gcr.io/distroless/base-debian12:nonroot
 
 WORKDIR /
 
