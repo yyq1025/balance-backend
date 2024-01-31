@@ -73,7 +73,7 @@ jobs:
           AUTH0_AUDIENCE: test
         run: go test -race -coverprofile=coverage.txt -covermode=atomic ./internal/...
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
 
   build:
     runs-on: ubuntu-latest
