@@ -13,7 +13,7 @@ require (
 	github.com/redis/go-redis/v9 v9.5.1
 	github.com/shopspring/decimal v1.3.1
 	github.com/stretchr/testify v1.8.4
-	golang.org/x/crypto v0.19.0
+	golang.org/x/crypto v0.20.0
 	gorm.io/driver/mysql v1.5.4
 	gorm.io/gorm v1.25.7
 )
@@ -71,7 +71,7 @@ require (
 	golang.org/x/arch v0.3.0 // indirect
 	golang.org/x/exp v0.0.0-20231110203233-9a3e6036ecaa // indirect
 	golang.org/x/mod v0.14.0 // indirect
-	golang.org/x/net v0.18.0 // indirect
+	golang.org/x/net v0.21.0 // indirect
 	golang.org/x/sync v0.6.0 // indirect
 	golang.org/x/sys v0.17.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
