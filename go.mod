@@ -12,7 +12,7 @@ require (
 	github.com/golang/mock v1.6.0
 	github.com/redis/go-redis/v9 v9.5.1
 	github.com/shopspring/decimal v1.3.1
-	github.com/stretchr/testify v1.8.4
+	github.com/stretchr/testify v1.9.0
 	golang.org/x/crypto v0.20.0
 	gorm.io/driver/mysql v1.5.4
 	gorm.io/gorm v1.25.7
