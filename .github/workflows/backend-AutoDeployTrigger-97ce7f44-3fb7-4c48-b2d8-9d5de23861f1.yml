@@ -52,7 +52,7 @@ jobs:
 
 
       - name: Deploy to containerapp
-        uses: azure/CLI@v1
+        uses: azure/CLI@v2
         with:
           inlineScript: |
             az config set extension.use_dynamic_install=yes_without_prompt
