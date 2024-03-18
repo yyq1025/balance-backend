@@ -14,7 +14,7 @@ require (
 	github.com/shopspring/decimal v1.3.1
 	github.com/stretchr/testify v1.9.0
 	golang.org/x/crypto v0.21.0
-	gorm.io/driver/mysql v1.5.4
+	gorm.io/driver/mysql v1.5.5
 	gorm.io/gorm v1.25.7
 )
 
