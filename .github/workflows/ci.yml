@@ -35,8 +35,7 @@ jobs:
         image: mcr.microsoft.com/mssql/server
         env:
           ACCEPT_EULA: Y
-          SA_PASSWORD: Sa_password
-          MSSQL_PID: Express
+          MSSQL_SA_PASSWORD: Sa_password
         options: >-
           --health-cmd "sqlcmd -U sa -P Sa_password -Q 'SELECT 1'"
           --health-interval 10s
