@@ -32,10 +32,11 @@ jobs:
 
     services:
       sql-server:
-        image: mcr.microsoft.com/mssql/server
+        image: mcr.microsoft.com/mssql/server:2019-latest
         env:
           ACCEPT_EULA: Y
           MSSQL_SA_PASSWORD: Sa_password
+          MSSQL_PID: Express
         options: >-
           --health-cmd "sqlcmd -U sa -P Sa_password -Q 'SELECT 1'"
           --health-interval 10s
