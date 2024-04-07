@@ -1,6 +1,10 @@
-INSERT INTO `networks` (`chain_id`, `name`, `url`, `symbol`, `explorer`) VALUES
-('0x1', 'Ethereum', 'https://eth.public-rpc.com', 'ETH', 'https://etherscan.io'),
-('0x38', 'BSC', 'https://bsc-dataseed.binance.org/', 'BNB', 'https://bscscan.com');
+INSERT INTO [networks]
+    ([chain_id], [name], [url], [symbol], [explorer])
+VALUES
+    ('0x1', 'Ethereum', 'https://eth.public-rpc.com', 'ETH', 'https://etherscan.io'),
+    ('0x38', 'BSC', 'https://bsc-dataseed.binance.org/', 'BNB', 'https://bscscan.com');
 
-INSERT INTO `wallets` (`user_id`, `address`, `network_name`, `token`) VALUES
-('1', UNHEX('0000000000000000000000000000000000000000'), 'Ethereum', UNHEX('0000000000000000000000000000000000000000'));
+INSERT INTO [wallets]
+    ([user_id], [address], [network_name], [token])
+VALUES
+    ('1', 0x0000000000000000000000000000000000000000, 'Ethereum', 0x0000000000000000000000000000000000000000);

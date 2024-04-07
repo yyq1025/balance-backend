@@ -18,12 +18,12 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/cache/v9"
 	"github.com/redis/go-redis/v9"
-	"gorm.io/driver/mysql"
+	"gorm.io/driver/sqlserver"
 	"gorm.io/gorm"
 )
 
 func Run(cfg *config.Config) {
-	db, err := gorm.Open(mysql.Open(cfg.DB.Dsn), &gorm.Config{})
+	db, err := gorm.Open(sqlserver.Open(cfg.DB.Dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatal(err)
 	}

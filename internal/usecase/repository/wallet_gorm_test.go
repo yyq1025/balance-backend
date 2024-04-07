@@ -14,7 +14,7 @@ import (
 	"github.com/go-redis/cache/v9"
 	"github.com/redis/go-redis/v9"
 	"github.com/stretchr/testify/require"
-	"gorm.io/driver/mysql"
+	"gorm.io/driver/sqlserver"
 	"gorm.io/gorm"
 )
 
@@ -26,7 +26,7 @@ func wallet(t *testing.T) entity.WalletRepository {
 		t.Fatal(err)
 	}
 
-	db, err := gorm.Open(mysql.Open(cfg.DB.Dsn), &gorm.Config{})
+	db, err := gorm.Open(gorm.io/driver/sqlserver.Open(cfg.DB.Dsn), &gorm.Config{})
 	if err != nil {
 		t.Fatal(err)
 	}
