@@ -6,7 +6,7 @@ import (
 
 type Config struct {
 	DB struct {
-		Dsn string `env:"DB_DSN" envDefault:"sqlserver://sa:Sa_password@localhost:1433?database=database"`
+		Dsn string `env:"DB_DSN" envDefault:"sqlserver://sa:Sa_password@localhost:1433?database=master"`
 	}
 	Redis struct {
 		EndPoint string `env:"REDIS_ENDPOINT" envDefault:"localhost:6379"`
