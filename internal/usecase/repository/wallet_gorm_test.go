@@ -26,7 +26,7 @@ func wallet(t *testing.T) entity.WalletRepository {
 		t.Fatal(err)
 	}
 
-	db, err := gorm.Open(gorm.io/driver/sqlserver.Open(cfg.DB.Dsn), &gorm.Config{})
+	db, err := gorm.Open(sqlserver.Open(cfg.DB.Dsn), &gorm.Config{})
 	if err != nil {
 		t.Fatal(err)
 	}

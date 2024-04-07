@@ -35,10 +35,10 @@ jobs:
         image: mcr.microsoft.com/mssql/server
         env:
           ACCEPT_EULA: Y
-          SA_PASSWORD: sa_password
+          SA_PASSWORD: Sa_password
           MSSQL_PID: Express
         options: >-
-          --health-cmd "sqlcmd -U sa -P sa_password -Q 'SELECT 1'"
+          --health-cmd "sqlcmd -U sa -P Sa_password -Q 'SELECT 1'"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
@@ -55,8 +55,8 @@ jobs:
           cache: true
       - name: Run SQL scripts
         run: |
-          sqlcmd -S localhost -U sa -P sa_password -d database -i ./sql/schema.sql
-          sqlcmd -S localhost -U sa -P sa_password -d database -i ./sql/test_data.sql
+          sqlcmd -S localhost -U sa -P Sa_password -d database -i ./sql/schema.sql
+          sqlcmd -S localhost -U sa -P Sa_password -d database -i ./sql/test_data.sql
 
       - name: Run coverage
         env:
