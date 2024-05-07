@@ -2,7 +2,7 @@ module github.com/yyq1025/balance-backend
 
 go 1.21
 
-toolchain go1.22.2
+toolchain go1.22.3
 
 require (
 	github.com/auth0/go-jwt-middleware/v2 v2.2.1
