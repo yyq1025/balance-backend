@@ -7,7 +7,7 @@ toolchain go1.22.4
 require (
 	github.com/auth0/go-jwt-middleware/v2 v2.2.1
 	github.com/caarlos0/env/v10 v10.0.0
-	github.com/ethereum/go-ethereum v1.14.4
+	github.com/ethereum/go-ethereum v1.14.5
 	github.com/gin-gonic/gin v1.10.0
 	github.com/go-redis/cache/v9 v9.0.0
 	github.com/go-redis/redis_rate/v10 v10.0.1
