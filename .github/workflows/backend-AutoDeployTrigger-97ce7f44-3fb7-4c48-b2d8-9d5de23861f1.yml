@@ -32,7 +32,7 @@ jobs:
           password: ${{ secrets.BACKEND_REGISTRY_PASSWORD }}
 
       - name: Build and push container image to registry
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           push: true
           tags: yyq1025/backend:${{ github.sha }}
