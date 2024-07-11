@@ -7,7 +7,7 @@ toolchain go1.22.5
 require (
 	github.com/auth0/go-jwt-middleware/v2 v2.2.1
 	github.com/caarlos0/env/v10 v10.0.0
-	github.com/ethereum/go-ethereum v1.14.6
+	github.com/ethereum/go-ethereum v1.14.7
 	github.com/gin-gonic/gin v1.10.0
 	github.com/go-redis/cache/v9 v9.0.0
 	github.com/go-redis/redis_rate/v10 v10.0.1
@@ -50,7 +50,7 @@ require (
 	github.com/golang-sql/sqlexp v0.1.0 // indirect
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/gorilla/websocket v1.5.0 // indirect
-	github.com/holiman/uint256 v1.2.4 // indirect
+	github.com/holiman/uint256 v1.3.0 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
